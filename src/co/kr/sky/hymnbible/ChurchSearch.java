@@ -229,12 +229,14 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 						String church_img9 = order.getString("church_img9");
 						String church_img10 = order.getString("church_img10");
 						String search_index = order.getString("search_index");
+						String latitude = order.getString("Latitude");
+						String hardness = order.getString("Longitude");
 						Log.e("SKY" , "key_index :: " + key_index);
 
-						String latitude = "" + findGeoPoint(church_address).getLatitudeE6();
-						String hardness = "" + findGeoPoint(church_address).getLongitudeE6();
-						Log.e("SKY" , "latitude :: " + latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length()));
-						Log.e("SKY" , "hardness :: " + hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length()));
+//						String latitude = "" + findGeoPoint(church_address).getLatitudeE6();
+//						String hardness = "" + findGeoPoint(church_address).getLongitudeE6();
+//						Log.e("SKY" , "latitude :: " + latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length()));
+//						Log.e("SKY" , "hardness :: " + hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length()));
 
 
 //						write("" + key_index + "/" + church_address + "/" + latitude + "/" + hardness);
@@ -258,8 +260,8 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 								church_img9,
 								church_img10,
 								search_index,
-								latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length()),
-								hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length())));
+								latitude,
+								hardness));
 					}
 					write(arrData);
 //					write("" + key_index + "/" + church_address + "/" + latitude + "/" + hardness);
