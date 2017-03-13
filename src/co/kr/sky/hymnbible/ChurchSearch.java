@@ -2,12 +2,11 @@ package co.kr.sky.hymnbible;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -113,18 +112,27 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 		SupportMapFragment fragment =   (SupportMapFragment)getSupportFragmentManager()
 				.findFragmentById(R.id.mapview);
 		mMap = fragment.getMap();
+		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_sp2).setOnClickListener(btnListener);
 		e_search1.setText("부천");
 		//SendHttp();
 		//GPS_Start();
+		int latitude =  findGeoPoint("경기도 수원시 우만동 81-7").getLatitudeE6();
+		int hardness =  findGeoPoint("경기도 수원시 우만동 81-7").getLongitudeE6();
+//		Log.e("SKY" , "latitude :: " + latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length()));
+//		Log.e("SKY" , "hardness :: " + hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length()));
+		
+		 
 	}
 	//버튼 리스너 구현 부분 
 	View.OnClickListener btnListener = new View.OnClickListener() {
 		public void onClick(View v) {
 			switch (v.getId()) {
-
+			
 			case R.id.btn_sp2:	
 				SendHttp();
+				break;
+			case R.id.btn_back:	
 				break;
 
 			}
@@ -229,17 +237,25 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 						String church_img9 = order.getString("church_img9");
 						String church_img10 = order.getString("church_img10");
 						String search_index = order.getString("search_index");
-						String latitude = order.getString("Latitude");
-						String hardness = order.getString("Longitude");
+						//String latitude = order.getString("Latitude");
+						//String hardness = order.getString("Longitude");
 						Log.e("SKY" , "key_index :: " + key_index);
-
-//						String latitude = "" + findGeoPoint(church_address).getLatitudeE6();
-//						String hardness = "" + findGeoPoint(church_address).getLongitudeE6();
+						Log.e("SKY" , "church_address :: " + church_address);
+						String latitude = "" + findGeoPoint(church_address).getLatitudeE6();
+						String hardness = "" + findGeoPoint(church_address).getLongitudeE6();
+						Log.e("SKY" , "latitude :: " + latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length()));
+						Log.e("SKY" , "hardness :: " + hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length()));
+						
+						
+						String latitude1;
+						String hardness1;
 //						Log.e("SKY" , "latitude :: " + latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length()));
 //						Log.e("SKY" , "hardness :: " + hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length()));
-
-
-//						write("" + key_index + "/" + church_address + "/" + latitude + "/" + hardness);
+//						Thread t = new Test(i,church_address);
+//			            t.start();
+						latitude1 = "" + latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length());
+						hardness1 = "" + hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length());
+						write("" + key_index + "/" + church_address + "/" + latitude1 + "/" + hardness1);
 						arrData.add(new ChurchObj(key_index, 
 								church_name, 
 								church_type, 
@@ -260,24 +276,22 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 								church_img9,
 								church_img10,
 								search_index,
-								latitude,
-								hardness));
+								"",
+								""));
 					}
-					write(arrData);
+					//write(arrData);
 //					write("" + key_index + "/" + church_address + "/" + latitude + "/" + hardness);
-					m_ListView.setVisibility(View.VISIBLE);
-					m_Adapter = new ChurchSearch_Adapter( ChurchSearch.this , arrData);
-					//					 Xml에서 추가한 ListView 연결
-					m_ListView.setOnItemClickListener(mItemClickListener);
-					//					 ListView에 어댑터 연결
-					m_ListView.setAdapter(m_Adapter);
+					//m_ListView.setVisibility(View.VISIBLE);
+					//m_Adapter = new ChurchSearch_Adapter( ChurchSearch.this , arrData);
+					//m_ListView.setOnItemClickListener(mItemClickListener);
+					//m_ListView.setAdapter(m_Adapter);
 
 				} catch (JSONException e) {
 					e.printStackTrace();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
-				}
+				} 
 
 				customProgressClose();
 				MapMarker();
@@ -286,7 +300,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 			}
 		}
 	};
-	private void write(ArrayList<ChurchObj> arrDat1a) throws IOException{
+	private void write(String str) throws IOException{
 		String dirPath = "" + Environment.getExternalStorageDirectory();
 		File file = new File(dirPath); 
 
@@ -300,16 +314,28 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 			File savefile = new File(dirPath+"/test.txt");
 			FileOutputStream fos = null;
 			fos = new FileOutputStream(savefile);
-			String testStr ="";
-			for (int i = 0; i < arrDat1a.size(); i++) {
-				testStr += "key : " + i +
-						"주소 :" + arrDat1a.get(i).getChurch_address() +
-						"위도 :" + arrDat1a.get(i).getLatitude() +
-						"경도 :" + arrDat1a.get(i).getLongitude() +
-						"\n";
-				
-				Log.e("SKY" , "testStr :: " + testStr);
-			}
+			String testStr = "";
+			try {
+			      ////////////////////////////////////////////////////////////////
+			      BufferedReader in = new BufferedReader(new FileReader(savefile));
+			      String s;
+
+			      while ((s = in.readLine()) != null) {
+			        System.out.println(s);
+			        testStr += s + "\n";
+			      }
+			      in.close();
+			      ////////////////////////////////////////////////////////////////
+			    } catch (IOException e) {
+			        System.err.println(e); // 에러가 있다면 메시지 출력
+			        System.exit(1);
+			    }
+			
+			
+			
+			
+			
+			Log.e("SKY" , "testStr :: " + testStr);
 			fos.write(testStr.getBytes());
 			fos.close();
 		} catch (FileNotFoundException e1) {
@@ -441,6 +467,8 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 		Geocoder geocoder = new Geocoder(this);
 		Address addr;
 		GeoPoint location = null;
+		Log.e("SKY", "address : " + address);
+
 		try {
 			List<Address> listAddress = geocoder.getFromLocationName(address, 1);
 			if (listAddress.size() > 0) { // 주소값이 존재 하면
@@ -449,10 +477,12 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 				int lng = (int) (addr.getLongitude() * 1E6);
 				location = new GeoPoint(lat, lng);
 
-				Log.d("SKY", "주소로부터 취득한 위도 : " + lat + ", 경도 : " + lng);
+				Log.e("SKY", "주소로부터 취득한 위도 : " + lat + ", 경도 : " + lng);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			Log.e("SKY", "e : " + e);
+
 		}
 		return location;
 	} 
