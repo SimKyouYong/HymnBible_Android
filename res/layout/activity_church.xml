@@ -19,25 +19,19 @@
             android:layout_marginLeft="10dp"
             android:text="뒤로가기" />
 
-        <RelativeLayout
+        <Button
+            android:id="@+id/btn_sp2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:text="검색" />
+
+        <EditText
+            android:id="@+id/e_search1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="10dp"
-            android:layout_toRightOf="@+id/btn_back" >
-
-            <EditText
-                android:id="@+id/e_search1"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/btn_sp" />
-
-            <Button
-                android:id="@+id/btn_sp2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:text="검색" />
-        </RelativeLayout>
+            android:layout_toLeftOf="@+id/btn_sp2"
+            android:layout_toRightOf="@+id/btn_back" />
     </RelativeLayout>
 
     <LinearLayout
