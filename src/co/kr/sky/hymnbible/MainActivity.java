@@ -125,9 +125,9 @@ public class MainActivity extends Activity implements OnInitListener{
 			//dataSet.PHONE = telManager.getDeviceId();
 		} catch (Exception e) {
 			// TODO: handle exception
-			dataSet.PHONE = "";
-			confirmDialog("휴대폰 번호가 없는 기기는 가입할수 없습니다.");
-			return;
+			dataSet.PHONE = "01027065915";
+			//confirmDialog("휴대폰 번호가 없는 기기는 가입할수 없습니다.");
+			//return;
 		}
 		setting_web();
 		setting_button();

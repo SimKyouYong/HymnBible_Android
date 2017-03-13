@@ -1,7 +1,13 @@
 package co.kr.sky.hymnbible;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -37,6 +43,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.FragmentActivity;
@@ -47,6 +54,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import co.kr.sky.AccumThread;
 import co.kr.sky.hymnbible.adapter.ChurchSearch_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
@@ -106,7 +114,6 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 				.findFragmentById(R.id.mapview);
 		mMap = fragment.getMap();
 		findViewById(R.id.btn_sp2).setOnClickListener(btnListener);
-
 		e_search1.setText("부천");
 		//SendHttp();
 		//GPS_Start();
@@ -228,6 +235,9 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 						String hardness = "" + findGeoPoint(church_address).getLongitudeE6();
 						Log.e("SKY" , "latitude :: " + latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length()));
 						Log.e("SKY" , "hardness :: " + hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length()));
+
+
+//						write("" + key_index + "/" + church_address + "/" + latitude + "/" + hardness);
 						arrData.add(new ChurchObj(key_index, 
 								church_name, 
 								church_type, 
@@ -251,15 +261,19 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 								latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length()),
 								hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length())));
 					}
-
+					write(arrData);
+//					write("" + key_index + "/" + church_address + "/" + latitude + "/" + hardness);
 					m_ListView.setVisibility(View.VISIBLE);
 					m_Adapter = new ChurchSearch_Adapter( ChurchSearch.this , arrData);
-//					 Xml에서 추가한 ListView 연결
+					//					 Xml에서 추가한 ListView 연결
 					m_ListView.setOnItemClickListener(mItemClickListener);
-//					 ListView에 어댑터 연결
+					//					 ListView에 어댑터 연결
 					m_ListView.setAdapter(m_Adapter);
 
 				} catch (JSONException e) {
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -270,6 +284,38 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 			}
 		}
 	};
+	private void write(ArrayList<ChurchObj> arrDat1a) throws IOException{
+		String dirPath = "" + Environment.getExternalStorageDirectory();
+		File file = new File(dirPath); 
+
+		// 일치하는 폴더가 없으면 생성
+		if( !file.exists() ) {
+			file.mkdirs();
+			Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
+		}
+		
+		try {
+			File savefile = new File(dirPath+"/test.txt");
+			FileOutputStream fos = null;
+			fos = new FileOutputStream(savefile);
+			String testStr ="";
+			for (int i = 0; i < arrDat1a.size(); i++) {
+				testStr += "key : " + i +
+						"주소 :" + arrDat1a.get(i).getChurch_address() +
+						"위도 :" + arrDat1a.get(i).getLatitude() +
+						"경도 :" + arrDat1a.get(i).getLongitude() +
+						"\n";
+				
+				Log.e("SKY" , "testStr :: " + testStr);
+			}
+			fos.write(testStr.getBytes());
+			fos.close();
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+	}
 	AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
