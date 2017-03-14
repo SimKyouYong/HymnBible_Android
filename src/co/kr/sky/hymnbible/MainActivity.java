@@ -18,9 +18,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.net.http.SslError;
@@ -30,6 +32,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Browser;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -116,8 +119,68 @@ public class MainActivity extends Activity implements OnInitListener{
 		vc = new MySQLiteOpenHelper(this);
 		bottomview = (LinearLayout)findViewById(R.id.bottomview);
 		bottomview.setVisibility(View.GONE);
+
+
+		ContentResolver cr = getContentResolver();
+		Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+
+		int idIndex = cur.getColumnIndex(ContactsContract.Contacts._ID);
+		int nameIndex = cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
+
+		StringBuilder result = new StringBuilder();
+		int position1 = 0;
+
 		
 		
+//		while (cur.moveToNext()) {
+//			position1++;
+//			result.append(cur.getString(nameIndex) + " :");
+//
+//			String id = cur.getString(idIndex);
+//			Cursor cur2 = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+//					ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+//					new String[]{id}, null);
+//
+//			int typeIndex = cur2.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
+//			int numIndex = cur2.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+//			int numIndex2 = cur2.getColumnIndex(ContactsContract.CommonDataKinds.Phone.IN_VISIBLE_GROUP);
+//
+//			int position = 0;
+//			while(cur2.moveToNext()){
+//				String num = cur2.getString(numIndex);
+//				String num2 = cur2.getString(numIndex2);
+//				switch (cur2.getInt(typeIndex)) {
+//				case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
+//					result.append(" Mobile:" + num);
+//					Log.e("SKY" , "Mobile :: " + num);
+//					Log.e("SKY" , "num2 :: " + num2);
+//
+//					break;
+//				case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
+//					result.append(" Home:" + num);
+//					break;
+//				case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
+//					result.append(" Work:" + num);
+//					break;
+//				}
+//				position++;
+//			}
+//			//            Log.e("SKY" , "position :: " + position);
+//
+//			cur2.close();
+//			result.append("\n");
+//		}
+//		cur.close();
+		
+		
+		getGroup();
+		//        Log.e("SKY" , "RESULT :: " + result);
+		//        TextView tv = new TextView(this);
+		//        tv.setText(result);
+		//        setContentView(tv);
+
+
+
 		TelephonyManager telManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);// 사용자 전화번호로 ID값 가져옴
 		try {
 			dataSet.PHONE = telManager.getLine1Number().toString().trim().replace("+82", "0").replace("82", "0"); //폰번호를 가져옴
@@ -133,7 +196,7 @@ public class MainActivity extends Activity implements OnInitListener{
 		setting_button();
 		myTTS = new TextToSpeech(this, this);
 
-		
+
 
 
 		//push
@@ -165,6 +228,56 @@ public class MainActivity extends Activity implements OnInitListener{
 			InputAlert();
 		}
 	}
+
+	private void getGroup() {
+		Uri uri = ContactsContract.Groups.CONTENT_URI;
+		String[] projection = new String[] {
+				ContactsContract.Groups._ID,
+				ContactsContract.Groups.TITLE,
+				ContactsContract.Groups.ACCOUNT_NAME,
+				ContactsContract.Groups.ACCOUNT_TYPE,
+				ContactsContract.Groups.DELETED,
+				ContactsContract.Groups.GROUP_VISIBLE
+		};
+		//  String selection = ContactsContract.Groups.DELETED + "=0" + " AND " +
+		//		      ContactsContract.Groups.GROUP_VISIBLE + "=1";
+
+		String selection = null;
+		String sortOrder = null;
+		Cursor cursor = managedQuery(uri, projection, selection, null, sortOrder);
+		String groupType = null;
+		String groupTitle = null;
+		String accountName = null;
+
+		while (cursor.moveToNext()) {
+			Log.e("SKY", "Id ===> " + cursor.getString(0));
+			Log.e("SKY", "Title ===> " + cursor.getString(1));
+			Log.e("SKY", "Account Name ===> " + cursor.getString(2));
+			Log.e("SKY", "Account Type ===> " + cursor.getString(3));
+			Log.e("SKY", "Deleted ===> " + cursor.getString(4));
+			Log.e("SKY", "Visible ===> " + cursor.getString(5));
+
+			groupTitle = cursor.getString(1);
+			groupType = cursor.getString(3);
+			getGroupSummaryCount(cursor.getString(0));
+		}
+	}
+	private void getGroupSummaryCount(String groupId) {
+		Uri uri = ContactsContract.Groups.CONTENT_SUMMARY_URI;
+		String[] projection = new String[]  { 
+				ContactsContract.Groups.SUMMARY_COUNT,
+				ContactsContract.Groups.ACCOUNT_NAME,
+				ContactsContract.Groups.ACCOUNT_TYPE
+		};
+		String selection = ContactsContract.Groups._ID + "=" + groupId;
+		Cursor cursor = managedQuery(uri, projection, selection, null, null);
+		int cnt = 0;
+		while (cursor.moveToNext()) {
+			Log.e("SKY",",  SummaryCount ===> " + cursor.getInt(0));
+			cnt = cursor.getInt(0);
+		}
+	}
+
 	public void confirmDialog(String message) {
 		AlertDialog.Builder ab = new AlertDialog.Builder(this , AlertDialog.THEME_HOLO_LIGHT);
 		//		.setTitle("부적결제 후 전화상담 서비스로 연결 되며 12시간 동안 재연결 무료 입니다.\n(운수대톡 )")
@@ -187,7 +300,7 @@ public class MainActivity extends Activity implements OnInitListener{
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String user_phone = name.getText().toString();
 				Check_Preferences.setAppPreferences(MainActivity.this, "ch", "true");
-				
+
 				//post 발송
 				//http://shqrp5200.cafe24.com/json/recommender-proc.do?my_id=01012341234&user_id=01043214321
 				map.put("url", dataSet.SERVER+"json/recommender-proc.do");
@@ -195,7 +308,7 @@ public class MainActivity extends Activity implements OnInitListener{
 				map.put("user_id",user_phone);
 				mThread = new AccumThread(MainActivity.this , mAfterAccum , map , 0 , 0 , null);
 				mThread.start();		//스레드 시작!!
-				
+
 			}
 		});
 		alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
