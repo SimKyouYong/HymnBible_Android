@@ -18,7 +18,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,6 +32,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.Browser;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.Data;
+import android.provider.ContactsContract.Groups;
 import android.provider.MediaStore;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -116,70 +117,30 @@ public class MainActivity extends Activity implements OnInitListener{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		vc = new MySQLiteOpenHelper(this);
+		//vc = new MySQLiteOpenHelper(this);
 		bottomview = (LinearLayout)findViewById(R.id.bottomview);
 		bottomview.setVisibility(View.GONE);
 
-
-		ContentResolver cr = getContentResolver();
-		Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-
-		int idIndex = cur.getColumnIndex(ContactsContract.Contacts._ID);
-		int nameIndex = cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-
-		StringBuilder result = new StringBuilder();
-		int position1 = 0;
-
-		
-		
-//		while (cur.moveToNext()) {
-//			position1++;
-//			result.append(cur.getString(nameIndex) + " :");
-//
-//			String id = cur.getString(idIndex);
-//			Cursor cur2 = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-//					ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-//					new String[]{id}, null);
-//
-//			int typeIndex = cur2.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE);
-//			int numIndex = cur2.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-//			int numIndex2 = cur2.getColumnIndex(ContactsContract.CommonDataKinds.Phone.IN_VISIBLE_GROUP);
-//
-//			int position = 0;
-//			while(cur2.moveToNext()){
-//				String num = cur2.getString(numIndex);
-//				String num2 = cur2.getString(numIndex2);
-//				switch (cur2.getInt(typeIndex)) {
-//				case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
-//					result.append(" Mobile:" + num);
-//					Log.e("SKY" , "Mobile :: " + num);
-//					Log.e("SKY" , "num2 :: " + num2);
-//
-//					break;
-//				case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
-//					result.append(" Home:" + num);
-//					break;
-//				case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
-//					result.append(" Work:" + num);
-//					break;
-//				}
-//				position++;
-//			}
-//			//            Log.e("SKY" , "position :: " + position);
-//
-//			cur2.close();
-//			result.append("\n");
-//		}
-//		cur.close();
-		
-		
 		getGroup();
-		//        Log.e("SKY" , "RESULT :: " + result);
-		//        TextView tv = new TextView(this);
-		//        tv.setText(result);
-		//        setContentView(tv);
+		/*
+		//폰번호 알아오기
+		Cursor cursor3 = getContentResolver().query(
+				ContactsContract.Data.CONTENT_URI, 
+				null, 
+				ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + "=" + 5, 
+				null, 
+				null);
 
-
+		try {
+			while (cursor3.moveToNext()) {
+				String id = cursor3.getString(cursor3.getColumnIndex(ContactsContract.Data._ID));
+				showMember(id);
+			}
+		} finally {
+			// TODO: handle finally clause
+			cursor3.close();
+		}
+		*/
 
 		TelephonyManager telManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);// 사용자 전화번호로 ID값 가져옴
 		try {
@@ -230,39 +191,78 @@ public class MainActivity extends Activity implements OnInitListener{
 	}
 
 	private void getGroup() {
-		Uri uri = ContactsContract.Groups.CONTENT_URI;
-		String[] projection = new String[] {
-				ContactsContract.Groups._ID,
-				ContactsContract.Groups.TITLE,
-				ContactsContract.Groups.ACCOUNT_NAME,
-				ContactsContract.Groups.ACCOUNT_TYPE,
-				ContactsContract.Groups.DELETED,
-				ContactsContract.Groups.GROUP_VISIBLE
-		};
-		//  String selection = ContactsContract.Groups.DELETED + "=0" + " AND " +
-		//		      ContactsContract.Groups.GROUP_VISIBLE + "=1";
+		Cursor cursor = getContentResolver().query(
+				ContactsContract.Groups.CONTENT_URI, 
+				new String[] {
+						ContactsContract.Groups._ID,
+						ContactsContract.Groups.TITLE,
+						ContactsContract.Groups.ACCOUNT_NAME,
+						ContactsContract.Groups.ACCOUNT_TYPE,
+						ContactsContract.Groups.DELETED,
+						ContactsContract.Groups.GROUP_VISIBLE
+				}, 
+				ContactsContract.Groups.DELETED + "=0" + " AND " +
+						ContactsContract.Groups.GROUP_VISIBLE + "=1", 
+						null, 
+						null);
 
-		String selection = null;
-		String sortOrder = null;
-		Cursor cursor = managedQuery(uri, projection, selection, null, sortOrder);
-		String groupType = null;
-		String groupTitle = null;
-		String accountName = null;
+		try {
+			while (cursor.moveToNext()) {
 
-		while (cursor.moveToNext()) {
-			Log.e("SKY", "Id ===> " + cursor.getString(0));
-			Log.e("SKY", "Title ===> " + cursor.getString(1));
-			Log.e("SKY", "Account Name ===> " + cursor.getString(2));
-			Log.e("SKY", "Account Type ===> " + cursor.getString(3));
-			Log.e("SKY", "Deleted ===> " + cursor.getString(4));
-			Log.e("SKY", "Visible ===> " + cursor.getString(5));
-
-			groupTitle = cursor.getString(1);
-			groupType = cursor.getString(3);
-			getGroupSummaryCount(cursor.getString(0));
+				Log.e("SKY" , "_ID :: " + cursor.getInt(0));
+				Log.e("SKY" , "TITLE :: " + cursor.getString(1));
+				Log.e("SKY" , "ACCOUNT_NAME :: " + cursor.getString(2));
+				Log.e("SKY" , "ACCOUNT_TYPE :: " + cursor.getString(3));
+				Log.e("SKY" , "DELETED :: " + cursor.getString(4));
+				Log.e("SKY" , "GROUP_VISIBLE :: " + cursor.getString(5));
+				Log.e("SKY" , "GROUP_COUNT :: " + getGroupSummaryCount(cursor.getString(0)));
+				
+				getSampleContactList(cursor.getInt(0));
+			}
+		} finally {
+			cursor.close();
 		}
 	}
-	private void getGroupSummaryCount(String groupId) {
+	public void getSampleContactList(int groupID) {
+
+	    Uri groupURI = ContactsContract.Data.CONTENT_URI;
+	    String[] projection = new String[] {
+	            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+	            ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID };
+
+	    Cursor c = getContentResolver().query(
+	            groupURI,
+	            projection,
+	            ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID
+	                    + "=" + groupID, null, null);
+
+	    while (c.moveToNext()) {
+	        String id = c
+	                .getString(c
+	                        .getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
+	        Cursor pCur = getContentResolver().query(
+	                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+	                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+	                new String[] { id }, null);
+
+	        int i =0;
+	        while (pCur.moveToNext()) {
+	        	i++;
+	            String name = pCur
+	                    .getString(pCur
+	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+
+	            String phone = pCur
+	                    .getString(pCur
+	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+				Log.e("SKY" , "" + i + ".name:: " + name + " // phone :: " + phone);
+
+	        }
+
+	        pCur.close();
+	    }
+	}
+	private int getGroupSummaryCount(String groupId) {
 		Uri uri = ContactsContract.Groups.CONTENT_SUMMARY_URI;
 		String[] projection = new String[]  { 
 				ContactsContract.Groups.SUMMARY_COUNT,
@@ -273,9 +273,9 @@ public class MainActivity extends Activity implements OnInitListener{
 		Cursor cursor = managedQuery(uri, projection, selection, null, null);
 		int cnt = 0;
 		while (cursor.moveToNext()) {
-			Log.e("SKY",",  SummaryCount ===> " + cursor.getInt(0));
 			cnt = cursor.getInt(0);
 		}
+		return cnt;
 	}
 
 	public void confirmDialog(String message) {
