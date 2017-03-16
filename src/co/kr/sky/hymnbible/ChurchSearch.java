@@ -115,12 +115,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_sp2).setOnClickListener(btnListener);
 		e_search1.setText("부천");
-		//SendHttp();
-		//GPS_Start();
-		int latitude =  findGeoPoint("경기도 수원시 우만동 81-7").getLatitudeE6();
-		int hardness =  findGeoPoint("경기도 수원시 우만동 81-7").getLongitudeE6();
-//		Log.e("SKY" , "latitude :: " + latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length()));
-//		Log.e("SKY" , "hardness :: " + hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length()));
+//		SendHttp();
 		
 		 
 	}
@@ -237,25 +232,10 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 						String church_img9 = order.getString("church_img9");
 						String church_img10 = order.getString("church_img10");
 						String search_index = order.getString("search_index");
-						//String latitude = order.getString("Latitude");
-						//String hardness = order.getString("Longitude");
-						Log.e("SKY" , "key_index :: " + key_index);
-						Log.e("SKY" , "church_address :: " + church_address);
-						String latitude = "" + findGeoPoint(church_address).getLatitudeE6();
-						String hardness = "" + findGeoPoint(church_address).getLongitudeE6();
-						Log.e("SKY" , "latitude :: " + latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length()));
-						Log.e("SKY" , "hardness :: " + hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length()));
-						
-						
-						String latitude1;
-						String hardness1;
-//						Log.e("SKY" , "latitude :: " + latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length()));
-//						Log.e("SKY" , "hardness :: " + hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length()));
-//						Thread t = new Test(i,church_address);
-//			            t.start();
-						latitude1 = "" + latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length());
-						hardness1 = "" + hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length());
-						write("" + key_index + "/" + church_address + "/" + latitude1 + "/" + hardness1);
+						String latitude = order.getString("latitude");
+						String hardness = order.getString("hardness");
+						//latitude1 = "" + latitude.substring(0 , 2) + "." + latitude.substring(2,latitude.length());
+						//hardness1 = "" + hardness.substring(0 , 3) + "." + hardness.substring(3,hardness.length());
 						arrData.add(new ChurchObj(key_index, 
 								church_name, 
 								church_type, 
@@ -276,20 +256,17 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 								church_img9,
 								church_img10,
 								search_index,
-								"",
-								""));
+								latitude,
+								hardness));
 					}
 					//write(arrData);
 //					write("" + key_index + "/" + church_address + "/" + latitude + "/" + hardness);
-					//m_ListView.setVisibility(View.VISIBLE);
-					//m_Adapter = new ChurchSearch_Adapter( ChurchSearch.this , arrData);
-					//m_ListView.setOnItemClickListener(mItemClickListener);
-					//m_ListView.setAdapter(m_Adapter);
+					m_ListView.setVisibility(View.VISIBLE);
+					m_Adapter = new ChurchSearch_Adapter( ChurchSearch.this , arrData);
+					m_ListView.setOnItemClickListener(mItemClickListener);
+					m_ListView.setAdapter(m_Adapter);
 
 				} catch (JSONException e) {
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} 
 
@@ -300,50 +277,6 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 			}
 		}
 	};
-	private void write(String str) throws IOException{
-		String dirPath = "" + Environment.getExternalStorageDirectory();
-		File file = new File(dirPath); 
-
-		// 일치하는 폴더가 없으면 생성
-		if( !file.exists() ) {
-			file.mkdirs();
-			Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
-		}
-		
-		try {
-			File savefile = new File(dirPath+"/test.txt");
-			FileOutputStream fos = null;
-			fos = new FileOutputStream(savefile);
-			String testStr = "";
-			try {
-			      ////////////////////////////////////////////////////////////////
-			      BufferedReader in = new BufferedReader(new FileReader(savefile));
-			      String s;
-
-			      while ((s = in.readLine()) != null) {
-			        System.out.println(s);
-			        testStr += s + "\n";
-			      }
-			      in.close();
-			      ////////////////////////////////////////////////////////////////
-			    } catch (IOException e) {
-			        System.err.println(e); // 에러가 있다면 메시지 출력
-			        System.exit(1);
-			    }
-			
-			
-			
-			
-			
-			Log.e("SKY" , "testStr :: " + testStr);
-			fos.write(testStr.getBytes());
-			fos.close();
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-	}
 	AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
