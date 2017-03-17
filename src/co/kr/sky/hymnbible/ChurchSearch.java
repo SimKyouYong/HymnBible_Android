@@ -116,7 +116,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 		findViewById(R.id.btn_sp2).setOnClickListener(btnListener);
 		e_search1.setText("");
 //		SendHttp();
-		
+		  
 		 
 	}
 	//버튼 리스너 구현 부분 
