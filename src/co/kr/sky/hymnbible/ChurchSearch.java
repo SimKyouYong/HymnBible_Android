@@ -114,7 +114,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 		mMap = fragment.getMap();
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_sp2).setOnClickListener(btnListener);
-		e_search1.setText("부천");
+		e_search1.setText("");
 //		SendHttp();
 		
 		 
