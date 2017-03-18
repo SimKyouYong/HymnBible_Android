@@ -98,7 +98,8 @@ public class ChurchSearch_Detail extends Activity{
 		church_body.setText("" 			+ m_board.getChurch_body());
 		church_post.setText("" 			+ m_board.getChurch_fax());
 
-		H5ImageLoader.getInstance(this).set( m_board.getChurch_img(), i_img);
+		//H5ImageLoader.getInstance(this).set( m_board.getChurch_img(), i_img);
+		H5ImageLoader.getInstance(this).set( "http://shqrp5200.cafe24.com/img/nl_1.jpg", i_img);
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.bottomview_l).setOnClickListener(btnListener);
 
