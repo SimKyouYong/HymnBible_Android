@@ -121,7 +121,7 @@ public class MainActivity extends Activity implements OnInitListener{
 		bottomview = (LinearLayout)findViewById(R.id.bottomview);
 		bottomview.setVisibility(View.GONE);
 
-		getGroup();
+		//getGroup();
 		/*
 		//폰번호 알아오기
 		Cursor cursor3 = getContentResolver().query(
