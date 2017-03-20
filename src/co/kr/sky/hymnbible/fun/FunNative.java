@@ -18,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -26,10 +27,13 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.RecognizerIntent;
@@ -45,6 +49,8 @@ import co.kr.sky.hymnbible.LMSMainActivity;
 import co.kr.sky.hymnbible.MainActivity;
 import co.kr.sky.hymnbible.common.Check_Preferences;
 
+@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+@SuppressLint("NewApi")
 public class FunNative  {
 
 	CommonUtil dataSet = CommonUtil.getInstance();
@@ -64,9 +70,19 @@ public class FunNative  {
 	public void AppVersion(String url , final Activity ac , WebView vc , String return_fun){
 		Log.e("SKY" , "-AppVersion-- :: ");
 		//팝업으로 앱버전 띄우기(개발사 , 앱 버전 정보)
+		PackageInfo pi = null;
+		try {
+		pi = ac.getPackageManager().getPackageInfo(ac.getPackageName(), 0);
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		String verSion = pi.versionName;
+		
 		AlertDialog.Builder alert = new AlertDialog.Builder(ac, AlertDialog.THEME_HOLO_LIGHT);
 		alert.setTitle("개발 및 버전 정보");
-		alert.setMessage("dd");
+		alert.setMessage("해당 앱 버전은 " + verSion + "입니다.");
 		alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 
@@ -379,7 +395,7 @@ public class FunNative  {
 	 * return :: 안씀
 	 * window.location.href = "js2ios://ClipboardCopy?url=not&name=문구&return=not";
 	 * */
-	@SuppressLint("ShowToast")
+	@SuppressLint({ "ShowToast", "NewApi" })
 	@SuppressWarnings("deprecation")
 	public void ClipboardCopy(String url , Activity ac , WebView vc , String return_fun){
 		Log.e("SKY" , "--ClipboardCopy-- :: ");
