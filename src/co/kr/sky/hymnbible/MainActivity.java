@@ -446,15 +446,17 @@ public class MainActivity extends Activity implements OnInitListener{
 				}
 			} 
 			break;
+		case 999:
+			if (resultCode == RESULT_OK && null != data) {
+				
+				ArrayList<String> result = data
+						.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+				Log.e("SKY" , "RESULT :: " + result.get(0));
+				Log.e("SKY" , "return_fun :: " + return_fun);
+				BibleWeb.loadUrl("javascript:"+return_fun + "('" + result.get(0) + "')");
+			}
+			break;
 		case REQ_CODE_SPEECH_INPUT: {
-			//			if (resultCode == RESULT_OK && null != data) {
-			//
-			//				ArrayList<String> result = data
-			//						.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-			//				Log.e("SKY" , "RESULT :: " + result.get(0));
-			//				Log.e("SKY" , "return_fun :: " + return_fun);
-			//				BibleWeb.loadUrl("javascript:"+return_fun + "('" + result.get(0) + "')");
-			//			}
 			if (requestCode == FILECHOOSER_NORMAL_REQ_CODE) {
 				if (filePathCallbackNormal == null) return ;
 				Uri result = (data == null || resultCode != RESULT_OK) ? null : data.getData();
@@ -485,6 +487,7 @@ public class MainActivity extends Activity implements OnInitListener{
 				//            }
 			}
 			break;
+			
 		}
 
 		}

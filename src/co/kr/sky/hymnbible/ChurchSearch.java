@@ -162,18 +162,12 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.e("SKY" , "RESULT :: " + requestCode);
-		switch (requestCode) {
-		case REQ_CODE_SPEECH_INPUT: {
-			if (resultCode == RESULT_OK && null != data) {
-				
-				ArrayList<String> result = data
-						.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-				Log.e("SKY" , "RESULT :: " + result.get(0));
-				e_search1.setText(""+result.get(0));
-			}
-			break;
-		}
-
+		if (resultCode == RESULT_OK && null != data) {
+			
+			ArrayList<String> result = data
+					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+			Log.e("SKY" , "RESULT :: " + result.get(0));
+			e_search1.setText(""+result.get(0));
 		}
 	}
 	/*

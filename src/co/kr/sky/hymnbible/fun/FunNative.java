@@ -250,7 +250,7 @@ public class FunNative  {
 		intent.putExtra("return_fun", return_fun);
 		MainActivity.return_fun = return_fun;
 		try {
-			ac.startActivityForResult(intent, MainActivity.REQ_CODE_SPEECH_INPUT);
+			ac.startActivityForResult(intent, 999);
 		} catch (ActivityNotFoundException a) {
 			Toast.makeText(ac,"다시 시도해주세요.",
 					Toast.LENGTH_SHORT).show();
