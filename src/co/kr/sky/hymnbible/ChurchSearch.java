@@ -12,6 +12,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -31,6 +32,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.maps.GeoPoint;
 
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -45,6 +47,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.speech.RecognizerIntent;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.View;
@@ -114,6 +117,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 		mMap = fragment.getMap();
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_sp2).setOnClickListener(btnListener);
+		findViewById(R.id.btn_sp3).setOnClickListener(btnListener);
 		e_search1.setText("");
 //		SendHttp();
 		  
@@ -132,6 +136,20 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 				SendHttp();
 				break;
 			case R.id.btn_back:	
+				finish();
+				break;
+			case R.id.btn_sp3:	
+				Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+						RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+				intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Speech to Text");
+				try {
+					startActivityForResult(intent, MainActivity.REQ_CODE_SPEECH_INPUT);
+				} catch (ActivityNotFoundException a) {
+					Toast.makeText(ChurchSearch.this,"다시 시도해주세요.",
+							Toast.LENGTH_SHORT).show();
+				}
 				break;
 
 			}

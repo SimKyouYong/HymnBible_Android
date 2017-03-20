@@ -8,7 +8,7 @@
     <RelativeLayout
         android:id="@+id/view1"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="47dp"
         android:layout_alignParentTop="true"
         android:background="#007AFF" >
 
@@ -52,9 +52,12 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="2dp"
+            android:layout_marginLeft="20dp"
+            android:hint="내용을 입력해주세요."
+            android:paddingLeft="25dp"
             android:layout_toLeftOf="@+id/sspp"
-            android:layout_toRightOf="@+id/btn_back" />
+            android:layout_toRightOf="@+id/btn_back"
+            android:background="@drawable/search" />
     </RelativeLayout>
 
     <LinearLayout
