@@ -246,6 +246,10 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 				Log.e("SKY", "RES :: " +  res);
 				try {
 					JSONArray ja = new JSONArray(res);
+					if (ja.length() == 0 ) {
+						Toast.makeText(getApplicationContext(), "해당 검색 데이터는 존재하지 않습니다.", 0).show();
+						return;
+					}
 					for (int i = 0; i < ja.length(); i++) {
 						bm.add(null);
 						JSONObject order = ja.getJSONObject(i);
