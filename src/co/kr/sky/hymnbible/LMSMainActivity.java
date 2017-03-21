@@ -39,6 +39,7 @@ public class LMSMainActivity extends Activity{
 		findViewById(R.id.tab2).setOnClickListener(btnListener);
 		findViewById(R.id.number_plus).setOnClickListener(btnListener);
 		findViewById(R.id.exel_plus).setOnClickListener(btnListener);
+		findViewById(R.id.send_lms).setOnClickListener(btnListener);
 
 
 		m_Adapter = new LMSMain_Adapter( this , arrData , mAfterAccum);
@@ -75,17 +76,17 @@ public class LMSMainActivity extends Activity{
 
 			case R.id.tab1:	
 				//폰주소록
-				Intent intent100 = new Intent(LMSMainActivity.this , LMSMainActivity.class);
+				Intent intent100 = new Intent(LMSMainActivity.this , LMSMyPhoneActivity.class);
 				startActivityForResult(intent100, 100);
 				break;
 			case R.id.tab2:	
 				//폰주소록
-				Intent intent200 = new Intent(LMSMainActivity.this , LMSMainActivity.class);
+				Intent intent200 = new Intent(LMSMainActivity.this , LMSMyPhoneActivity.class);
 				startActivityForResult(intent200, 200);
 				break;
 			case R.id.send_lms:
 				if (phone_number.getText().toString().trim().length() > 0) {
-					for (int i = 0; i < FOCUSED_STATE_SET.length; i++) {
+					for (int i = 0; i < arrData.size(); i++) {
 						Log.e("SKY" , "I :: "  +i);
 						sendSMS(phone_number.getText().toString(),arrData.get(i).getNumber());
 					}
