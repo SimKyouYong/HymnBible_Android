@@ -37,6 +37,7 @@ import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -53,6 +54,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -78,8 +80,10 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 	private ArrayList<Bitmap> bm = new ArrayList<Bitmap>();
 	private ChurchSearch_Adapter           m_Adapter;
 	private ListView                m_ListView;
-
+	LinearLayout list_view_11;
 	EditText e_search1;
+	TextView list_count;
+	private Typeface ttf;
 
 	@Override
 	protected void onDestroy() {
@@ -108,7 +112,8 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_church);
-		
+		ttf = Typeface.createFromAsset(getAssets(), "HANYGO230.TTF");
+
 		try {
 			PackageInfo info = getPackageManager().getPackageInfo("패키지이름", PackageManager.GET_SIGNATURES);
 			for (Signature signature : info.signatures) {
@@ -123,6 +128,9 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 		
 		e_search1 = (EditText)findViewById(R.id.e_search1);
 		m_ListView = (ListView)findViewById(R.id.list_cummun);
+		list_view_11 = (LinearLayout)findViewById(R.id.list_view_11);
+		list_count = (TextView)findViewById(R.id.list_count);
+		list_count.setTypeface(ttf);
 
 		SupportMapFragment fragment =   (SupportMapFragment)getSupportFragmentManager()
 				.findFragmentById(R.id.mapview);
@@ -135,7 +143,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 		
 		CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(36.3370879,127.5477928));
 		mMap.moveCamera(update);		//자기 위치로 이동
-		CameraUpdate zoom = CameraUpdateFactory.zoomTo(8);
+		CameraUpdate zoom = CameraUpdateFactory.zoomTo(7);
 		mMap.animateCamera(zoom);
 		 
 	}
@@ -292,7 +300,8 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 					}
 					//write(arrData);
 //					write("" + key_index + "/" + church_address + "/" + latitude + "/" + hardness);
-					m_ListView.setVisibility(View.VISIBLE);
+					list_view_11.setVisibility(View.VISIBLE);
+					list_count.setText(e_search1.getText().toString() + " 검색 결과는 총 " + arrData.size() + " 건 입니다.");
 					m_Adapter = new ChurchSearch_Adapter( ChurchSearch.this , arrData);
 					m_ListView.setOnItemClickListener(mItemClickListener);
 					m_ListView.setAdapter(m_Adapter);
@@ -425,7 +434,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 		}
 		CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(Double.parseDouble(arrData.get(0).getLatitude()), Double.parseDouble(arrData.get(0).getLongitude())));
 		mMap.moveCamera(update);		//자기 위치로 이동
-		CameraUpdate zoom = CameraUpdateFactory.zoomTo(14);
+		CameraUpdate zoom = CameraUpdateFactory.zoomTo(10);
 		mMap.animateCamera(zoom);
 	}
 	/**

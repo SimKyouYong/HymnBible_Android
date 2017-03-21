@@ -53,15 +53,15 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="20dp"
-            android:textColor="#ffffff"
-            android:textSize="17dp"
-            android:textColorHint="#DCDCDC"
-            android:typeface="sans"
-            android:hint="내용을 입력해주세요."
-            android:paddingLeft="25dp"
             android:layout_toLeftOf="@+id/sspp"
             android:layout_toRightOf="@+id/btn_back"
-            android:background="@drawable/search" />
+            android:background="@drawable/search"
+            android:hint="내용을 입력해주세요."
+            android:paddingLeft="25dp"
+            android:textColor="#ffffff"
+            android:textColorHint="#DCDCDC"
+            android:textSize="17dp"
+            android:typeface="sans" />
     </RelativeLayout>
 
     <LinearLayout
@@ -77,19 +77,40 @@
             android:layout_height="fill_parent"
             android:layout_weight="1" />
 
-        <ListView
-            android:id="@+id/list_cummun"
+        <LinearLayout
+            android:id="@+id/list_view_11"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:layout_weight="1"
-            android:divider="#dfdede"
-            android:dividerHeight="1dp"
+            android:orientation="vertical"
             android:visibility="gone" >
-        </ListView>
+
+            <TextView
+                android:id="@+id/list_count"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#A9A9A9"
+                android:textSize="14dp" />
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1dp"
+                android:background="#DCDCDC" />
+
+            <ListView
+                android:id="@+id/list_cummun"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:divider="#dfdede"
+                android:dividerHeight="1dp" >
+            </ListView>
+        </LinearLayout>
     </LinearLayout>
 
 </RelativeLayout>
