@@ -50,9 +50,9 @@ public class LMSMainActivity extends Activity{
 		public void handleMessage(Message msg)
 		{
 			if (msg.arg1  == 0 ) {
-				String res = (String)msg.obj;
+				int res = (Integer)msg.obj;
 				Log.e("SKY" , "RESULT  -> " + res);
-				arrData.remove(Integer.parseInt(res));
+				arrData.remove(res);
 				m_Adapter.notifyDataSetChanged();
 			} 
 		}

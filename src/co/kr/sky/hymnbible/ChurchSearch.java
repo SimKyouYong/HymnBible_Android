@@ -131,6 +131,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 		list_view_11 = (LinearLayout)findViewById(R.id.list_view_11);
 		list_count = (TextView)findViewById(R.id.list_count);
 		list_count.setTypeface(ttf);
+		e_search1.setTypeface(ttf);
 
 		SupportMapFragment fragment =   (SupportMapFragment)getSupportFragmentManager()
 				.findFragmentById(R.id.mapview);

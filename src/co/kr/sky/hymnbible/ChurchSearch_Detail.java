@@ -24,7 +24,7 @@ public class ChurchSearch_Detail extends Activity{
 	NetworkImageView i_img;
 	private Typeface ttf;
 
-	Button bottomview_l;
+	Button bottomview_l,bottomview_r;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_church_detail);
@@ -49,6 +49,7 @@ public class ChurchSearch_Detail extends Activity{
 		titlename 		= (TextView)findViewById(R.id.titlename);
 		church_post 		= (TextView)findViewById(R.id.church_post);
 		bottomview_l 		= (Button)findViewById(R.id.bottomview_l);
+		bottomview_r 		= (Button)findViewById(R.id.bottomview_r);
 		
 		a1 	= (TextView)findViewById(R.id.a1);
 		a2 	= (TextView)findViewById(R.id.a2);
@@ -84,6 +85,7 @@ public class ChurchSearch_Detail extends Activity{
 		church_body.setTypeface(ttf);
 		church_post.setTypeface(ttf);
 		bottomview_l.setTypeface(ttf);
+		bottomview_r.setTypeface(ttf);
 
 
 		titlename.setText("" 				+ "교회찾기");
