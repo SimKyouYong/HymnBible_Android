@@ -16,7 +16,7 @@ import co.kr.sky.hymnbible.obj.ChurchObj;
 
 public class ChurchSearch_Detail extends Activity{
 	ChurchObj m_board;
-
+	
 	TextView title , church_name , church_type , person_name , church_address , church_number;
 	TextView church_fax , church_homepage , church_body , church_post;
 
@@ -102,6 +102,7 @@ public class ChurchSearch_Detail extends Activity{
 		H5ImageLoader.getInstance(this).set( "http://shqrp5200.cafe24.com/img/nl_1.jpg", i_img);
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.bottomview_l).setOnClickListener(btnListener);
+		findViewById(R.id.bottomview_r).setOnClickListener(btnListener);
 
 
 	}
@@ -109,7 +110,11 @@ public class ChurchSearch_Detail extends Activity{
 	View.OnClickListener btnListener = new View.OnClickListener() {
 		public void onClick(View v) {
 			switch (v.getId()) {
-
+			
+			case R.id.bottomview_r:	
+				Log.e("SKY"  , "--bottomview_r--");
+				finish();
+				break;
 			case R.id.btn_back:	
 				Log.e("SKY"  , "--btn_back--");
 				finish();

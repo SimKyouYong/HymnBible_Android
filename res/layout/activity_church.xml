@@ -57,6 +57,8 @@
             android:layout_toRightOf="@+id/btn_back"
             android:background="@drawable/search"
             android:hint="내용을 입력해주세요."
+            android:imeOptions="actionSearch"
+            android:inputType="text"
             android:paddingLeft="25dp"
             android:textColor="#ffffff"
             android:textColorHint="#DCDCDC"
@@ -91,10 +93,10 @@
 
             <TextView
                 android:id="@+id/list_count"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
                 android:textColor="#A9A9A9"
                 android:textSize="14dp" />
 
