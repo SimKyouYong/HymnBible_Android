@@ -6,23 +6,42 @@ import android.app.Activity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.ListView;
-import co.kr.sky.hymnbible.adapter.LMSMain_Adapter;
+import co.kr.sky.hymnbible.adapter.LMSMyPhone_Adapter;
 import co.kr.sky.hymnbible.obj.MyPhoneObj;
 
 public class LMSMyPhoneActivity extends Activity{
-	LMSMain_Adapter           m_Adapter;
+	LMSMyPhone_Adapter           m_Adapter;
 	ArrayList<MyPhoneObj> arrData = new ArrayList<MyPhoneObj>();
 	ListView                list_number;
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_myphone);
-
+		list_number = (ListView)findViewById(R.id.list_number);
+		
+		
+		
+		
 		getGroup();
 	}
+	Handler mAfterAccum = new Handler()
+	{
+		@Override
+		public void handleMessage(Message msg)
+		{
+			if (msg.arg1  == 0 ) {
+				String res = (String)msg.obj;
+				Log.e("SKY" , "RESULT  -> " + res);
+				arrData.remove(Integer.parseInt(res));
+				m_Adapter.notifyDataSetChanged();
+			} 
+		}
+	};
 	private void getGroup() {
 		Cursor cursor = getContentResolver().query(
 				ContactsContract.Groups.CONTENT_URI, 
@@ -59,6 +78,8 @@ public class LMSMyPhoneActivity extends Activity{
 			}
 		} finally {
 			cursor.close();
+			m_Adapter = new LMSMyPhone_Adapter( this , arrData , mAfterAccum);
+			list_number.setAdapter(m_Adapter);
 		}
 	}
 	private int getGroupSummaryCount(String groupId) {

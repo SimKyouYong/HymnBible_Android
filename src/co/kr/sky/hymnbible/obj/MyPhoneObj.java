@@ -77,6 +77,9 @@ public class MyPhoneObj implements Parcelable{
 	public void setCHECK(String cHECK) {
 		CHECK = cHECK;
 	}
+	public MyPhoneObj(Parcel in) {
+		readFromParcel(in);
+	}
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
 		dest.writeString(_ID);
