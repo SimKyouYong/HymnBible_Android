@@ -665,8 +665,10 @@ public class MainActivity extends Activity implements OnInitListener{
 			if (url.startsWith("http://shqrp5200.cafe24.com/index.do")) {
 				//메인 페이지이기에 종료하기 띄운다!.
 				Real_exit = true;
+			}else{
+				Real_exit = false;
 			}
-			Real_exit = false;
+			
 			if( url.startsWith("http:") || url.startsWith("https:") ) {
 				return false;
 
