@@ -979,6 +979,7 @@ public class MainActivity extends Activity implements OnInitListener{
 		if ((keyCode == KeyEvent.KEYCODE_BACK) && BibleWeb.canGoBack()) {
 			if (Real_exit) {
 				EXIT();
+				return true;
 			}
 			if ("http://sharp5200.cafe24.com/index.do".equals(fix_url)) {
 				return true;
