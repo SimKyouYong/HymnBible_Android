@@ -32,8 +32,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.Browser;
 import android.provider.ContactsContract;
-import android.provider.ContactsContract.Data;
-import android.provider.ContactsContract.Groups;
 import android.provider.MediaStore;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -80,6 +78,7 @@ public class MainActivity extends Activity implements OnInitListener{
 
 	private final static int FILECHOOSER_RESULTCODE = 1;
 
+	private Boolean Real_exit = false;
 	public static WebView BibleWeb;
 	public WebView BibleWeb_s = null;
 	//String url = "http://hoon0319.cafe24.com/index.do";
@@ -616,6 +615,7 @@ public class MainActivity extends Activity implements OnInitListener{
 
 		});
 		Log.e("SKY" , "URL :: "  + url+dataSet.PHONE);
+		Real_exit = true;
 		BibleWeb.loadUrl(url+dataSet.PHONE);
 		if(android.os.Build.VERSION.SDK_INT >= 11)
 		{
@@ -660,7 +660,13 @@ public class MainActivity extends Activity implements OnInitListener{
 		@Override 
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			Log.e("SKY", "shouldOverrideUrlLoading = = = = = = = "+url);
+		
 			myTTS.stop();
+			if (url.startsWith("http://shqrp5200.cafe24.com/index.do")) {
+				//메인 페이지이기에 종료하기 띄운다!.
+				Real_exit = true;
+			}
+			Real_exit = false;
 			if( url.startsWith("http:") || url.startsWith("https:") ) {
 				return false;
 
@@ -969,6 +975,9 @@ public class MainActivity extends Activity implements OnInitListener{
 			}
 		}
 		if ((keyCode == KeyEvent.KEYCODE_BACK) && BibleWeb.canGoBack()) {
+			if (Real_exit) {
+				EXIT();
+			}
 			if ("http://sharp5200.cafe24.com/index.do".equals(fix_url)) {
 				return true;
 			}
@@ -1043,5 +1052,22 @@ public class MainActivity extends Activity implements OnInitListener{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	private void EXIT(){
+		final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this , AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+		builder.setMessage("종료 하시겠습니까?");
+		builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				finish();
+			}
+		});
+		builder.setNegativeButton("취소", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+		});
+		final AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 }
