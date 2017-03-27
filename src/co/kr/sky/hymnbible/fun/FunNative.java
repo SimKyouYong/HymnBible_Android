@@ -60,6 +60,18 @@ public class FunNative  {
 
 	private WebView Webview_copy;
 
+	public void WebFont(String url , final Activity ac , WebView vc , String return_fun){
+		Log.e("SKY" , "-WebFont-- :: ");
+		//팝업으로 앱버전 띄우기(개발사 , 앱 버전 정보)
+		PackageInfo pi = null;
+		try {
+		pi = ac.getPackageManager().getPackageInfo(ac.getPackageName(), 0);
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 	/*  추천인 입력
 	 * param 
 	 * url :: 안씀 
