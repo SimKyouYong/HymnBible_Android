@@ -74,6 +74,7 @@ public class MainActivity extends Activity implements OnInitListener{
 	private String mCameraPhotoPath;
 	AccumThread mThread;
 
+    JIFace iface = new JIFace();
 
 
 	private final static int FILECHOOSER_RESULTCODE = 1;
@@ -580,6 +581,8 @@ public class MainActivity extends Activity implements OnInitListener{
 		BibleWeb.getSettings().setDomStorageEnabled(true);
 		BibleWeb.getSettings().setBuiltInZoomControls(true);
 		BibleWeb.getSettings().setSupportZoom(true);
+		BibleWeb.addJavascriptInterface(iface, "droid");
+
 		//		BibleWeb.setDownloadListener(new DownloadListener() {
 		//			public void onDownloadStart(String url, String userAgent,
 		//					String contentDisposition, String mimetype,
@@ -623,7 +626,13 @@ public class MainActivity extends Activity implements OnInitListener{
 		}
 
 	}
-
+	class JIFace {
+        public void print(String data) {
+            data =""+data+"";
+            System.out.println(data);
+			Log.e("SKY", "data :: "+data);
+        }
+    }
 	/*****************
 	 * @Class WebViewClient
 	 *****************/
@@ -733,6 +742,9 @@ public class MainActivity extends Activity implements OnInitListener{
 		public void onPageFinished(WebView view, String url){
 			//			CookieSyncManager.getInstance().sync();
 			super.onPageFinished(view, url); 
+			//String ht = "javascript:window.droid.print(document.getElementsByTagName('html')[0].innerHTML);";
+			//BibleWeb.loadUrl(ht);
+			
 			Log.e("SKY", "onPageFinished = = = = = = = "+url);
 			//하단 bottomView visible
 			if (url.matches("http://sharp5200.cafe24.com/bible/bible_view.do.*") ||
