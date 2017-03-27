@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -32,12 +33,14 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.telephony.SmsManager;
 import android.util.Log;
 import android.webkit.WebView;
 import android.widget.EditText;
@@ -60,17 +63,83 @@ public class FunNative  {
 
 	private WebView Webview_copy;
 
+	
+	
+	
+	/*  공유하기
+	 * param 
+	 * url :: 안씀 
+	 * str :: 안씀
+	 * return :: 안씀 
+	 * window.location.href = "js2ios://AppShare?url=안씀&str=안씀&return=안씀";
+	 * */
+	public void AppShare(String url , final Activity ac , WebView vc , String return_fun){
+		Log.e("SKY" , "-AppShare-- :: ");
+		CharSequence info[] = new CharSequence[] {"문자보내기", "카카오톡" };
+        AlertDialog.Builder builder = new AlertDialog.Builder(ac);
+        builder.setTitle("공유하기");
+        builder.setItems(info, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                switch(which){
+                case 0:
+                	Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                	sendIntent.putExtra("sms_body", "문자 내용 알려주세요"); // 보낼 문자
+                	sendIntent.putExtra("address", ""); // 받는사람 번호
+                	sendIntent.setType("vnd.android-dir/mms-sms");
+                	ac.startActivity(sendIntent);
+                    break;
+                case 1:
+                    break;
+                }
+                dialog.dismiss();
+            }
+        });
+        builder.show();
+	}
+	/*  문의하기
+	 * param 
+	 * url :: 안씀 
+	 * str :: 안씀
+	 * return :: 안씀 
+	 * window.location.href = "js2ios://Question?url=안씀&str=안씀&return=안씀";
+	 * */
+	public void Question(String url , final Activity ac , WebView vc , String return_fun){
+		Log.e("SKY" , "-Question-- :: ");
+		Intent it = new Intent(Intent.ACTION_SEND);
+		it.setType("plain/text");
+		// 수신인 주소 - tos배열의 값을 늘릴 경우 다수의 수신자에게 발송됨
+		String[] tos = { "sharp5200@naver.com" };
+		it.putExtra(Intent.EXTRA_EMAIL, tos);
+		it.putExtra(Intent.EXTRA_SUBJECT, "[문의하기]" + "문의 드립니다.");
+		it.putExtra(Intent.EXTRA_TEXT, "");
+		ac.startActivity(it);
+	}
+	/*  칭찬하기
+	 * param 
+	 * url :: 안씀 
+	 * str :: 안씀
+	 * return :: 안씀 
+	 * window.location.href = "js2ios://MarketLink?url=안씀&str=안씀&return=안씀";
+	 * */
+	public void MarketLink(String url , final Activity ac , WebView vc , String return_fun){
+		Log.e("SKY" , "-MarketLink-- :: ");
+
+		Intent marketLaunch = new Intent(Intent.ACTION_VIEW); 
+		marketLaunch.setData(Uri.parse("http://market.android.com/details?id=co.kr.app.helloweurope"));
+
+		ac.startActivity(marketLaunch);
+	}
 	public void WebFont(String url , final Activity ac , WebView vc , String return_fun){
 		Log.e("SKY" , "-WebFont-- :: ");
 		//팝업으로 앱버전 띄우기(개발사 , 앱 버전 정보)
 		PackageInfo pi = null;
 		try {
-		pi = ac.getPackageManager().getPackageInfo(ac.getPackageName(), 0);
+			pi = ac.getPackageManager().getPackageInfo(ac.getPackageName(), 0);
 		} catch (NameNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 	/*  추천인 입력
 	 * param 
@@ -84,14 +153,14 @@ public class FunNative  {
 		//팝업으로 앱버전 띄우기(개발사 , 앱 버전 정보)
 		PackageInfo pi = null;
 		try {
-		pi = ac.getPackageManager().getPackageInfo(ac.getPackageName(), 0);
+			pi = ac.getPackageManager().getPackageInfo(ac.getPackageName(), 0);
 		} catch (NameNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 		String verSion = pi.versionName;
-		
+
 		AlertDialog.Builder alert = new AlertDialog.Builder(ac, AlertDialog.THEME_HOLO_LIGHT);
 		alert.setTitle("개발 및 버전 정보");
 		alert.setMessage("해당 앱 버전은 " + verSion + "입니다.");
@@ -103,8 +172,8 @@ public class FunNative  {
 		alert.show();
 
 	}
-	
-	
+
+
 	/*  추천인 입력
 	 * param 
 	 * url :: 안씀 
@@ -121,7 +190,7 @@ public class FunNative  {
 		vc.loadUrl("javascript:"+return_fun + "('" +dataSet.PHONE + "')");
 
 	}
-	
+
 	/*  추천인 입력
 	 * param 
 	 * url :: 안씀 

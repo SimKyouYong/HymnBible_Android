@@ -120,7 +120,7 @@ public class MainActivity extends Activity implements OnInitListener{
 		//vc = new MySQLiteOpenHelper(this);
 		bottomview = (LinearLayout)findViewById(R.id.bottomview);
 		bottomview.setVisibility(View.GONE);
-
+		
 		//getGroup();
 		/*
 		//폰번호 알아오기
