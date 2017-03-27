@@ -13,6 +13,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.google.android.gcm.GCMRegistrar;
+import com.kakao.kakaolink.KakaoLink;
+import com.kakao.kakaolink.KakaoTalkLinkMessageBuilder;
+import com.kakao.util.KakaoParameterException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -120,7 +123,16 @@ public class MainActivity extends Activity implements OnInitListener{
 		//vc = new MySQLiteOpenHelper(this);
 		bottomview = (LinearLayout)findViewById(R.id.bottomview);
 		bottomview.setVisibility(View.GONE);
-		
+		try {
+			KakaoLink kakaoLink = KakaoLink.getKakaoLink(this);
+			KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
+			kakaoTalkLinkMessageBuilder.addText("[성경찬송]:성경찬송 앱입니다.");
+			//kakaoTalkLinkMessageBuilder.addImage("http://emview.godohosting.com/ic_launcher.png", 100, 100);
+			kakaoTalkLinkMessageBuilder.addWebButton("앱 설치하러 가기", "http://market.android.com/details?id=co.kr.app.helloweurope");
+			//kakaoTalkLinkMessageBuilder.addWebLink("앱 설치하러 가기", "http://market.android.com/details?id=co.kr.app.helloweurope");
+			kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, this);
+		} catch (KakaoParameterException e) {
+		}
 		//getGroup();
 		/*
 		//폰번호 알아오기

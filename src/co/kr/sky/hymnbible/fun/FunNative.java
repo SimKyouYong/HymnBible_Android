@@ -9,7 +9,6 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -17,6 +16,10 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.kakao.kakaolink.KakaoLink;
+import com.kakao.kakaolink.KakaoTalkLinkMessageBuilder;
+import com.kakao.util.KakaoParameterException;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -40,7 +43,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
-import android.telephony.SmsManager;
 import android.util.Log;
 import android.webkit.WebView;
 import android.widget.EditText;
@@ -84,12 +86,22 @@ public class FunNative  {
                 switch(which){
                 case 0:
                 	Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                	sendIntent.putExtra("sms_body", "문자 내용 알려주세요"); // 보낼 문자
+                	sendIntent.putExtra("sms_body", "성경찬송 앱입니다. 반갑습니다.\n http://market.android.com/details?id=co.kr.app.helloweurope"); // 보낼 문자
                 	sendIntent.putExtra("address", ""); // 받는사람 번호
                 	sendIntent.setType("vnd.android-dir/mms-sms");
                 	ac.startActivity(sendIntent);
                     break;
                 case 1:
+                	try {
+            			KakaoLink kakaoLink = KakaoLink.getKakaoLink(ac);
+            			KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
+            			kakaoTalkLinkMessageBuilder.addText("[성경찬송]:성경찬송 앱입니다.");
+            			//kakaoTalkLinkMessageBuilder.addImage("http://emview.godohosting.com/ic_launcher.png", 100, 100);
+        				kakaoTalkLinkMessageBuilder.addWebButton("앱 설치하러 가기", "http://market.android.com/details?id=co.kr.app.helloweurope");
+            			//kakaoTalkLinkMessageBuilder.addWebLink("앱 설치하러 가기", "http://market.android.com/details?id=co.kr.app.helloweurope");
+            			kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, ac);
+            		} catch (KakaoParameterException e) {
+            		}
                     break;
                 }
                 dialog.dismiss();
