@@ -67,7 +67,24 @@ public class FunNative  {
 
 	
 	
-	
+	/*  Youtube
+	 * param 
+	 * url :: 안씀 
+	 * str :: 안씀
+	 * return :: 안씀 
+	 * window.location.href = "js2ios://MarketLink?url=검색어&str=안씀&return=안씀";
+	 * */
+	public void Youtube(String url , final Activity ac , WebView vc , String return_fun){
+		Log.e("SKY" , "-MarketLink-- :: ");
+		String val[] = url.split(",");
+		for (int i = 0; i < val.length; i++) {
+			Log.e("SKY" , "VAL["+i + "]  :: " + i + " --> " + val[i]);
+		}
+		Intent marketLaunch = new Intent(Intent.ACTION_VIEW); 
+		marketLaunch.setData(Uri.parse("https://www.youtube.com/results?search_query=" + val[0]));
+
+		ac.startActivity(marketLaunch);
+	}
 	/*  공유하기
 	 * param 
 	 * url :: 안씀 
