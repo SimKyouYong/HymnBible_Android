@@ -65,8 +65,29 @@ public class FunNative  {
 
 	private WebView Webview_copy;
 
-	
-	
+	/*
+	 * window.location.href = "js2ios://GetHtml?url=html데이&str=안씀&return=안씀";
+	 * */
+	public void GetHtml(String url , final Activity ac , WebView vc , String return_fun){
+		Log.e("SKY" , "-GetHtml-- :: ");
+		String val[] = url.split(",");
+		for (int i = 0; i < val.length; i++) {
+			Log.e("SKY" , "VAL["+i + "]  :: " + i + " --> " + val[i]);
+		}
+		String meta = "<meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>";
+		String style =  "<style>@font-face {font-family: 'gamza';src: url('file:///android_asset/NanumPen.ttf');}body {font-family: 'gamza';}</style>";
+		String body = "<body><strong>감자! Strong </strong><br /><b>감자! Bold</b><br />감자! 그냥</body>";
+
+		String head = "<head>" + meta + style + "</head>";
+		String htmlContents = "<html>" + head + body + "</html>";
+
+		String vald = val[0] +val[1] + val[2] + val[3];
+		vald.replace("안씀", "");
+		Log.e("SKY", "vald :: " + vald);
+		vc.loadDataWithBaseURL( "file:///android_asset/", vald, "text/html", "utf-8", null );
+
+	}
+
 	/*  Youtube
 	 * param 
 	 * url :: 안씀 
