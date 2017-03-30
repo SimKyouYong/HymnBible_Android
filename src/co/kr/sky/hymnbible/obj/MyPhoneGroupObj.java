@@ -4,8 +4,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-public class MyPhoneObj implements Parcelable{
-	public static Parcelable.Creator<MyPhoneObj> getCreator() {
+public class MyPhoneGroupObj implements Parcelable{
+	public static Parcelable.Creator<MyPhoneGroupObj> getCreator() {
 		return CREATOR;
 	}	
 	String _ID;
@@ -17,7 +17,7 @@ public class MyPhoneObj implements Parcelable{
 	String GROUP_COUNT;
 	String CHECK;
 	
-	public MyPhoneObj(String _ID, String tITLE, String aCCOUNT_NAME, String aCCOUNT_TYPE, String dELETED,
+	public MyPhoneGroupObj(String _ID, String tITLE, String aCCOUNT_NAME, String aCCOUNT_TYPE, String dELETED,
 			String gROUP_VISIBLE, String gROUP_COUNT, String cHECK) {
 		super();
 		this._ID = _ID;
@@ -83,7 +83,7 @@ public class MyPhoneObj implements Parcelable{
 	public void setCHECK(String cHECK) {
 		CHECK = cHECK;
 	}
-	public MyPhoneObj(Parcel in) {
+	public MyPhoneGroupObj(Parcel in) {
 		readFromParcel(in);
 	}
 	@Override
@@ -110,13 +110,13 @@ public class MyPhoneObj implements Parcelable{
 
 	}
 	@SuppressWarnings("rawtypes")
-	public static final Parcelable.Creator<MyPhoneObj> CREATOR = new Parcelable.Creator() {
+	public static final Parcelable.Creator<MyPhoneGroupObj> CREATOR = new Parcelable.Creator() {
 		public Object createFromParcel(Parcel in) {
-			return new MyPhoneObj(in);
+			return new MyPhoneGroupObj(in);
 		}
 
 		public Object[] newArray(int size) {
-			return new MyPhoneObj[size];
+			return new MyPhoneGroupObj[size];
 		}
 	};
 

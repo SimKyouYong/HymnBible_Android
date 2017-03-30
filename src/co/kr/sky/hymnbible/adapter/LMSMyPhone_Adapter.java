@@ -17,18 +17,18 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import co.kr.sky.hymnbible.R;
 import co.kr.sky.hymnbible.fun.CommonUtil;
-import co.kr.sky.hymnbible.obj.MyPhoneObj;
+import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
 
 public class LMSMyPhone_Adapter extends BaseAdapter {
 	CommonUtil dataSet = CommonUtil.getInstance();
 
 	private Activity activity;
 	private static LayoutInflater inflater=null;
-	ArrayList<MyPhoneObj> items;
+	ArrayList<MyPhoneGroupObj> items;
 	private Typeface ttf;
 	private Handler mAfterAccum;
 
-	public LMSMyPhone_Adapter(Activity a, ArrayList<MyPhoneObj> m_board  , Handler mAfterAccum_) {
+	public LMSMyPhone_Adapter(Activity a, ArrayList<MyPhoneGroupObj> m_board  , Handler mAfterAccum_) {
 		activity = a;
 
 		inflater = (LayoutInflater) activity
@@ -56,7 +56,7 @@ public class LMSMyPhone_Adapter extends BaseAdapter {
 		CheckBox check;
 	}
 	public View getView(final int position, View convertView, ViewGroup parent) {
-		final MyPhoneObj board = items.get(position);
+		final MyPhoneGroupObj board = items.get(position);
 		ViewHolder vh = new ViewHolder();
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.activity_lms_myphone_item,null);

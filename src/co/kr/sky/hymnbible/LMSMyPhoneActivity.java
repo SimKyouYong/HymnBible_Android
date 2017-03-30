@@ -15,11 +15,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import co.kr.sky.hymnbible.adapter.LMSMyPhone_Adapter;
-import co.kr.sky.hymnbible.obj.MyPhoneObj;
+import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
 
 public class LMSMyPhoneActivity extends Activity{
 	LMSMyPhone_Adapter           m_Adapter;
-	ArrayList<MyPhoneObj> arrData = new ArrayList<MyPhoneObj>();
+	ArrayList<MyPhoneGroupObj> arrData = new ArrayList<MyPhoneGroupObj>();
 	ListView                list_number;
 
 	protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +85,7 @@ public class LMSMyPhoneActivity extends Activity{
 						Log.e("SKY" , "GROUP_VISIBLE :: " + GROUP_VISIBLE);
 						Log.e("SKY" , "GROUP_COUNT :: " + GROUP_COUNT);
 						*/
-						arrData.add(new MyPhoneObj(""+_ID, 
+						arrData.add(new MyPhoneGroupObj(""+_ID, 
 								TITLE, 
 								ACCOUNT_NAME, 
 								ACCOUNT_TYPE, 
@@ -113,7 +113,7 @@ public class LMSMyPhoneActivity extends Activity{
 							}else{
 //								Log.e("SKY" , "for else  :: " + i);
 								//default add
-								arrData.add(new MyPhoneObj(""+_ID, 
+								arrData.add(new MyPhoneGroupObj(""+_ID, 
 										TITLE, 
 										ACCOUNT_NAME, 
 										ACCOUNT_TYPE, 
