@@ -14,11 +14,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import co.kr.sky.hymnbible.adapter.LMSMyPhone_Adapter;
+import co.kr.sky.hymnbible.adapter.LMSMyPhoneGroup_Adapter;
 import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
 
 public class LMSMyPhoneActivity extends Activity{
-	LMSMyPhone_Adapter           m_Adapter;
+	LMSMyPhoneGroup_Adapter           m_Adapter;
 	ArrayList<MyPhoneGroupObj> arrData = new ArrayList<MyPhoneGroupObj>();
 	ListView                list_number;
 
@@ -129,7 +129,7 @@ public class LMSMyPhoneActivity extends Activity{
 			}
 		} finally {
 			cursor.close();
-			m_Adapter = new LMSMyPhone_Adapter( this , arrData , mAfterAccum);
+			m_Adapter = new LMSMyPhoneGroup_Adapter( this , arrData , mAfterAccum);
 			list_number.setAdapter(m_Adapter);
 		}
 	}

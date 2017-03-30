@@ -19,7 +19,7 @@ import co.kr.sky.hymnbible.R;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
 
-public class LMSMyPhone_Adapter extends BaseAdapter {
+public class LMSMyPhoneList_Adapter extends BaseAdapter {
 	CommonUtil dataSet = CommonUtil.getInstance();
 
 	private Activity activity;
@@ -28,7 +28,7 @@ public class LMSMyPhone_Adapter extends BaseAdapter {
 	private Typeface ttf;
 	private Handler mAfterAccum;
 
-	public LMSMyPhone_Adapter(Activity a, ArrayList<MyPhoneGroupObj> m_board  , Handler mAfterAccum_) {
+	public LMSMyPhoneList_Adapter(Activity a, ArrayList<MyPhoneGroupObj> m_board  , Handler mAfterAccum_) {
 		activity = a;
 
 		inflater = (LayoutInflater) activity
@@ -59,7 +59,7 @@ public class LMSMyPhone_Adapter extends BaseAdapter {
 		final MyPhoneGroupObj board = items.get(position);
 		ViewHolder vh = new ViewHolder();
 		if (convertView == null) {
-			convertView = inflater.inflate(R.layout.activity_lms_myphone_item,null);
+			convertView = inflater.inflate(R.layout.activity_lms_myphone_list_item,null);
 			vh.t_name = (TextView) convertView.findViewById(R.id.t_name); 
 			vh.check = (CheckBox) convertView.findViewById(R.id.check); 
 

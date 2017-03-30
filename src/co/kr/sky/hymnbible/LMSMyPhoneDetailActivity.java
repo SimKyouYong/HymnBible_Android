@@ -9,12 +9,13 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
 import android.widget.ListView;
-import co.kr.sky.hymnbible.adapter.LMSMyPhone_Adapter;
+import co.kr.sky.hymnbible.adapter.LMSMyPhoneList_Adapter;
 import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
+import co.kr.sky.hymnbible.obj.MyPhoneListObj;
 
 public class LMSMyPhoneDetailActivity extends Activity{
-	LMSMyPhone_Adapter           m_Adapter;
-	ArrayList<MyPhoneGroupObj> arrData = new ArrayList<MyPhoneGroupObj>();
+	LMSMyPhoneList_Adapter           m_Adapter;
+	ArrayList<MyPhoneListObj> arrData = new ArrayList<MyPhoneListObj>();
 	ListView                list_number;
 	MyPhoneGroupObj obj;
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +26,12 @@ public class LMSMyPhoneDetailActivity extends Activity{
 
 		Bundle bundle = getIntent().getExtras();
 		obj = bundle.getParcelable("Object");
+		String id_str[] = obj.get_ID().split(",");
 		
-		getSampleContactList(Integer.parseInt(obj.get_ID()));
 		
+		for (int i = 0; i < id_str.length; i++) {
+			getSampleContactList(Integer.parseInt(id_str[i]));
+		}
 	}
 	public void getSampleContactList(int groupID) {
 
@@ -61,9 +65,13 @@ public class LMSMyPhoneDetailActivity extends Activity{
 	                    .getString(pCur
 	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 				Log.e("SKY" , "" + i + ".name:: " + name + " // phone :: " + phone);
+				arrData.add(new MyPhoneListObj(name, phone));
 	        }
 	        pCur.close();
+	        
 	    }
+//	    m_Adapter = new LMSMyPhoneList_Adapter( this , arrData , mAfterAccum);
+//		list_number.setAdapter(m_Adapter);
 	}
 //	AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
 //		public void onItemClick(AdapterView parent, View view, int position,
