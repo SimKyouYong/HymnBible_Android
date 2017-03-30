@@ -69,7 +69,7 @@ public class LMSMyPhone_Adapter extends BaseAdapter {
 		}
 		vh.t_name.setTypeface(ttf);
 		
-		vh.t_name.setText(board.getTITLE());
+		vh.t_name.setText(board.getTITLE() + "(" + board.getGROUP_COUNT() + ")");
 		vh.check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {

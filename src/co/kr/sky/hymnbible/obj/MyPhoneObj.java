@@ -35,6 +35,9 @@ public class MyPhoneObj implements Parcelable{
 	public void set_ID(String _ID) {
 		this._ID = _ID;
 	}
+	public void set_Add_ID(String _ID) {
+		this._ID = this._ID + "," + _ID;
+	}
 	public String getTITLE() {
 		return TITLE;
 	}
@@ -70,6 +73,9 @@ public class MyPhoneObj implements Parcelable{
 	}
 	public void setGROUP_COUNT(String gROUP_COUNT) {
 		GROUP_COUNT = gROUP_COUNT;
+	}
+	public void set_Add_GROUP_COUNT(int gROUP_COUNT) {
+		GROUP_COUNT = ""+ (Integer.parseInt(GROUP_COUNT) + gROUP_COUNT);
 	}
 	public String getCHECK() {
 		return CHECK;
