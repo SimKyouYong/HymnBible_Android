@@ -105,6 +105,14 @@ public class FunNative  {
 	 * */
 	public void AppShare(String url , final Activity ac , WebView vc , String return_fun){
 		Log.e("SKY" , "-AppShare-- :: ");
+		Intent msg = new Intent(Intent.ACTION_SEND);
+		msg.addCategory(Intent.CATEGORY_DEFAULT);
+		msg.putExtra(Intent.EXTRA_SUBJECT, "-성경 찬송-");
+		msg.putExtra(Intent.EXTRA_TEXT, "안녕하세요 성경 찬송 입니다.\n다운받을 주소는 http://market.android.com/details?id=co.kr.app.helloweurope 입니다. \n감사합니다.");
+		//		msg.putExtra(Intent.EXTRA_TITLE, "제목");
+		msg.setType("text/plain");    
+		ac.startActivity(Intent.createChooser(msg, "공유"));
+		/*
 		CharSequence info[] = new CharSequence[] {"문자보내기", "카카오톡" };
         AlertDialog.Builder builder = new AlertDialog.Builder(ac);
         builder.setTitle("공유하기");
@@ -136,6 +144,7 @@ public class FunNative  {
             }
         });
         builder.show();
+        */
 	}
 	/*  문의하기
 	 * param 
