@@ -997,6 +997,10 @@ public class MainActivity extends Activity implements OnInitListener{
 				return true;
 			}
 		}
+		if (keyCode == KeyEvent.KEYCODE_BACK && Check_Preferences.getAppPreferences(MainActivity.this, "slide").equals("true")) {
+			//slide 메뉴를 닫는다.
+			BibleWeb.loadUrl("javascript:srchClose()");
+		}
 		if ((keyCode == KeyEvent.KEYCODE_BACK) && BibleWeb.canGoBack()) {
 			if (Real_exit) {
 				EXIT();
