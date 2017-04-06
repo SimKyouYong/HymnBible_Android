@@ -302,7 +302,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 					//write(arrData);
 //					write("" + key_index + "/" + church_address + "/" + latitude + "/" + hardness);
 					list_view_11.setVisibility(View.VISIBLE);
-					list_count.setText(e_search1.getText().toString() + " 검색 결과는 총 " + arrData.size() + " 건 입니다.");
+					list_count.setText("\""+e_search1.getText().toString() +"\"" + " 검색 결과는 총 " + arrData.size() + " 건 입니다.");
 					m_Adapter = new ChurchSearch_Adapter( ChurchSearch.this , arrData);
 					m_ListView.setOnItemClickListener(mItemClickListener);
 					m_ListView.setAdapter(m_Adapter);

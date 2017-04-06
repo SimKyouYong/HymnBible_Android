@@ -106,14 +106,35 @@
             android:layout_height="fill_parent"
             android:orientation="vertical" >
 
-            <com.android.volley.toolbox.NetworkImageView
-                android:id="@+id/i_img"
+            <RelativeLayout
                 android:layout_width="fill_parent"
-                android:layout_height="200dp"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/view1"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="8dp"
-                android:scaleType="fitXY" />
+                android:layout_margin="8dp" >
+
+                <com.android.volley.toolbox.NetworkImageView
+                    android:id="@+id/i_img"
+                    android:layout_width="fill_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="fitXY" />
+
+                <Button
+                    android:id="@+id/btn_prev"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:text="Prev" />
+
+                <Button
+                    android:id="@+id/btn_next"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:text="Next" />
+            </RelativeLayout>
 
             <LinearLayout
                 android:id="@+id/lastview"

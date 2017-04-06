@@ -591,7 +591,6 @@ public class MainActivity extends Activity implements OnInitListener{
 		BibleWeb.getSettings().setBuiltInZoomControls(true);
 		BibleWeb.getSettings().setSupportZoom(true);
 		BibleWeb.addJavascriptInterface(iface, "droid");
-
 		//		BibleWeb.setDownloadListener(new DownloadListener() {
 		//			public void onDownloadStart(String url, String userAgent,
 		//					String contentDisposition, String mimetype,
@@ -680,6 +679,7 @@ public class MainActivity extends Activity implements OnInitListener{
 			Log.e("SKY", "shouldOverrideUrlLoading = = = = = = = "+url);
 		
 			myTTS.stop();
+			
 			if (url.startsWith("http://shqrp5200.cafe24.com/index.do")) {
 				//메인 페이지이기에 종료하기 띄운다!.
 				Real_exit = true;
@@ -744,7 +744,7 @@ public class MainActivity extends Activity implements OnInitListener{
 			if (url.matches(".*sharp5200.*")) {
 				URL_NOW = url;
 			}
-
+			
 
 		}
 		@Override
@@ -784,32 +784,40 @@ public class MainActivity extends Activity implements OnInitListener{
 			}
 			if(url.matches(".*listExcel.do")){
 				Log.e("SKY" , "다운 고고");
-				Date d = new Date();
-				String s = d.toString();
-				System.out.println("현재날짜 : "+ s);
-				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-				System.out.println("현재날짜 : "+ sdf.format(d));
-				String date = sdf.format(d);
-
-
-				Uri source = Uri.parse(url);
-				// Make a new request pointing to the .apk url
-				DownloadManager.Request request = new DownloadManager.Request(source);
-				// appears the same in Notification bar while downloading
-				request.setDescription("Description for the DownloadManager Bar");
-				request.setTitle("event_" + date +  ".xls");
-				if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-					request.allowScanningByMediaScanner();
-					request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-				}
-				// save the file in the "Downloads" folder of SDCARD
-				request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "event_" + date +  ".xls");
-				// get download service and enqueue file
-				DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-				manager.enqueue(request);
-				//return;
+				final String urlcopy = url;
+				new Handler().postDelayed(new Runnable() {// 1 초 후에 실행 
+					@Override public void run() {
+						downgogo(urlcopy);
+					}
+				}, 1000);
 			}
+			
 		}
+	}
+	private void downgogo(String url){
+		url += "?my_phone=" + dataSet.PHONE;
+		Log.e("SKY" , "url :: " + url);
+		Date d = new Date();
+		String s = d.toString();
+		System.out.println("현재날짜 : "+ s);
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		System.out.println("현재날짜 : "+ sdf.format(d));
+		String date = sdf.format(d);
+		Uri source = Uri.parse(url);
+		// Make a new request pointing to the .apk url
+		DownloadManager.Request request = new DownloadManager.Request(source);
+		// appears the same in Notification bar while downloading
+		request.setDescription("Description for the DownloadManager Bar");
+		request.setTitle("event_" + date +   ".xls");
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+			request.allowScanningByMediaScanner();
+			request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+		}
+		// save the file in the "Downloads" folder of SDCARD
+		request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "event_" + date  +  ".xls");
+		// get download service and enqueue file
+		DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+		manager.enqueue(request);
 	}
 	/*
 	 * 안드로이드 브릿지 연결
@@ -999,7 +1007,10 @@ public class MainActivity extends Activity implements OnInitListener{
 		}
 		if (keyCode == KeyEvent.KEYCODE_BACK && Check_Preferences.getAppPreferences(MainActivity.this, "slide").equals("true")) {
 			//slide 메뉴를 닫는다.
-			BibleWeb.loadUrl("javascript:srchClose()");
+			Log.e("SKY", "CLOSE SLIDE MENU");
+			BibleWeb.loadUrl("javascript:lnbClose()");
+			Check_Preferences.setAppPreferences(MainActivity.this, "slide", "false");
+			return true;
 		}
 		if ((keyCode == KeyEvent.KEYCODE_BACK) && BibleWeb.canGoBack()) {
 			if (Real_exit) {
@@ -1007,6 +1018,7 @@ public class MainActivity extends Activity implements OnInitListener{
 				return true;
 			}
 			if ("http://sharp5200.cafe24.com/index.do".equals(fix_url)) {
+				EXIT();
 				return true;
 			}
 			myTTS.stop();
@@ -1019,8 +1031,11 @@ public class MainActivity extends Activity implements OnInitListener{
 			}
 
 			return true;
+		}else{
+			EXIT();
+			return true;
 		}
-		return super.onKeyDown(keyCode, event);
+		//return super.onKeyDown(keyCode, event);
 	}
 	private void SplitFun(String url){
 		url = url.replace("js2ios://", "");
