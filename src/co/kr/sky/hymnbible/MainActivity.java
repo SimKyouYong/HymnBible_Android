@@ -64,7 +64,7 @@ import co.kr.sky.hymnbible.common.RealPathUtil;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.fun.MySQLiteOpenHelper;
 
-public class MainActivity extends Activity implements OnInitListener{
+public class MainActivity extends Activity{
 
 	//업로드
 	private static final String TYPE_IMAGE = "image/*";
@@ -154,6 +154,8 @@ public class MainActivity extends Activity implements OnInitListener{
 		TelephonyManager telManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);// 사용자 전화번호로 ID값 가져옴
 		try {
 			dataSet.PHONE = telManager.getLine1Number().toString().trim().replace("+82", "0").replace("82", "0"); //폰번호를 가져옴
+			//dataSet.PHONE = "01027065911";
+
 			Log.e("SKY" , "폰번호 :: " + dataSet.PHONE);
 			//dataSet.PHONE = telManager.getDeviceId();
 		} catch (Exception e) {
@@ -164,7 +166,7 @@ public class MainActivity extends Activity implements OnInitListener{
 		}
 		setting_web();
 		setting_button();
-		myTTS = new TextToSpeech(this, this);
+		//myTTS = new TextToSpeech(this, this);
 
 
 
@@ -193,10 +195,10 @@ public class MainActivity extends Activity implements OnInitListener{
 				mThread.start();		//스레드 시작!!
 			}
 		}
-		//최초 설치시 추천인 입력
-		if("".equals(Check_Preferences.getAppPreferences(MainActivity.this, "ch"))){
-			InputAlert();
-		}
+//		//최초 설치시 추천인 입력
+//		if("".equals(Check_Preferences.getAppPreferences(MainActivity.this, "ch"))){
+//			InputAlert();
+//		}
 	}
 
 	private void getGroup() {
@@ -338,18 +340,11 @@ public class MainActivity extends Activity implements OnInitListener{
 			}
 		}
 	};
-	@Override
-	public void onInit(int str) {
-		String myText1 =  TTS_str;
-		//String myText2 = "말하는 스피치 입니다.";
-		myTTS.speak(myText1, TextToSpeech.QUEUE_FLUSH, null);
-		//myTTS.speak(myText2, TextToSpeech.QUEUE_ADD, null);
-	}
 
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		myTTS.shutdown();
+		//myTTS.shutdown();
 	}
 	private void setting_button(){
 		findViewById(R.id.b_bible1).setOnClickListener(btnListener);
@@ -406,22 +401,6 @@ public class MainActivity extends Activity implements OnInitListener{
 		public void onEvent(int eventType, Bundle params) {
 		}
 	};
-	/**
-	 * Showing google speech input dialog
-	 * */
-	private void promptSpeechInput() {
-		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-		intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"말하세요");
-		try {
-			startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
-		} catch (ActivityNotFoundException a) {
-			Toast.makeText(getApplicationContext(),"말하세요2",
-					Toast.LENGTH_SHORT).show();
-		}
-	}
 
 	/**
 	 * Receiving speech input
@@ -678,7 +657,7 @@ public class MainActivity extends Activity implements OnInitListener{
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			Log.e("SKY", "shouldOverrideUrlLoading = = = = = = = "+url);
 		
-			myTTS.stop();
+			//myTTS.stop();
 			
 			if (url.startsWith("http://shqrp5200.cafe24.com/index.do")) {
 				//메인 페이지이기에 종료하기 띄운다!.
@@ -1032,7 +1011,7 @@ public class MainActivity extends Activity implements OnInitListener{
 				EXIT();
 				return true;
 			}
-			myTTS.stop();
+			//myTTS.stop();
 			WebBackForwardList webBackForwardList = BibleWeb.copyBackForwardList();
 			String backUrl = webBackForwardList.getItemAtIndex(webBackForwardList.getCurrentIndex() - 1).getUrl();
 			if (backUrl.matches(".*js2ios.*")) {

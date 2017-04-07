@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:background="#ffffff" >
 
-
     <RelativeLayout
         android:id="@+id/view1"
         android:layout_width="fill_parent"
@@ -66,11 +65,63 @@
             android:typeface="sans" />
     </RelativeLayout>
 
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:id="@+id/bottomview"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" >
+
+        <Button
+            android:id="@+id/btn_count"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#007AFF"
+            android:padding="10dp"
+            android:text="1114명"
+            android:textColor="#ffffff"
+            android:textSize="13dp" />
+
+        <Button
+            android:id="@+id/btn_server"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#007AFF"
+            android:padding="10dp"
+            android:text="서버저장"
+            android:textColor="#ffffff"
+            android:textSize="13dp" />
+
+        <Button
+            android:id="@+id/btn_reflash"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#007AFF"
+            android:padding="10dp"
+            android:text="새로고침"
+            android:textColor="#ffffff"
+            android:textSize="13dp" />
+
+        <Button
+            android:id="@+id/btn_ok"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#007AFF"
+            android:padding="10dp"
+            android:text="완료"
+            android:textColor="#ffffff"
+            android:textSize="13dp" />
+    </LinearLayout>
 
     <ListView
         android:id="@+id/list_number"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_above="@+id/bottomview"
         android:layout_below="@+id/view1"
         android:divider="#dfdede"
         android:dividerHeight="1dp" >

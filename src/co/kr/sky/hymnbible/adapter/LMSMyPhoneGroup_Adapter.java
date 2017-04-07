@@ -69,7 +69,7 @@ public class LMSMyPhoneGroup_Adapter extends BaseAdapter {
 		}
 		vh.t_name.setTypeface(ttf);
 		
-		vh.t_name.setText(board.getTITLE() + "(" + board.getGROUP_COUNT() + ")");
+		vh.t_name.setText(board.getTITLE() + "(" + board.getSELECTED_COUNT() + " / " + board.getGROUP_COUNT() + ")");
 		vh.check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
@@ -83,6 +83,12 @@ public class LMSMyPhoneGroup_Adapter extends BaseAdapter {
 				}
 			}
 		});
+		
+		if (board.getSELECTED() == 0) {
+			vh.check.setChecked(false);
+		}else{
+			vh.check.setChecked(true);
+		}
 
 		return convertView;
 	}

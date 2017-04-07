@@ -4,7 +4,6 @@
     android:layout_height="match_parent"
     android:background="#ffffff" >
 
-
     <RelativeLayout
         android:id="@+id/view1"
         android:layout_width="fill_parent"
@@ -66,11 +65,22 @@
             android:typeface="sans" />
     </RelativeLayout>
 
+    <Button
+        android:id="@+id/btn_ok"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#007AFF"
+        android:padding="10dp"
+        android:text="완료"
+        android:textColor="#ffffff"
+        android:textSize="18dp" />
 
     <ListView
         android:id="@+id/list_number"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_above="@+id/btn_ok"
         android:layout_below="@+id/view1"
         android:divider="#dfdede"
         android:dividerHeight="1dp" >

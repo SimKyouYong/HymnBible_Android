@@ -47,25 +47,26 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.RecognizerIntent;
-import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import co.kr.sky.AccumThread;
 import co.kr.sky.hymnbible.adapter.ChurchSearch_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.ChurchObj;
 
-public class ChurchSearch extends FragmentActivity implements LocationListener {
+public class ChurchSearch extends FragmentActivity implements LocationListener,OnEditorActionListener {
 	private GoogleMap mMap;
 	LocationManager locationManager; 
 	LocationListener locationListener;
@@ -132,6 +133,10 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 		m_ListView = (ListView)findViewById(R.id.list_cummun);
 		list_view_11 = (LinearLayout)findViewById(R.id.list_view_11);
 		list_count = (TextView)findViewById(R.id.list_count);
+		
+		e_search1.setOnEditorActionListener(this); //mEditText와 onEditorActionListener를 연결
+
+			
 		list_count.setTypeface(ttf);
 		e_search1.setTypeface(ttf);
 		SupportMapFragment fragment =   (SupportMapFragment)getSupportFragmentManager()
@@ -149,6 +154,17 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 		mMap.animateCamera(zoom);
 		 
 	}
+	@Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        // TODO Auto-generated method stub
+        if(v.getId()==R.id.e_search1 && actionId==EditorInfo.IME_ACTION_SEARCH){ 
+        	// 뷰의 id를 식별, 키보드의 완료 키 입력 검출
+        	SendHttp();
+        }
+        return false;
+    }
+
+
 	//버튼 리스너 구현 부분 
 	View.OnClickListener btnListener = new View.OnClickListener() {
 		public void onClick(View v) {
@@ -190,6 +206,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 			Log.e("SKY" , "RESULT :: " + result.get(0));
 			e_search1.setText(""+result.get(0));
+			SendHttp();
 		}
 	}
 	/*

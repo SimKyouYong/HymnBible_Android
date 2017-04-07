@@ -21,7 +21,12 @@ public class LMSMainActivity extends Activity{
 	ListView                list_number;
 	ArrayList<LMSMainObj> arrData = new ArrayList<LMSMainObj>();
 	LMSMain_Adapter           m_Adapter;
+	public static int onresume_0 = 0;
 
+	@Override
+	public void onResume(){
+		super.onResume();
+	}
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_lmsmain);

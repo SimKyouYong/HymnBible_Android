@@ -5,6 +5,7 @@ import java.util.StringTokenizer;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
 
 
 //AIzaSyApdCPSYnLhdlNMqQGJ3sJnFwUqIkWgKpY
@@ -16,6 +17,7 @@ public class CommonUtil {
 	
 	public ArrayList<Activity> av = new ArrayList<Activity>();					//Activity 를 담는다.
 
+	public ArrayList<MyPhoneListObj2> arrData_real = new ArrayList<MyPhoneListObj2>();
 	public String Local_Path;
 	public String PHONE;
 	public String SERVER;

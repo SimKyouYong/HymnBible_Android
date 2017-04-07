@@ -59,7 +59,6 @@ import co.kr.sky.hymnbible.common.Check_Preferences;
 public class FunNative  {
 
 	CommonUtil dataSet = CommonUtil.getInstance();
-	private TextToSpeech myTTS;
 	static Map<String, String> map = new HashMap<String, String>();
 	AccumThread mThread;
 
@@ -144,7 +143,7 @@ public class FunNative  {
             }
         });
         builder.show();
-        */
+		 */
 	}
 	/*  문의하기
 	 * param 
@@ -245,6 +244,46 @@ public class FunNative  {
 	 * url :: 안씀 
 	 * str :: 안씀
 	 * return :: 안씀 
+	 * window.location.href = "js2ios://FirstInputAlert?url=안씀&str=안씀&return=안씀";
+	 * */
+	public void FirstInputAlert(String url , final Activity ac , WebView vc , String return_fun){
+		Log.e("SKY" , "-InputAlert-- :: ");
+		if (!Check_Preferences.getAppPreferences(ac, "ch").equals("true")) {
+			AlertDialog.Builder alert = new AlertDialog.Builder(ac, AlertDialog.THEME_HOLO_LIGHT);
+			alert.setTitle("알림");
+			final EditText name = new EditText(ac);
+			name.setHint("추천인(휴대폰 번호)을 입력해주세요.");
+			alert.setView(name);
+			alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					String user_phone = name.getText().toString();
+					Check_Preferences.setAppPreferences(ac, "ch", "true");
+
+					//post 발송
+					map.put("url", dataSet.SERVER+"recommender-proc.do");
+					map.put("my_id",dataSet.PHONE);
+					map.put("user_id",user_phone);
+					mThread = new AccumThread(ac , mAfterAccum , map , 0 , 0 , null);
+					mThread.start();		//스레드 시작!!
+
+				}
+			});
+			alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					Check_Preferences.setAppPreferences(ac, "ch", "true");
+
+				}
+			});
+			alert.show();
+		}
+
+	}
+
+	/*  추천인 입력
+	 * param 
+	 * url :: 안씀 
+	 * str :: 안씀
+	 * return :: 안씀 
 	 * window.location.href = "js2ios://InputAlert?url=안씀&str=안씀&return=안씀";
 	 * */
 	public void InputAlert(String url , final Activity ac , WebView vc , String return_fun){
@@ -265,14 +304,17 @@ public class FunNative  {
 				map.put("user_id",user_phone);
 				mThread = new AccumThread(ac , mAfterAccum , map , 0 , 0 , null);
 				mThread.start();		//스레드 시작!!
+				Check_Preferences.setAppPreferences(ac, "ch", "true");
 
 			}
 		});
 		alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
+
 			}
 		});
 		alert.show();
+
 	}
 	Handler mAfterAccum = new Handler()
 	{
@@ -282,6 +324,7 @@ public class FunNative  {
 			if (msg.arg1  == 0 ) {
 				String res = (String)msg.obj;
 				Log.e("CHECK" , "RESULT  -> " + res);
+
 			}
 		}
 	};

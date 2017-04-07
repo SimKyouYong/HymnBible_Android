@@ -16,9 +16,11 @@ public class MyPhoneGroupObj implements Parcelable{
 	String GROUP_VISIBLE;
 	String GROUP_COUNT;
 	String CHECK;
+	int    SELECTED;
+	int    SELECTED_COUNT;
 	
 	public MyPhoneGroupObj(String _ID, String tITLE, String aCCOUNT_NAME, String aCCOUNT_TYPE, String dELETED,
-			String gROUP_VISIBLE, String gROUP_COUNT, String cHECK) {
+			String gROUP_VISIBLE, String gROUP_COUNT, String cHECK, int SELECTED_, int SELECTED_COUNT_) {
 		super();
 		this._ID = _ID;
 		TITLE = tITLE;
@@ -28,7 +30,26 @@ public class MyPhoneGroupObj implements Parcelable{
 		GROUP_VISIBLE = gROUP_VISIBLE;
 		GROUP_COUNT = gROUP_COUNT;
 		CHECK = cHECK;
+		SELECTED = SELECTED_;
+		SELECTED_COUNT = SELECTED_COUNT_;
 	}
+	
+	public int getSELECTED() {
+		return SELECTED;
+	}
+
+	public void setSELECTED(int sELECTED) {
+		SELECTED = sELECTED;
+	}
+
+	public int getSELECTED_COUNT() {
+		return SELECTED_COUNT;
+	}
+
+	public void setSELECTED_COUNT(int sELECTED_COUNT) {
+		SELECTED_COUNT = sELECTED_COUNT;
+	}
+
 	public String get_ID() {
 		return _ID;
 	}
@@ -96,7 +117,11 @@ public class MyPhoneGroupObj implements Parcelable{
 		dest.writeString(GROUP_VISIBLE);
 		dest.writeString(GROUP_COUNT);
 		dest.writeString(CHECK);
+		dest.writeInt(SELECTED);
+		dest.writeInt(SELECTED_COUNT);
 
+		
+		
 	}
 	private void readFromParcel(Parcel in){
 		_ID = in.readString();
@@ -107,6 +132,8 @@ public class MyPhoneGroupObj implements Parcelable{
 		GROUP_VISIBLE = in.readString();
 		GROUP_COUNT = in.readString();
 		CHECK = in.readString();
+		SELECTED = in.readInt();
+		SELECTED_COUNT = in.readInt();
 
 	}
 	@SuppressWarnings("rawtypes")
