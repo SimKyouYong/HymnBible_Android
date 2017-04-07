@@ -47,6 +47,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.speech.RecognizerIntent;
+import android.speech.tts.TextToSpeech;
+import android.speech.tts.TextToSpeech.OnInitListener;
 import android.support.v4.app.FragmentActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -125,14 +127,13 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 		} catch (Exception e) {
 			// TODO: handle exception
 		}
-		
+
 		e_search1 = (EditText)findViewById(R.id.e_search1);
 		m_ListView = (ListView)findViewById(R.id.list_cummun);
 		list_view_11 = (LinearLayout)findViewById(R.id.list_view_11);
 		list_count = (TextView)findViewById(R.id.list_count);
 		list_count.setTypeface(ttf);
 		e_search1.setTypeface(ttf);
-
 		SupportMapFragment fragment =   (SupportMapFragment)getSupportFragmentManager()
 				.findFragmentById(R.id.mapview);
 		mMap = fragment.getMap();
@@ -164,7 +165,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener {
 				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
 						RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-				intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Speech to Text");
+				intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"교회명.담임목사.주소.전화등 말씀해주세요");
 				try {
 					startActivityForResult(intent, MainActivity.REQ_CODE_SPEECH_INPUT);
 				} catch (ActivityNotFoundException a) {

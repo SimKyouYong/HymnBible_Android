@@ -96,7 +96,7 @@ public class MainActivity extends Activity implements OnInitListener{
 	String regId ;
 	static Map<String, String> map = new HashMap<String, String>();
 	String Before_URL , URL_NOW;
-	public static String TTS_str = "";
+	public static String TTS_str = "문단을 말해주세요";
 
 	public static final int REQ_CODE_SPEECH_INPUT = 100;
 	public static Intent i;
@@ -744,7 +744,18 @@ public class MainActivity extends Activity implements OnInitListener{
 			if (url.matches(".*sharp5200.*")) {
 				URL_NOW = url;
 			}
-			
+
+			if(url.matches(".*bible_category.*")){
+				//성경
+				TTS_str = "문단을 말해주세요";
+			}else if(url.matches(".*hymn_list.*")){
+				//찬송
+				TTS_str = "숫자,제목,가사를 말해주세요";
+			}else if(url.matches(".*event/list.do.*")){
+				//경조사
+				TTS_str = "이름을 말해주세요";
+			}
+
 
 		}
 		@Override

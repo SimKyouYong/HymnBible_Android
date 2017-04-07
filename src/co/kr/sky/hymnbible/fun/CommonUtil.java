@@ -27,7 +27,7 @@ public class CommonUtil {
 	public String SERVER_MP3;
 	public String SERVER_DB;
 	public String SERVER_MY_IMG;
-	public String COSS_FOOD;
+	public String TTS_STR;
 	
 	
 	public String LOGIN_MEMBER_GEUST;
@@ -75,7 +75,7 @@ public class CommonUtil {
 			_instance.USER_PW = 	   		"";
 			_instance.USER_EMAIL = 	   		"";
 			_instance.USER_PHONE = 	   		"";
-			_instance.POINT = 	   		"";
+			_instance.TTS_STR = 	   		"";
 
 			_instance.EXIT = 	   		false;
 			_instance.PHONE = 	   		"";

@@ -392,7 +392,7 @@ public class FunNative  {
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
 				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-		intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"Speech to Text");
+		intent.putExtra(RecognizerIntent.EXTRA_PROMPT,MainActivity.TTS_str);
 		intent.putExtra("return_fun", return_fun);
 		MainActivity.return_fun = return_fun;
 		try {
