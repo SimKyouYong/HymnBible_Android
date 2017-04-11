@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,10 +20,9 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import co.kr.sky.hymnbible.adapter.LMSMyPhoneGroup_Adapter;
-import co.kr.sky.hymnbible.adapter.LMSMyPhoneList_Adapter;
+import co.kr.sky.hymnbible.common.Check_Preferences;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
-import co.kr.sky.hymnbible.obj.MyPhoneListObj;
 
 public class LMSMyPhoneActivity extends Activity{
 	LMSMyPhoneGroup_Adapter           m_Adapter;
@@ -56,8 +58,78 @@ public class LMSMyPhoneActivity extends Activity{
 		findViewById(R.id.btn_reflash).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
 
-		getGroup();
+		
+		m_Adapter = new LMSMyPhoneGroup_Adapter( this , arrData , mAfterAccum);
+		list_number.setOnItemClickListener(mItemClickListener);
+		list_number.setAdapter(m_Adapter);
+		
+		//디비에 값이 있으면 디비 조
+		if (!Check_Preferences.getAppPreferencesboolean(this, "phonedb")) {
+			getGroup();
+		}else{
+			Log.e("SKY", "DB 조회해오기");
+			SELECT_GROUP();
+		}
+		
+	}  
+	public void SELECT_GROUP()		//디비 값 조회해서 저장하기
+	{
+		arrData.clear();
+		try{
+			//  db파일 읽어오기
+			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
+			// 쿼리로 db의 커서 획득
+			Cursor cur = db.rawQuery("SELECT * FROM `group`;", null);
+			// 처음 레코드로 이동
+			while(cur.moveToNext()){
+				// 읽은값 출력
+				Log.i("MiniApp",cur.getString(0)+"/"+cur.getString(1)+"/"+cur.getString(2));
+				arrData.add(new MyPhoneGroupObj(""+cur.getString(0), 
+						cur.getString(1), 
+						"", 
+						"", 
+						"",
+						"", 
+						""+cur.getString(2), 
+						"false",
+						0,
+						0));
+			}
+			cur.close();
+			db.close();
+			m_Adapter.notifyDataSetChanged();
+		}
+		catch (SQLException se) {
+			// TODO: handle exception
+			Log.e("selectData()Error! : ",se.toString());
+		}   
+
 	}
+	public void SAVE_DB_Group(String name, String count)
+	{
+		try{
+			//인서트쿼리
+			//			Toast.makeText(One.this, "즐겨찾기 등록완료!", 0).show();
+			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
+			String sql;
+			try {
+				
+				sql = "INSERT INTO `group`(`name`,`count`) VALUES (";
+				sql += "'" + name  + "'" ;
+				sql += ",'" + count  + "'" ;
+				sql +=   ")";
+				Log.e("SKY","sql  : "+ sql);
+				db.execSQL(sql);
+			} catch (Exception e) {
+				db.close();
+				Log.e("SKY","sql error : "+ e.toString());
+			}
+			db.close();
+		}catch (Exception e) {
+			Log.e("SKY","onPostExecute error : "+ e.toString());
+		}
+	}
+	
 	//버튼 리스너 구현 부분 
 	View.OnClickListener btnListener = new View.OnClickListener() {
 		public void onClick(View v) {
@@ -71,6 +143,7 @@ public class LMSMyPhoneActivity extends Activity{
 				getGroup();
 				break;
 			case R.id.btn_ok:	
+				LMSMainActivity.onresume_0 = 1;
 				finish();
 				break;
 				
@@ -186,6 +259,7 @@ public class LMSMyPhoneActivity extends Activity{
 				//그룹 테이블인설트 !
 				//key // name // count 
 				Log.e("SKY" , "그룹 테이블인설트 ! :: " +  arrData.get(i).get_ID() );
+				SAVE_DB_Group(arrData.get(i).getTITLE() ,  "0");
 				if (arrData.get(i).get_ID().indexOf(",") == -1) {
 					//없을떄
 					getSampleContactList(Integer.parseInt(arrData.get(i).get_ID()) , i);
@@ -198,13 +272,13 @@ public class LMSMyPhoneActivity extends Activity{
 						getSampleContactList(Integer.parseInt((String)noDupArray[j]) , i);
 					}
 				}
+				SAVE_DB_GROUP_COUNT(arrData.get(i).getGROUP_COUNT() , i);
 			}
 			
+			Check_Preferences.setAppPreferences(LMSMyPhoneActivity.this, "phonedb", true);
 			
+			m_Adapter.notifyDataSetChanged();
 			
-			m_Adapter = new LMSMyPhoneGroup_Adapter( this , arrData , mAfterAccum);
-			list_number.setOnItemClickListener(mItemClickListener);
-			list_number.setAdapter(m_Adapter);
 		}
 	}
 	public void getSampleContactList(int groupID , int ii) {
@@ -242,10 +316,58 @@ public class LMSMyPhoneActivity extends Activity{
 				arrData.get(ii).set_Add_GROUP_COUNT(1);
 				//회원 테이블인설트 !
 				//key // name // phone // group_key 
+				SAVE_DB_Phone(name , phone  , ""+ii);
 				//arrData.add(new MyPhoneListObj(name, phone , 0));
 			}
 			pCur.close();
 
+		}
+		c.close();
+		
+		
+	}
+	public void SAVE_DB_GROUP_COUNT(String count , int key)
+	{
+		try{
+			//인서트쿼리
+			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
+			String sql;
+			try {
+				sql = "UPDATE `group` SET count = '" + count + "' WHERE key=" +  (key+1);
+				Log.e("SKY","sql2  : "+ sql);
+				db.execSQL(sql);
+			} catch (Exception e) {
+				db.close();
+				Log.e("MiniApp","sql error : "+ e.toString());
+			}
+			db.close();
+		}catch (Exception e) {
+			Log.e("SKY","onPostExecute error : "+ e.toString());
+		}
+	}
+	public void SAVE_DB_Phone(String name, String phone, String group_key)
+	{
+		try{
+			//인서트쿼리
+			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
+			String sql;
+			try {
+				sql = "INSERT INTO  phone";
+				sql += " VALUES(";
+				sql += "" + "NULL"  + "" ;
+				sql += ",'" + name  + "'" ;
+				sql += ",'" + phone  + "'" ;
+				sql += ",'" + group_key  + "'" ;
+				sql +=   ")";
+				Log.e("SKY","sql  : "+ sql);
+				db.execSQL(sql);
+			} catch (Exception e) {
+				db.close();
+				Log.e("MiniApp","sql error : "+ e.toString());
+			}
+			db.close();
+		}catch (Exception e) {
+			Log.e("SKY","onPostExecute error : "+ e.toString());
 		}
 	}
 	public Object[] removeDuplicateArray(String[] array){

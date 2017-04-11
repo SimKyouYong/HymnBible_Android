@@ -19,8 +19,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 	static String NAME = "testdb.sqlite";		//sqlite �̸� ���� 
 	static CursorFactory FACTORY = null;		//Ŀ�� �ʱ�ȭ 
 	static String PACKEGE = "co.kr.sky.hymnbible";	//��Ű�� �̸� ���� 
-	static String DB = "bible_kr.db";			//Į�θ� ��� �̸� ���� 
-	static String DB2 = "bible_category.db";			//Į�θ� ��� �̸� ���� 
+	static String DB = "phonedb.db";			//Į�θ� ��� �̸� ���� 
 	static int VERSION  = 1;					//��� ���� 
 	public MySQLiteOpenHelper(Context context) {
 		super(context, NAME, FACTORY, VERSION);
@@ -30,7 +29,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 			Log.i("MiniApp", "DB Check="+bResult);
 			if(!bResult){   // DB�� �մ��� Ȯ�� 
 				copyDB(context);	
-				copyDB2(context);
+				//copyDB2(context);
 			}else{
 
 			}
@@ -51,6 +50,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 		return false;
 
 	}
+	/*
 	public void copyDB2(Context mContext){
 		Log.d("MiniApp", "copyDB2");
 		AssetManager manager = mContext.getAssets();
@@ -95,6 +95,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 			Log.e("ErrorMessage : ", e.getMessage());
 		} 
 	}
+	*/
 	public void copyDB(Context mContext){
 		Log.d("MiniApp", "copyDB");
 		AssetManager manager = mContext.getAssets();

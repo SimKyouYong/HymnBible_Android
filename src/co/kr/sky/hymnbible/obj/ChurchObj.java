@@ -11,6 +11,7 @@ public class ChurchObj implements Parcelable{
 	String church_name;		//이름
 	String church_type;		//어디 소속
 	String person_name;		//사람이름
+	String church_post;	//주소
 	String church_address;	//주소
 	String church_number;	//번호
 	String church_fax;		//팩스번호
@@ -32,7 +33,15 @@ public class ChurchObj implements Parcelable{
 	
 	
 	
-	public ChurchObj(String key_index, String church_name, String church_type, String person_name,
+	public String getChurch_post() {
+		return church_post;
+	}
+
+	public void setChurch_post(String church_post) {
+		this.church_post = church_post;
+	}
+
+	public ChurchObj(String key_index, String church_name, String church_type, String person_name,String church_post,
 			String church_address, String church_number, String church_fax, String church_homepage, String church_body,
 			String church_img, String church_img2, String church_img3, String church_img4, String church_img5,
 			String church_img6, String church_img7, String church_img8, String church_img9, String church_img10,
@@ -42,6 +51,7 @@ public class ChurchObj implements Parcelable{
 		this.church_name = church_name;
 		this.church_type = church_type;
 		this.person_name = person_name;
+		this.church_post = church_post;
 		this.church_address = church_address;
 		this.church_number = church_number;
 		this.church_fax = church_fax;
@@ -207,6 +217,7 @@ public class ChurchObj implements Parcelable{
 		dest.writeString(church_name);
 		dest.writeString(church_type);
 		dest.writeString(person_name);
+		dest.writeString(church_post);
 		dest.writeString(church_address);
 		dest.writeString(church_number);
 		dest.writeString(church_fax);
@@ -223,13 +234,14 @@ public class ChurchObj implements Parcelable{
 		dest.writeString(church_img9);
 		dest.writeString(church_img10);
 		dest.writeString(search_index);
-
+		
 	}
 	private void readFromParcel(Parcel in){
 		key_index = in.readString();
 		church_name = in.readString();
 		church_type = in.readString();
 		person_name = in.readString();
+		church_post = in.readString();
 		church_address = in.readString();
 		church_number = in.readString();
 		church_fax = in.readString();

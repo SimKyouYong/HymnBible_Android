@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 import co.kr.sky.hymnbible.adapter.LMSMain_Adapter;
+import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.LMSMainObj;
 
 public class LMSMainActivity extends Activity{
@@ -22,10 +23,19 @@ public class LMSMainActivity extends Activity{
 	ArrayList<LMSMainObj> arrData = new ArrayList<LMSMainObj>();
 	LMSMain_Adapter           m_Adapter;
 	public static int onresume_0 = 0;
+	CommonUtil dataSet = CommonUtil.getInstance();
 
 	@Override
 	public void onResume(){
 		super.onResume();
+		if (onresume_0 ==1) {
+			onresume_0 = 0;
+			//setting
+			for (int i = 0; i < dataSet.arrData_real.size(); i++) {
+				arrData.add(new LMSMainObj(dataSet.arrData_real.get(i).getNAME(), dataSet.arrData_real.get(i).getPHONE()));
+			}
+			m_Adapter.notifyDataSetChanged();
+		}
 	}
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -90,16 +100,22 @@ public class LMSMainActivity extends Activity{
 				startActivityForResult(intent200, 200);
 				break;
 			case R.id.send_lms:
-				if (phone_number.getText().toString().trim().length() > 0) {
-					for (int i = 0; i < arrData.size(); i++) {
-						Log.e("SKY" , "I :: "  +i);
-						sendSMS(phone_number.getText().toString(),arrData.get(i).getNumber());
-					}
-				}else{
+				
+				if (arrData.size() == 0) {
+					Toast.makeText(getApplicationContext(), "이름 혹은 전화번호를 입력해주세요.", 0).show();
+				}else if(lms_msg.getText().toString().trim().length() == 0){
 					Toast.makeText(getApplicationContext(), "보내실 문자를 입력해주세요.", 0).show();
+				}else{
+					for (int i = 0; i < arrData.size(); i++) {
+						sendSMS(lms_msg.getText().toString(),arrData.get(i).getNumber());
+					}
 				}
 				break;
 			case R.id.number_plus:	
+				if (phone_number.getText().toString().length() == 0 || phone_number.getText().toString().length() == 0) {
+					Toast.makeText(getApplicationContext(), "이름 혹은 전화번호를 입력해주세요.", 0).show();
+					return;
+				}
 				arrData.add(new LMSMainObj(phone_number.getText().toString().replace("-", ""), phone_number.getText().toString().replace("-", "")));
 				m_Adapter.notifyDataSetChanged();
 				break;
@@ -111,6 +127,7 @@ public class LMSMainActivity extends Activity{
 		}
 	};
 	private void sendSMS(String msg, String number) {
+		Log.e("SKY", "보낼 문자 번호 :: " + number);
 		SmsManager sm = SmsManager.getDefault();
 
 		if(msg.getBytes().length > 80) {

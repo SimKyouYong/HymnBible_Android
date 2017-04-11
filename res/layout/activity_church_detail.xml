@@ -335,7 +335,6 @@
                         android:paddingLeft="10dp"
                         android:paddingRight="3dp"
                         android:paddingTop="3dp"
-                        android:text="test"
                         android:textColor="#5C5C5C" />
                 </LinearLayout>
 

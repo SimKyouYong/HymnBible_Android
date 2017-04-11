@@ -4,7 +4,12 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +19,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import co.kr.sky.hymnbible.adapter.LMSMyPhoneGroup_Adapter;
 import co.kr.sky.hymnbible.adapter.LMSMyPhoneList_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
@@ -29,7 +35,7 @@ public class LMSMyPhoneDetailActivity extends Activity{
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_myphone);
+		setContentView(R.layout.activity_myphonedetail);
 		list_number = (ListView)findViewById(R.id.list_number);
 		//list_number.setOnItemClickListener(mItemClickListener);
 
@@ -37,35 +43,44 @@ public class LMSMyPhoneDetailActivity extends Activity{
 		obj = bundle.getParcelable("Object");
 		Log.e("SKY", "ID :: " + obj.get_ID());
 
-		if (obj.get_ID().indexOf(",") == -1) {
-			//없을떄
-			getSampleContactList(Integer.parseInt(obj.get_ID()));
-		}else{
-			String id_str[] = obj.get_ID().split(",");
-			String[] dupArray=id_str;
-			Object[] noDupArray=removeDuplicateArray(dupArray);
-			for(int i=0; i<noDupArray.length; i++){
-				System.out.println(i+"......."+(String)noDupArray[i]);
-				getSampleContactList(Integer.parseInt((String)noDupArray[i]));
-			}
-		}
+		//디비 조회해서 값 뿌려주면 끝!!
 
-
+		
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
 		
+		m_Adapter = new LMSMyPhoneList_Adapter( this , arrData , mAfterAccum);
+		list_number.setOnItemClickListener(mItemClickListener);
+		list_number.setAdapter(m_Adapter);
+		
+		SELECT_Phone();
 
 	}
-	public Object[] removeDuplicateArray(String[] array){
-		Object[] removeArray=null;
-		TreeSet ts=new TreeSet();
-		for(int i=0; i<array.length; i++){
-			ts.add(array[i]);
+	public void SELECT_Phone()		//디비 값 조회해서 저장하기
+	{
+		arrData.clear();
+		try{
+			//  db파일 읽어오기
+			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
+			// 쿼리로 db의 커서 획득
+			Cursor cur = db.rawQuery("SELECT * FROM `phone`;", null);
+			// 처음 레코드로 이동
+			while(cur.moveToNext()){
+				// 읽은값 출력
+				Log.i("MiniApp",cur.getString(0)+"/"+cur.getString(1)+"/"+cur.getString(2));
+				arrData.add(new MyPhoneListObj(cur.getString(1), cur.getString(2), 0));
+			}
+			cur.close();
+			db.close();
+			m_Adapter.notifyDataSetChanged();
+			
 		}
-		removeArray= ts.toArray();
-		return removeArray;
-	}
+		catch (SQLException se) {
+			// TODO: handle exception
+			Log.e("selectData()Error! : ",se.toString());
+		}   
 
+	}
 	//버튼 리스너 구현 부분 
 	View.OnClickListener btnListener = new View.OnClickListener() {
 		public void onClick(View v) {
@@ -74,62 +89,35 @@ public class LMSMyPhoneDetailActivity extends Activity{
 				finish();
 				break;
 			case R.id.btn_ok:
-				LMSMyPhoneActivity.onresume_1 = 1;
+				int j = 0;
 				for (int i = 0; i < arrData.size(); i++) {
 					if (arrData.get(i).getCHECK() == 1) {
-						Log.e("SKY", "DATA SELECTED :: " + arrData.get(i).getCHECK());
+						j++;
 						dataSet.arrData_real.add(new MyPhoneListObj2(LMSMyPhoneActivity.position_click ,
 								arrData.get(i).getNAME(),
 								arrData.get(i).getPHONE(),
 								arrData.get(i).getCHECK()));
 					}
 				}
-				finish();
+				if (j > 499) {
+					//499개 보다 많으면.. 다음화면으로 못가게 맊음.!
+					AlertDialog.Builder ab = new AlertDialog.Builder(LMSMyPhoneDetailActivity.this , AlertDialog.THEME_HOLO_LIGHT);
+					//		.setTitle("부적결제 후 전화상담 서비스로 연결 되며 12시간 동안 재연결 무료 입니다.\n(운수대톡 )")
+					ab.setMessage("500개 이상 선택은 불가능합니다.");
+					ab.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+							return;
+						}
+					})
+					.show();
+				}else{
+					LMSMyPhoneActivity.onresume_1 = 1;
+					finish();
+				}
 				break;
 			}
 		}
 	};
-	public void getSampleContactList(int groupID) {
-
-		Uri groupURI = ContactsContract.Data.CONTENT_URI;
-		String[] projection = new String[] {
-				ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-				ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID };
-
-		Cursor c = getContentResolver().query(
-				groupURI,
-				projection,
-				ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID
-				+ "=" + groupID, null, null);
-
-		while (c.moveToNext()) {
-			String id = c
-					.getString(c
-							.getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
-			Cursor pCur = getContentResolver().query(
-					ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-					ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-					new String[] { id }, null);
-
-			int i =0;
-			while (pCur.moveToNext()) {
-				i++;
-				String name = pCur
-						.getString(pCur
-								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-				String phone = pCur
-						.getString(pCur
-								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-				Log.e("SKY" , "" + i + ".name:: " + name + " // phone :: " + phone);
-				arrData.add(new MyPhoneListObj(name, phone , 0));
-			}
-			pCur.close();
-
-		}
-		m_Adapter = new LMSMyPhoneList_Adapter( this , arrData , mAfterAccum);
-		list_number.setOnItemClickListener(mItemClickListener);
-		list_number.setAdapter(m_Adapter);
-	}
 	Handler mAfterAccum = new Handler()
 	{
 		@Override

@@ -241,6 +241,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
 	}
 	private void SendHttp(){
+		recycleImages();
 		customProgressPop();
 		//String []val = {"KEY_INDEX" , "CODE","NAME","ADDRESS", 
 		//		"LOAD_ADDRESS","PHONE","LATITUDE", "HARDNESS","FILE_NAME","PLACE","INTRODUCE"};
@@ -258,6 +259,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 		{
 			if (msg.arg1  == 0 ) {
 				bm.clear();
+				arrData.clear();
 				String res = (String)msg.obj;
 				Log.e("SKY", "RES :: " +  res);
 				try {
@@ -274,6 +276,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 						String church_name = order.getString("church_name");
 						String church_type = order.getString("church_type");
 						String person_name = order.getString("person_name");
+						String church_post = order.getString("church_post");
 						String church_address = order.getString("church_address");
 						String church_number = order.getString("church_number");
 						String church_fax = order.getString("church_fax");
@@ -298,6 +301,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 								church_name, 
 								church_type, 
 								person_name, 
+								church_post, 
 								church_address, 
 								church_number, 
 								church_fax, 
@@ -352,14 +356,19 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 			LatLng latlng = null;
 			latlng = new LatLng(Double.parseDouble(arrData.get(i).getLatitude()), Double.parseDouble(arrData.get(i).getLongitude()));
 			markerOptions.position(latlng);
+			
 			mMap.addMarker(new MarkerOptions()
 					.position(latlng)
 					.title(""+i)
 					.snippet(arrData.get(i).getChurch_name())
 					.icon(BitmapDescriptorFactory.fromResource(R.drawable.gps_experience)));
 
-			AccumThread1 av = new AccumThread1(arrData.get(i).getChurch_img(), i );
-			av.start();
+			if (arrData.get(i).getChurch_img().length() > 0) {
+				Log.e("SKY" , "MapMarker : ");
+				AccumThread1 av = new AccumThread1(arrData.get(i).getChurch_img(), i );
+				av.start();
+
+			}
 		}
 	}
 	public class AccumThread1 extends Thread{
@@ -379,14 +388,19 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 		public void run()
 		{
 			bm.set(i_, getBitmapFromURL(url_));
-			Message msg2 = mAfterAccum.obtainMessage();
-			msg2.arg1 = 2;
-			msg2.arg2 = i_;
-			mAfterAccum.sendMessage(msg2);
+//			Message msg2 = mAfterAccum.obtainMessage();
+//			msg2.arg1 = 2;
+//			msg2.arg2 = i_;
+//			mAfterAccum.sendMessage(msg2);
 		}
 	}
 	public static Bitmap getBitmapFromURL(String src) {
 		Log.e("SKY" , "HTTP : " + src);
+		if (src.length() == 0) {
+			Log.e("SKY" , "src.length() 00 : ");
+
+			return null;
+		}
 		try {
 			URL url = new URL(src);
 			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -394,23 +408,27 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 			connection.connect();
 			InputStream input = connection.getInputStream();
 			BitmapFactory.Options options = new BitmapFactory.Options();
-			options.inSampleSize = 4;
+			options.inSampleSize = 8;
 			Bitmap bitmap_resize = BitmapFactory.decodeStream(input,null, options);
 			return bitmap_resize;
 		} catch (IOException e) {
 			// Log exception
+			Log.e("SKY", "ERROR :: " + e.toString());
 			return null;
 		}
 	}
 	private void MapMarker(){
-
+		mMap.clear();
 		mMap.setMyLocationEnabled(true);
 		for (int i = 0; i < arrData.size(); i++) {
 			Allpin(i);
 		}
+		Log.e("SKY" , "MapMarker : ");
+
 		mMap.setInfoWindowAdapter(new CustomInfoWindowAdapter() {
 			@Override
 			public View getInfoContents(Marker marker) {
+				/*
 				View myContentView = getLayoutInflater().inflate(
 						R.layout.custommarker, null);
 				ImageView img = (ImageView) myContentView.findViewById(R.id.img_c);
@@ -420,11 +438,14 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 				//				String[] array = dataSet.Token_Str(arrData.get(index).getFILE_NAME());
 				img.setImageBitmap(bm.get(index));
 				TextView tvTitle = ((TextView) myContentView.findViewById(R.id.title));
-				tvTitle.setText(arrData.get(index).getChurch_address());
+				tvTitle.setText("주소: "+arrData.get(index).getChurch_address());
 				TextView tvSnippet = ((TextView) myContentView.findViewById(R.id.snippet));
-				tvSnippet.setText(arrData.get(index).getChurch_name());
+				tvSnippet.setText("▶ "+arrData.get(index).getChurch_name());
+				TextView name = ((TextView) myContentView.findViewById(R.id.name));
+				name.setText("담임목사:"+arrData.get(index).getPerson_name());
 				myContentView.setBackgroundColor(Color.WHITE);
-				return myContentView;
+				*/
+				return null;
 			}
 		});
 
@@ -506,9 +527,11 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 			//			String[] array = dataSet.Token_Str(mData.get(index).getFILE_NAME());
 			img.setImageBitmap(bm.get(index));
 			TextView tvTitle = ((TextView) myContentView.findViewById(R.id.title));
-			tvTitle.setText(arrData.get(index).getChurch_address());
+			tvTitle.setText("주소: "+arrData.get(index).getChurch_address());
 			TextView tvSnippet = ((TextView) myContentView.findViewById(R.id.snippet));
-			tvSnippet.setText(arrData.get(index).getChurch_name());
+			tvSnippet.setText("▶ "+arrData.get(index).getChurch_name());
+			TextView name = ((TextView) myContentView.findViewById(R.id.name));
+			name.setText("담임목사:"+arrData.get(index).getPerson_name());
 			myContentView.setBackgroundColor(Color.WHITE);
 			return myContentView;
 		}

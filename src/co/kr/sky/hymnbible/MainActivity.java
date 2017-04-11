@@ -117,7 +117,7 @@ public class MainActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		//vc = new MySQLiteOpenHelper(this);
+		vc = new MySQLiteOpenHelper(this);
 		bottomview = (LinearLayout)findViewById(R.id.bottomview);
 		bottomview.setVisibility(View.GONE);
 //		try {
