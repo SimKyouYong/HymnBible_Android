@@ -235,6 +235,7 @@ public class FunNative  {
 		for (int i = 0; i < val.length; i++) {
 			Log.e("SKY" , "VAL["+i + "]  :: " + i + " --> " + val[i]);
 		}
+		Log.e("SKY", "javascript:"+return_fun + "('" +dataSet.PHONE + "')");
 		vc.loadUrl("javascript:"+return_fun + "('" +dataSet.PHONE + "')");
 
 	}

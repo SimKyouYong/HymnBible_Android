@@ -120,36 +120,6 @@ public class MainActivity extends Activity{
 		vc = new MySQLiteOpenHelper(this);
 		bottomview = (LinearLayout)findViewById(R.id.bottomview);
 		bottomview.setVisibility(View.GONE);
-//		try {
-//			KakaoLink kakaoLink = KakaoLink.getKakaoLink(this);
-//			KakaoTalkLinkMessageBuilder kakaoTalkLinkMessageBuilder = kakaoLink.createKakaoTalkLinkMessageBuilder();
-//			kakaoTalkLinkMessageBuilder.addText("[성경찬송]:성경찬송 앱입니다.");
-//			//kakaoTalkLinkMessageBuilder.addImage("http://emview.godohosting.com/ic_launcher.png", 100, 100);
-//			kakaoTalkLinkMessageBuilder.addWebButton("앱 설치하러 가기", "http://market.android.com/details?id=co.kr.app.helloweurope");
-//			//kakaoTalkLinkMessageBuilder.addWebLink("앱 설치하러 가기", "http://market.android.com/details?id=co.kr.app.helloweurope");
-//			kakaoLink.sendMessage(kakaoTalkLinkMessageBuilder, this);
-//		} catch (KakaoParameterException e) {
-//		}
-		//getGroup();
-		/*
-		//폰번호 알아오기
-		Cursor cursor3 = getContentResolver().query(
-				ContactsContract.Data.CONTENT_URI, 
-				null, 
-				ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + "=" + 5, 
-				null, 
-				null);
-
-		try {
-			while (cursor3.moveToNext()) {
-				String id = cursor3.getString(cursor3.getColumnIndex(ContactsContract.Data._ID));
-				showMember(id);
-			}
-		} finally {
-			// TODO: handle finally clause
-			cursor3.close();
-		}
-		*/
 
 		TelephonyManager telManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);// 사용자 전화번호로 ID값 가져옴
 		try {
@@ -850,7 +820,7 @@ public class MainActivity extends Activity{
 				return true;
 			}
 
-			new AlertDialog.Builder(MainActivity.this).setTitle("확인").setMessage(message).setPositiveButton(
+			new AlertDialog.Builder(MainActivity.this ,AlertDialog.THEME_HOLO_LIGHT).setTitle("확인").setMessage(message).setPositiveButton(
 					android.R.string.ok, new AlertDialog.OnClickListener() {
 						public void onClick(DialogInterface dialog,int which) {
 							result.confirm();
