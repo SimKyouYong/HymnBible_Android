@@ -18,6 +18,7 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import co.kr.sky.hymnbible.adapter.LMSMyPhoneGroup_Adapter;
 import co.kr.sky.hymnbible.adapter.LMSMyPhoneList_Adapter;
@@ -28,15 +29,19 @@ import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
 
 public class LMSMyPhoneDetailActivity extends Activity{
 	LMSMyPhoneList_Adapter           m_Adapter;
-	ArrayList<MyPhoneListObj> arrData = new ArrayList<MyPhoneListObj>();
+	public static ArrayList<MyPhoneListObj> arrData = new ArrayList<MyPhoneListObj>();
 	ListView                list_number;
 	MyPhoneGroupObj obj;
 	CommonUtil dataSet = CommonUtil.getInstance();
+	ArrayList<MyPhoneListObj> arrData_copy = new ArrayList<MyPhoneListObj>();
 
+	public static ArrayList<Integer> arrint = new ArrayList<Integer>();
+	EditText e_lms;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_myphonedetail);
 		list_number = (ListView)findViewById(R.id.list_number);
+		e_lms = (EditText)findViewById(R.id.e_lms);
 		//list_number.setOnItemClickListener(mItemClickListener);
 
 		Bundle bundle = getIntent().getExtras();
@@ -48,22 +53,25 @@ public class LMSMyPhoneDetailActivity extends Activity{
 		
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
+		findViewById(R.id.btn_sp2).setOnClickListener(btnListener);
+		findViewById(R.id.btn_sp3).setOnClickListener(btnListener);
 		
 		m_Adapter = new LMSMyPhoneList_Adapter( this , arrData , mAfterAccum);
 		list_number.setOnItemClickListener(mItemClickListener);
 		list_number.setAdapter(m_Adapter);
 		
-		SELECT_Phone();
+		int key = Integer.parseInt(obj.get_ID());
+		SELECT_Phone(""+(key-1));
 
 	}
-	public void SELECT_Phone()		//디비 값 조회해서 저장하기
+	public void SELECT_Phone(String key)		//디비 값 조회해서 저장하기
 	{
 		arrData.clear();
 		try{
 			//  db파일 읽어오기
 			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
 			// 쿼리로 db의 커서 획득
-			Cursor cur = db.rawQuery("SELECT * FROM `phone`;", null);
+			Cursor cur = db.rawQuery("SELECT * FROM `phone` where group_key = '" + key + "';", null);
 			// 처음 레코드로 이동
 			while(cur.moveToNext()){
 				// 읽은값 출력
@@ -88,6 +96,26 @@ public class LMSMyPhoneDetailActivity extends Activity{
 			case R.id.btn_back:	
 				finish();
 				break;
+			case R.id.btn_sp2:	
+				arrint.clear();
+				if (e_lms.getText().toString().length() ==0) {
+					//모두 보여주기
+					m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData , mAfterAccum);
+					list_number.setAdapter(m_Adapter);
+				}else {
+					for (int i = 0; i < arrData.size(); i++) {
+						if (arrData.get(i).getNAME().matches(".*" + e_lms.getText().toString() +".*") || arrData.get(i).getPHONE().matches(".*" + e_lms.getText().toString() +".*")) {
+							Log.e("SKY", "같은 값! :: " + i);
+							arrData_copy.add(new MyPhoneListObj(arrData.get(i).getNAME(), arrData.get(i).getPHONE(), arrData.get(i).getCHECK()));
+							arrint.add(i);
+						}
+					}
+					m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData_copy , mAfterAccum);
+					list_number.setAdapter(m_Adapter);
+				}
+				break;
+			case R.id.btn_sp3:	
+				break;
 			case R.id.btn_ok:
 				int j = 0;
 				for (int i = 0; i < arrData.size(); i++) {
@@ -98,6 +126,18 @@ public class LMSMyPhoneDetailActivity extends Activity{
 								arrData.get(i).getPHONE(),
 								arrData.get(i).getCHECK()));
 					}
+				}
+				if (j == 0) {
+					AlertDialog.Builder ab = new AlertDialog.Builder(LMSMyPhoneDetailActivity.this , AlertDialog.THEME_HOLO_LIGHT);
+					//		.setTitle("부적결제 후 전화상담 서비스로 연결 되며 12시간 동안 재연결 무료 입니다.\n(운수대톡 )")
+					ab.setMessage("1개 이상은 선택해야 합니다.");
+					ab.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+							return;
+						}
+					})
+					.show();
+					return;
 				}
 				if (j > 499) {
 					//499개 보다 많으면.. 다음화면으로 못가게 맊음.!
@@ -135,13 +175,25 @@ public class LMSMyPhoneDetailActivity extends Activity{
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
 			Log.e("SKY", "POSITION : " + position);
-			if (arrData.get(position).getCHECK() == 0) {
-				arrData.get(position).setCHECK(1);
+			if (arrint.size() == 0 ) {
+				if (arrData.get(position).getCHECK() == 0) {
+					arrData.get(position).setCHECK(1);
+				}else{
+					arrData.get(position).setCHECK(0);
+				}
+				m_Adapter.notifyDataSetChanged();
 			}else{
-				arrData.get(position).setCHECK(0);
-			}
-			m_Adapter.notifyDataSetChanged();
+				//검색시에 원본 데이터 셋팅! 
+				if (arrData_copy.get(position).getCHECK() == 0) {
+					arrData_copy.get(position).setCHECK(1);
+					arrData.set(position, new MyPhoneListObj(arrData.get(arrint.get(position)).getNAME(), arrData.get(arrint.get(position)).getPHONE(), 1));
+				}else{
+					arrData_copy.get(position).setCHECK(0);
+					arrData.set(position, new MyPhoneListObj(arrData.get(arrint.get(position)).getNAME(), arrData.get(arrint.get(position)).getPHONE(), 0));
 
+				}
+				m_Adapter.notifyDataSetChanged();
+			}
 		}
 	};
 }

@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.TreeSet;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -19,9 +21,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import co.kr.sky.hymnbible.adapter.LMSMyPhoneGroup_Adapter;
 import co.kr.sky.hymnbible.common.Check_Preferences;
 import co.kr.sky.hymnbible.fun.CommonUtil;
+import co.kr.sky.hymnbible.fun.MySQLiteOpenHelper;
 import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
 
 public class LMSMyPhoneActivity extends Activity{
@@ -29,7 +33,10 @@ public class LMSMyPhoneActivity extends Activity{
 	ArrayList<MyPhoneGroupObj> arrData = new ArrayList<MyPhoneGroupObj>();
 	ListView                list_number;
 	CommonUtil dataSet = CommonUtil.getInstance();
+	protected ProgressDialog customDialog = null;
+	private Typeface ttf;
 
+	TextView title;
 	public static int position_click = 0;
 	public static int onresume_1 = 0;
 	@Override
@@ -52,12 +59,16 @@ public class LMSMyPhoneActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_myphone);
 		list_number = (ListView)findViewById(R.id.list_number);
-		
+		title = (TextView)findViewById(R.id.title);
+		ttf = Typeface.createFromAsset(getAssets(), "HANYGO230.TTF");
+		title.setTypeface(ttf);
+
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_server).setOnClickListener(btnListener);
 		findViewById(R.id.btn_reflash).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
 
+		
 		
 		m_Adapter = new LMSMyPhoneGroup_Adapter( this , arrData , mAfterAccum);
 		list_number.setOnItemClickListener(mItemClickListener);
@@ -65,13 +76,46 @@ public class LMSMyPhoneActivity extends Activity{
 		
 		//디비에 값이 있으면 디비 조
 		if (!Check_Preferences.getAppPreferencesboolean(this, "phonedb")) {
-			getGroup();
+			
+			customProgressPop();
+			AccumThread1 av = new AccumThread1();
+			av.start();
 		}else{
 			Log.e("SKY", "DB 조회해오기");
 			SELECT_GROUP();
 		}
 		
-	}  
+	}
+	public class AccumThread1 extends Thread{
+		public AccumThread1(){
+		}
+		@Override
+		public void run()
+		{
+			getGroup();
+			Message msg2 = mAfterAccum.obtainMessage();
+			msg2.arg1 = 100;
+			mAfterAccum.sendMessage(msg2);
+		}
+	}
+	public void customProgressPop(){
+		try{
+			if (customDialog==null){
+				customDialog = new ProgressDialog( this );
+			}
+			customDialog.show();
+		}catch(Exception ex){}
+	}
+	public void customProgressClose(){
+		if (customDialog!=null && customDialog.isShowing()){
+			try{
+				customDialog.cancel();
+				customDialog.dismiss();
+				customDialog = null;
+			}catch(Exception e)
+			{}
+		}
+	}
 	public void SELECT_GROUP()		//디비 값 조회해서 저장하기
 	{
 		arrData.clear();
@@ -98,6 +142,21 @@ public class LMSMyPhoneActivity extends Activity{
 			cur.close();
 			db.close();
 			m_Adapter.notifyDataSetChanged();
+		}
+		catch (SQLException se) {
+			// TODO: handle exception
+			Log.e("selectData()Error! : ",se.toString());
+		}   
+
+	}
+	public void DeleteTb()		//디비 값 조회해서 저장하기
+	{
+		try{
+			MySQLiteOpenHelper vc = new MySQLiteOpenHelper(this);
+			vc.copyDB(this);
+			customProgressPop();
+			AccumThread1 av = new AccumThread1();
+			av.start();
 		}
 		catch (SQLException se) {
 			// TODO: handle exception
@@ -140,7 +199,7 @@ public class LMSMyPhoneActivity extends Activity{
 			case R.id.btn_server:	
 				break;
 			case R.id.btn_reflash:
-				getGroup();
+				DeleteTb();
 				break;
 			case R.id.btn_ok:	
 				LMSMainActivity.onresume_0 = 1;
@@ -160,6 +219,11 @@ public class LMSMyPhoneActivity extends Activity{
 				Log.e("SKY" , "RESULT  -> " + res);
 				arrData.remove(Integer.parseInt(res));
 				m_Adapter.notifyDataSetChanged();
+			}else if (msg.arg1  == 100 ) {
+				//조회 끝 
+				Log.e("SKY" , "조회 끝 !");
+				customProgressClose();
+				SELECT_GROUP();
 			} 
 		}
 	};
@@ -277,7 +341,7 @@ public class LMSMyPhoneActivity extends Activity{
 			
 			Check_Preferences.setAppPreferences(LMSMyPhoneActivity.this, "phonedb", true);
 			
-			m_Adapter.notifyDataSetChanged();
+			
 			
 		}
 	}

@@ -15,6 +15,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
+import co.kr.sky.hymnbible.LMSMyPhoneDetailActivity;
 import co.kr.sky.hymnbible.R;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj;
@@ -74,9 +75,12 @@ public class LMSMyPhoneList_Adapter extends BaseAdapter {
 					if (isChecked) {
 						Log.e("SKY" , "클릭");
 						items.get(position).setCHECK(1);
+						LMSMyPhoneDetailActivity.arrData.set(position, new MyPhoneListObj(LMSMyPhoneDetailActivity.arrData.get(LMSMyPhoneDetailActivity.arrint.get(position)).getNAME(), LMSMyPhoneDetailActivity.arrData.get(LMSMyPhoneDetailActivity.arrint.get(position)).getPHONE(), 1));
 					} else {
 						Log.e("SKY" , "not 클릭" );
 						items.get(position).setCHECK(0);
+						LMSMyPhoneDetailActivity.arrData.set(position, new MyPhoneListObj(LMSMyPhoneDetailActivity.arrData.get(LMSMyPhoneDetailActivity.arrint.get(position)).getNAME(), LMSMyPhoneDetailActivity.arrData.get(LMSMyPhoneDetailActivity.arrint.get(position)).getPHONE(), 0));
+
 					}
 				}
 			}

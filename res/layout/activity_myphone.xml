@@ -19,50 +19,43 @@
             android:layout_marginLeft="10dp"
             android:background="@drawable/btn_back" />
 
-        <LinearLayout
-            android:id="@+id/sspp"
+        <TextView
+            android:id="@+id/titlename"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="5dp"
-            android:gravity="center"
-            android:orientation="horizontal" >
+            android:layout_marginLeft="4dp"
+            android:layout_toRightOf="@+id/btn_back"
+            android:textColor="#ffffff"
+            android:textSize="21dp" />
 
-            <Button
-                android:id="@+id/btn_sp2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_margin="3dp"
-                android:background="@drawable/search01"
-                android:gravity="center_vertical" />
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:textColor="#ffffff"
+            android:textSize="21dp" />
 
-            <Button
-                android:id="@+id/btn_sp3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="3dp"
-                android:background="@drawable/search02" />
-        </LinearLayout>
-
-        <EditText
-            android:id="@+id/e_lms"
+        <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="20dp"
-            android:layout_toLeftOf="@+id/sspp"
+            android:layout_marginRight="10dp"
             android:layout_toRightOf="@+id/btn_back"
-            android:background="@drawable/search"
-            android:hint="내용을 입력해주세요."
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:paddingLeft="25dp"
-            android:textColor="#ffffff"
-            android:textColorHint="#DCDCDC"
-            android:textSize="17dp"
-            android:typeface="sans" />
+            android:visibility="gone" >
+
+            <EditText
+                android:id="@+id/e_search"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp" />
+
+            <Button
+                android:id="@+id/btn_sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <LinearLayout

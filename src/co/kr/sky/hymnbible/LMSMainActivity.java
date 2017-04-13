@@ -34,6 +34,7 @@ public class LMSMainActivity extends Activity{
 			for (int i = 0; i < dataSet.arrData_real.size(); i++) {
 				arrData.add(new LMSMainObj(dataSet.arrData_real.get(i).getNAME(), dataSet.arrData_real.get(i).getPHONE()));
 			}
+			dataSet.arrData_real.clear();
 			m_Adapter.notifyDataSetChanged();
 		}
 	}
