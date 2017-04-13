@@ -17,6 +17,7 @@ import com.google.android.gcm.GCMRegistrar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -75,6 +76,7 @@ public class MainActivity extends Activity{
 	AccumThread mThread;
 
     JIFace iface = new JIFace();
+	protected ProgressDialog customDialog = null;
 
 
 	private final static int FILECHOOSER_RESULTCODE = 1;
@@ -96,8 +98,8 @@ public class MainActivity extends Activity{
 	String regId ;
 	static Map<String, String> map = new HashMap<String, String>();
 	String Before_URL , URL_NOW;
-	public static String TTS_str = "문단을 말해주세요";
 
+	public static String TTS_str = "문단을 말해주세요";
 	public static final int REQ_CODE_SPEECH_INPUT = 100;
 	public static Intent i;
 	SpeechRecognizer mRecognizer;
@@ -271,34 +273,6 @@ public class MainActivity extends Activity{
 		})
 		.show();
 	}
-	private void InputAlert(){
-		AlertDialog.Builder alert = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
-		alert.setTitle("알림");
-		final EditText name = new EditText(this);
-		name.setHint("추천인(휴대폰 번호)을 입력해주세요.");
-		alert.setView(name);
-		alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				String user_phone = name.getText().toString();
-				Check_Preferences.setAppPreferences(MainActivity.this, "ch", "true");
-
-				//post 발송
-				//http://shqrp5200.cafe24.com/json/recommender-proc.do?my_id=01012341234&user_id=01043214321
-				map.put("url", dataSet.SERVER+"json/recommender-proc.do");
-				map.put("my_id",dataSet.PHONE);
-				map.put("user_id",user_phone);
-				mThread = new AccumThread(MainActivity.this , mAfterAccum , map , 0 , 0 , null);
-				mThread.start();		//스레드 시작!!
-
-			}
-		});
-		alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int whichButton) {
-				Check_Preferences.setAppPreferences(MainActivity.this, "ch", "true");
-			}
-		});
-		alert.show();
-	}
 	Handler mAfterAccum = new Handler()
 	{
 		@Override
@@ -409,9 +383,9 @@ public class MainActivity extends Activity{
 				
 				ArrayList<String> result = data
 						.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-				Log.e("SKY" , "RESULT :: " + result.get(0));
+				Log.e("SKY" , "RESULT :: " + result.get(0).trim());
 				Log.e("SKY" , "return_fun :: " + return_fun);
-				BibleWeb.loadUrl("javascript:"+return_fun + "('" + result.get(0) + "')");
+				BibleWeb.loadUrl("javascript:"+return_fun + "('" + result.get(0).trim() + "')");
 			}
 			break;
 		case REQ_CODE_SPEECH_INPUT: {
@@ -705,6 +679,10 @@ public class MainActivity extends Activity{
 				TTS_str = "이름을 말해주세요";
 			}
 
+			if (url.matches("http://shqrp5200.cafe24.com/hymn/hymn_list.do")) {
+				customProgressPop();
+			}
+			
 
 		}
 		@Override
@@ -715,6 +693,7 @@ public class MainActivity extends Activity{
 			//BibleWeb.loadUrl(ht);
 			
 			Log.e("SKY", "onPageFinished = = = = = = = "+url);
+			customProgressClose();
 			//하단 bottomView visible
 			if (url.matches("http://sharp5200.cafe24.com/bible/bible_view.do.*") ||
 					url.matches("http://ch2ho.bible25.com/m/bbs.*") || 
@@ -935,7 +914,7 @@ public class MainActivity extends Activity{
 
 			Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
 			chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
-			chooserIntent.putExtra(Intent.EXTRA_TITLE, "Image Chooser");
+			chooserIntent.putExtra(Intent.EXTRA_TITLE, "파일을 선택해주세요.");
 			chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
 
 			startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
@@ -977,10 +956,6 @@ public class MainActivity extends Activity{
 				EXIT();
 				return true;
 			}
-			if ("http://sharp5200.cafe24.com/index.do".equals(fix_url)) {
-				EXIT();
-				return true;
-			}
 			//myTTS.stop();
 			WebBackForwardList webBackForwardList = BibleWeb.copyBackForwardList();
 			String backUrl = webBackForwardList.getItemAtIndex(webBackForwardList.getCurrentIndex() - 1).getUrl();
@@ -991,11 +966,11 @@ public class MainActivity extends Activity{
 			}
 
 			return true;
-		}else{
+		}else if((keyCode == KeyEvent.KEYCODE_BACK)){
 			EXIT();
 			return true;
 		}
-		//return super.onKeyDown(keyCode, event);
+		return super.onKeyDown(keyCode, event);
 	}
 	private void SplitFun(String url){
 		url = url.replace("js2ios://", "");
@@ -1072,5 +1047,24 @@ public class MainActivity extends Activity{
 		});
 		final AlertDialog dialog = builder.create();
 		dialog.show();
+	}
+	public void customProgressPop(){
+		try{
+			if (customDialog==null){
+				customDialog = new ProgressDialog( this );
+			}
+			customDialog.setMessage("리스트 불러오는 중..");
+			customDialog.show();
+		}catch(Exception ex){}
+	}
+	public void customProgressClose(){
+		if (customDialog!=null && customDialog.isShowing()){
+			try{
+				customDialog.cancel();
+				customDialog.dismiss();
+				customDialog = null;
+			}catch(Exception e)
+			{}
+		}
 	}
 }

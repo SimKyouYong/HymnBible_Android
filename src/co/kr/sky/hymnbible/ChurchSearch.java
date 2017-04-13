@@ -150,7 +150,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 		
 		CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(36.3370879,127.5477928));
 		mMap.moveCamera(update);		//자기 위치로 이동
-		CameraUpdate zoom = CameraUpdateFactory.zoomTo(7);
+		CameraUpdate zoom = CameraUpdateFactory.zoomTo(5);
 		mMap.animateCamera(zoom);
 		 
 	}
@@ -205,7 +205,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 			ArrayList<String> result = data
 					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 			Log.e("SKY" , "RESULT :: " + result.get(0));
-			e_search1.setText(""+result.get(0));
+			e_search1.setText(""+result.get(0).trim());
 			SendHttp();
 		}
 	}
@@ -241,6 +241,10 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 		locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, locationListener);
 	}
 	private void SendHttp(){
+		if (e_search1.getText().toString().length() ==0) {
+			Toast.makeText(getApplicationContext(), "검색어를 입력해주세요.", 0).show();
+			return;
+		}
 		recycleImages();
 		customProgressPop();
 		//String []val = {"KEY_INDEX" , "CODE","NAME","ADDRESS", 
@@ -464,11 +468,11 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 				startActivity(board);			
 			}
 		});
-		if (arrData.size() < 1) {
+		if (arrData.size() > 1) {
 			//37.5132042,126.846721
-			CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(37.5132042,126.846721));
+			CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(36.3370879,127.5477928));
 			mMap.moveCamera(update);		//자기 위치로 이동
-			CameraUpdate zoom = CameraUpdateFactory.zoomTo(11);
+			CameraUpdate zoom = CameraUpdateFactory.zoomTo(5);
 			mMap.animateCamera(zoom);
 			return;
 		}

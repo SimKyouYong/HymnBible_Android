@@ -17,10 +17,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.kakao.kakaolink.KakaoLink;
-import com.kakao.kakaolink.KakaoTalkLinkMessageBuilder;
-import com.kakao.util.KakaoParameterException;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -46,6 +42,7 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.webkit.WebView;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 import co.kr.sky.AccumThread;
 import co.kr.sky.hymnbible.ChurchSearch;
@@ -252,7 +249,14 @@ public class FunNative  {
 		if (!Check_Preferences.getAppPreferences(ac, "ch").equals("true")) {
 			AlertDialog.Builder alert = new AlertDialog.Builder(ac, AlertDialog.THEME_HOLO_LIGHT);
 			alert.setTitle("알림");
+			
+			
+			
 			final EditText name = new EditText(ac);
+			RelativeLayout.LayoutParams plControl = (RelativeLayout.LayoutParams) name.getLayoutParams();
+			plControl.leftMargin = 10;
+			plControl.rightMargin = 10;
+			name.setLayoutParams(plControl);
 			name.setHint("추천인(휴대폰 번호)을 입력해주세요.");
 			alert.setView(name);
 			alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -292,6 +296,10 @@ public class FunNative  {
 		AlertDialog.Builder alert = new AlertDialog.Builder(ac, AlertDialog.THEME_HOLO_LIGHT);
 		alert.setTitle("알림");
 		final EditText name = new EditText(ac);
+		RelativeLayout.LayoutParams plControl = (RelativeLayout.LayoutParams) name.getLayoutParams();
+		plControl.leftMargin = 10;
+		plControl.rightMargin = 10;
+		name.setLayoutParams(plControl);
 		name.setHint("추천인(휴대폰 번호)을 입력해주세요.");
 		alert.setView(name);
 		alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
