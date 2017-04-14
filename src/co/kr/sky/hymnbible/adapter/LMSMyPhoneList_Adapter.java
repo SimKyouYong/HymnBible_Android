@@ -60,11 +60,11 @@ public class LMSMyPhoneList_Adapter extends BaseAdapter {
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		final MyPhoneListObj board = items.get(position);
 		ViewHolder vh = new ViewHolder();
-			convertView = inflater.inflate(R.layout.activity_lms_myphone_list_item,null);
-			vh.t_name = (TextView) convertView.findViewById(R.id.t_name); 
-			vh.check = (CheckBox) convertView.findViewById(R.id.check); 
+		convertView = inflater.inflate(R.layout.activity_lms_myphone_list_item,null);
+		vh.t_name = (TextView) convertView.findViewById(R.id.t_name); 
+		vh.check = (CheckBox) convertView.findViewById(R.id.check); 
 
-			convertView.setTag(vh);
+		convertView.setTag(vh);
 		vh.t_name.setTypeface(ttf);
 		vh.t_name.setText("" + position + ". " + board.getNAME() + "(" + board.getPHONE().replace("-", "") + ")");
 		vh.check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -72,15 +72,25 @@ public class LMSMyPhoneList_Adapter extends BaseAdapter {
 			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
 
 				if (buttonView.getId() == R.id.check) {
+					Log.e("SKY" , "클릭 :: " + isChecked);
 					if (isChecked) {
 						Log.e("SKY" , "클릭");
-						items.get(position).setCHECK(1);
-						LMSMyPhoneDetailActivity.arrData.set(position, new MyPhoneListObj(LMSMyPhoneDetailActivity.arrData.get(LMSMyPhoneDetailActivity.arrint.get(position)).getNAME(), LMSMyPhoneDetailActivity.arrData.get(LMSMyPhoneDetailActivity.arrint.get(position)).getPHONE(), 1));
+						if (!LMSMyPhoneDetailActivity.search_flag) {
+							items.get(position).setCHECK(1);
+						}else{
+							int pp = board.getCopy_position();
+							LMSMyPhoneDetailActivity.arrData.set(pp, new MyPhoneListObj(LMSMyPhoneDetailActivity.arrData.get(pp).getNAME(), LMSMyPhoneDetailActivity.arrData.get(pp).getPHONE(), 1 , 0));
+
+						}
 					} else {
 						Log.e("SKY" , "not 클릭" );
-						items.get(position).setCHECK(0);
-						LMSMyPhoneDetailActivity.arrData.set(position, new MyPhoneListObj(LMSMyPhoneDetailActivity.arrData.get(LMSMyPhoneDetailActivity.arrint.get(position)).getNAME(), LMSMyPhoneDetailActivity.arrData.get(LMSMyPhoneDetailActivity.arrint.get(position)).getPHONE(), 0));
+						if (!LMSMyPhoneDetailActivity.search_flag) {
+							items.get(position).setCHECK(0);
+						}else{
+							int pp = board.getCopy_position();
+							LMSMyPhoneDetailActivity.arrData.set(pp, new MyPhoneListObj(LMSMyPhoneDetailActivity.arrData.get(pp).getNAME(), LMSMyPhoneDetailActivity.arrData.get(pp).getPHONE(), 0 , 0));
 
+						}
 					}
 				}
 			}

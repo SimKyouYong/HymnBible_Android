@@ -32,7 +32,24 @@ public class LMSMainActivity extends Activity{
 			onresume_0 = 0;
 			//setting
 			for (int i = 0; i < dataSet.arrData_real.size(); i++) {
-				arrData.add(new LMSMainObj(dataSet.arrData_real.get(i).getNAME(), dataSet.arrData_real.get(i).getPHONE()));
+				Log.e("SKY", "dataSet.arrData_real.get(i).getNAME() :: " + dataSet.arrData_real.get(i).getNAME());
+				Log.e("SKY", "dataSet.arrData_real.get(i).getPHONE() :: " + dataSet.arrData_real.get(i).getPHONE());
+				if (i == 0) {
+					arrData.add(new LMSMainObj(dataSet.arrData_real.get(i).getNAME(), dataSet.arrData_real.get(i).getPHONE().replace("-", "")));
+				}else{
+					Boolean flag = true;
+					for (int j = 0; j < arrData.size(); j++) {
+						Log.e("SKY", "arrData.get(j).getName() :: " + arrData.get(j).getName());
+						Log.e("SKY", "arrData.get(j).getNumber() :: " + arrData.get(j).getNumber());
+						if (arrData.get(j).getName().equals(dataSet.arrData_real.get(i).getNAME())  &&  arrData.get(j).getNumber().replace("-", "").equals(dataSet.arrData_real.get(i).getPHONE().replace("-", ""))) {
+							flag = false;
+						}
+					}
+					if (flag) {
+						Log.e("SKY", "추가!");
+						arrData.add(new LMSMainObj(dataSet.arrData_real.get(i).getNAME(), dataSet.arrData_real.get(i).getPHONE().replace("-", "")));
+					}
+				}
 			}
 			dataSet.arrData_real.clear();
 			m_Adapter.notifyDataSetChanged();

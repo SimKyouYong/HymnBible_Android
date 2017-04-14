@@ -40,9 +40,10 @@ import android.os.Message;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.Gravity;
 import android.webkit.WebView;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import co.kr.sky.AccumThread;
 import co.kr.sky.hymnbible.ChurchSearch;
@@ -249,16 +250,15 @@ public class FunNative  {
 		if (!Check_Preferences.getAppPreferences(ac, "ch").equals("true")) {
 			AlertDialog.Builder alert = new AlertDialog.Builder(ac, AlertDialog.THEME_HOLO_LIGHT);
 			alert.setTitle("알림");
-			
-			
-			
+			LinearLayout layout = new LinearLayout(ac);
+			layout.setOrientation(LinearLayout.VERTICAL);
+			layout.setGravity(Gravity.CENTER_HORIZONTAL);
 			final EditText name = new EditText(ac);
-			RelativeLayout.LayoutParams plControl = (RelativeLayout.LayoutParams) name.getLayoutParams();
-			plControl.leftMargin = 10;
-			plControl.rightMargin = 10;
-			name.setLayoutParams(plControl);
+			name.setSingleLine(true);
+			layout.setPadding(20, 0, 20, 0);
 			name.setHint("추천인(휴대폰 번호)을 입력해주세요.");
-			alert.setView(name);
+			layout.addView(name);
+			alert.setView(layout);
 			alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {
 					String user_phone = name.getText().toString();
@@ -295,13 +295,15 @@ public class FunNative  {
 		Log.e("SKY" , "-InputAlert-- :: ");
 		AlertDialog.Builder alert = new AlertDialog.Builder(ac, AlertDialog.THEME_HOLO_LIGHT);
 		alert.setTitle("알림");
+		LinearLayout layout = new LinearLayout(ac);
+		layout.setOrientation(LinearLayout.VERTICAL);
+		layout.setGravity(Gravity.CENTER_HORIZONTAL);
 		final EditText name = new EditText(ac);
-		RelativeLayout.LayoutParams plControl = (RelativeLayout.LayoutParams) name.getLayoutParams();
-		plControl.leftMargin = 10;
-		plControl.rightMargin = 10;
-		name.setLayoutParams(plControl);
+		name.setSingleLine(true);
+		layout.setPadding(20, 0, 20, 0);
 		name.setHint("추천인(휴대폰 번호)을 입력해주세요.");
-		alert.setView(name);
+		layout.addView(name);
+		alert.setView(layout);
 		alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
 				String user_phone = name.getText().toString();

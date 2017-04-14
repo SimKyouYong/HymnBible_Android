@@ -20,6 +20,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 	static CursorFactory FACTORY = null;		//Ŀ�� �ʱ�ȭ 
 	static String PACKEGE = "co.kr.sky.hymnbible";	//��Ű�� �̸� ���� 
 	static String DB = "phonedb.db";			//Į�θ� ��� �̸� ���� 
+	static String DB_HISTORY = "lms_history.db";			//Į�θ� ��� �̸� ���� 
 	static int VERSION  = 1;					//��� ���� 
 	public MySQLiteOpenHelper(Context context) {
 		super(context, NAME, FACTORY, VERSION);
@@ -98,6 +99,7 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 	*/
 	public void copyDB(Context mContext){
 		Log.d("MiniApp", "copyDB");
+		copyDB_SUB(mContext);
 		AssetManager manager = mContext.getAssets();
 		String folderPath = "/data/data/" + PACKEGE + "/databases";
 		String filePath = "/data/data/" + PACKEGE + "/databases/" +DB;
@@ -108,6 +110,44 @@ public class MySQLiteOpenHelper extends SQLiteOpenHelper {
 		BufferedOutputStream bos = null;
 		try {
 			InputStream is = manager.open("db/" + DB);
+			BufferedInputStream bis = new BufferedInputStream(is);
+			if (folder.exists()) {
+			}else{
+				folder.mkdirs();
+			}
+			if (file.exists()) {
+				file.delete();
+				file.createNewFile();
+			}
+			fos = new FileOutputStream(file);
+			bos = new BufferedOutputStream(fos);
+			int read = -1;
+			byte[] buffer = new byte[1024];
+			while ((read = bis.read(buffer, 0, 1024)) != -1) {
+				bos.write(buffer, 0, read);
+			}
+			bos.flush();
+			bos.close();
+			fos.close();
+			bis.close();
+			is.close();
+
+		} catch (IOException e) {
+			Log.e("ErrorMessage : ", e.getMessage());
+		} 
+	}
+	public void copyDB_SUB(Context mContext){
+		Log.d("MiniApp", "copyDB_SUB");
+		AssetManager manager = mContext.getAssets();
+		String folderPath = "/data/data/" + PACKEGE + "/databases";
+		String filePath = "/data/data/" + PACKEGE + "/databases/" +DB_HISTORY;
+		File folder = new File(folderPath);
+		File file = new File(filePath);
+
+		FileOutputStream fos = null;
+		BufferedOutputStream bos = null;
+		try {
+			InputStream is = manager.open("db/" + DB_HISTORY);
 			BufferedInputStream bis = new BufferedInputStream(is);
 			if (folder.exists()) {
 			}else{

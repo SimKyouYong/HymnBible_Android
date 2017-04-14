@@ -35,8 +35,8 @@ public class LMSMyPhoneDetailActivity extends Activity{
 	CommonUtil dataSet = CommonUtil.getInstance();
 	ArrayList<MyPhoneListObj> arrData_copy = new ArrayList<MyPhoneListObj>();
 
-	public static ArrayList<Integer> arrint = new ArrayList<Integer>();
 	EditText e_lms;
+	public static Boolean search_flag = false;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_myphonedetail);
@@ -50,16 +50,16 @@ public class LMSMyPhoneDetailActivity extends Activity{
 
 		//디비 조회해서 값 뿌려주면 끝!!
 
-		
+
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
 		findViewById(R.id.btn_sp2).setOnClickListener(btnListener);
 		findViewById(R.id.btn_sp3).setOnClickListener(btnListener);
-		
+
 		m_Adapter = new LMSMyPhoneList_Adapter( this , arrData , mAfterAccum);
 		list_number.setOnItemClickListener(mItemClickListener);
 		list_number.setAdapter(m_Adapter);
-		
+
 		int key = Integer.parseInt(obj.get_ID());
 		SELECT_Phone(""+(key-1));
 
@@ -76,12 +76,12 @@ public class LMSMyPhoneDetailActivity extends Activity{
 			while(cur.moveToNext()){
 				// 읽은값 출력
 				Log.i("MiniApp",cur.getString(0)+"/"+cur.getString(1)+"/"+cur.getString(2));
-				arrData.add(new MyPhoneListObj(cur.getString(1), cur.getString(2), 0));
+				arrData.add(new MyPhoneListObj(cur.getString(1), cur.getString(2), 0 ,0));
 			}
 			cur.close();
 			db.close();
 			m_Adapter.notifyDataSetChanged();
-			
+
 		}
 		catch (SQLException se) {
 			// TODO: handle exception
@@ -97,17 +97,18 @@ public class LMSMyPhoneDetailActivity extends Activity{
 				finish();
 				break;
 			case R.id.btn_sp2:	
-				arrint.clear();
 				if (e_lms.getText().toString().length() ==0) {
 					//모두 보여주기
+					search_flag = false;
 					m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData , mAfterAccum);
 					list_number.setAdapter(m_Adapter);
 				}else {
+					arrData_copy.clear();
 					for (int i = 0; i < arrData.size(); i++) {
 						if (arrData.get(i).getNAME().matches(".*" + e_lms.getText().toString() +".*") || arrData.get(i).getPHONE().matches(".*" + e_lms.getText().toString() +".*")) {
 							Log.e("SKY", "같은 값! :: " + i);
-							arrData_copy.add(new MyPhoneListObj(arrData.get(i).getNAME(), arrData.get(i).getPHONE(), arrData.get(i).getCHECK()));
-							arrint.add(i);
+							search_flag = true;
+							arrData_copy.add(new MyPhoneListObj(arrData.get(i).getNAME(), arrData.get(i).getPHONE(), arrData.get(i).getCHECK() , i));
 						}
 					}
 					m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData_copy , mAfterAccum);
@@ -175,7 +176,7 @@ public class LMSMyPhoneDetailActivity extends Activity{
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
 			Log.e("SKY", "POSITION : " + position);
-			if (arrint.size() == 0 ) {
+			if (!search_flag) {
 				if (arrData.get(position).getCHECK() == 0) {
 					arrData.get(position).setCHECK(1);
 				}else{
@@ -184,14 +185,19 @@ public class LMSMyPhoneDetailActivity extends Activity{
 				m_Adapter.notifyDataSetChanged();
 			}else{
 				//검색시에 원본 데이터 셋팅! 
+				Log.e("SKY", "else : " + arrData_copy.get(position).getCHECK());
 				if (arrData_copy.get(position).getCHECK() == 0) {
 					arrData_copy.get(position).setCHECK(1);
-					arrData.set(position, new MyPhoneListObj(arrData.get(arrint.get(position)).getNAME(), arrData.get(arrint.get(position)).getPHONE(), 1));
+					int pp = arrData_copy.get(position).getCopy_position();
+					Log.e("SKY", "1pp : " + pp);
+					arrData.set(pp, new MyPhoneListObj(arrData.get(pp).getNAME(), arrData.get(pp).getPHONE(), 1,1));
 				}else{
 					arrData_copy.get(position).setCHECK(0);
-					arrData.set(position, new MyPhoneListObj(arrData.get(arrint.get(position)).getNAME(), arrData.get(arrint.get(position)).getPHONE(), 0));
-
+					int pp = arrData_copy.get(position).getCopy_position();
+					Log.e("SKY", "2pp : " + pp);
+					arrData.set(pp, new MyPhoneListObj(arrData.get(pp).getNAME(), arrData.get(pp).getPHONE(), 0 ,0));
 				}
+
 				m_Adapter.notifyDataSetChanged();
 			}
 		}
