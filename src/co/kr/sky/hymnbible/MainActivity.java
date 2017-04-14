@@ -68,7 +68,7 @@ import co.kr.sky.hymnbible.fun.MySQLiteOpenHelper;
 public class MainActivity extends Activity{
 
 	//업로드
-	private static final String TYPE_IMAGE = "image/*";
+	private static final String TYPE_IMAGE = "file/*";
 	private static final int INPUT_FILE_REQUEST_CODE = 1;
 
 	private ValueCallback<Uri[]> mFilePathCallback;
@@ -353,6 +353,15 @@ public class MainActivity extends Activity{
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.e("SKY" , "RESULT :: " + requestCode);
+		Log.e("SKY" , "resultCode :: " + resultCode);
+		Log.e("SKY" , "data :: " + data);
+		if (data == null) {
+			Log.e("SKY" , "data null:: ");
+			Uri[] results = new Uri[]{Uri.parse("")};
+			mFilePathCallback.onReceiveValue(results);
+			mFilePathCallback = null;
+			return;
+		}
 		switch (requestCode) {
 		case 1:
 			if (requestCode == INPUT_FILE_REQUEST_CODE && resultCode == RESULT_OK) {
