@@ -1,9 +1,15 @@
 package co.kr.sky.hymnbible;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -16,6 +22,7 @@ import android.widget.Toast;
 import co.kr.sky.hymnbible.adapter.LMSMain_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.LMSMainObj;
+import co.kr.sky.hymnbible.obj.MyPhoneListObj;
 
 public class LMSMainActivity extends Activity{
 	EditText lms_msg , phone_number;
@@ -98,7 +105,9 @@ public class LMSMainActivity extends Activity{
 			case R.id.btn_back:	
 				finish();
 				break;
-			case R.id.bottomview_l:	
+			case R.id.bottomview_l:	//발송내역
+				Intent intent100 = new Intent(LMSMainActivity.this , LMSHistoryActivity.class);
+				startActivityForResult(intent100, 100);
 				break;
 
 			case R.id.bottomview_c:	
@@ -109,8 +118,8 @@ public class LMSMainActivity extends Activity{
 
 			case R.id.tab1:	
 				//폰주소록
-				Intent intent100 = new Intent(LMSMainActivity.this , LMSMyPhoneActivity.class);
-				startActivityForResult(intent100, 100);
+				Intent intent300 = new Intent(LMSMainActivity.this , LMSMyPhoneActivity.class);
+				startActivity(intent300);
 				break;
 			case R.id.tab2:	
 				//폰주소록
@@ -118,15 +127,25 @@ public class LMSMainActivity extends Activity{
 				startActivityForResult(intent200, 200);
 				break;
 			case R.id.send_lms:
-				
+				Date d = new Date();
+		        String s = d.toString();
+		        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				int count = (SELECT_Phone(sdf.format(d))+arrData.size());
+				Log.e("SKY" , "count :: " + count);
 				if (arrData.size() == 0) {
 					Toast.makeText(getApplicationContext(), "이름 혹은 전화번호를 입력해주세요.", 0).show();
 				}else if(lms_msg.getText().toString().trim().length() == 0){
 					Toast.makeText(getApplicationContext(), "보내실 문자를 입력해주세요.", 0).show();
+				}else if(arrData.size() > 499){
+					Toast.makeText(getApplicationContext(), "하루에 전송 최대치(500건)를 넘었습니다.", 0).show();
+				}else if((SELECT_Phone(sdf.format(d))+arrData.size()) > 499){
+					Toast.makeText(getApplicationContext(), "하루에 전송 최대치(500건)를 넘었습니다.", 0).show();
 				}else{
 					for (int i = 0; i < arrData.size(); i++) {
 						sendSMS(lms_msg.getText().toString(),arrData.get(i).getNumber());
 					}
+					//디비 인설트 
+					SAVE_LMS_HISTORY("" , lms_msg.getText().toString());
 				}
 				break;
 			case R.id.number_plus:	
@@ -144,8 +163,37 @@ public class LMSMainActivity extends Activity{
 			}
 		}
 	};
+	public int SELECT_Phone(String date)		//디비 값 조회해서 저장하기
+	{
+		try{
+			//  db파일 읽어오기
+			SQLiteDatabase db = openOrCreateDatabase("lms_history.db", Context.MODE_PRIVATE, null);
+			// 쿼리로 db의 커서 획득
+			Cursor cur = db.rawQuery("SELECT * FROM `lms_history` where date like '%" + date + "%';", null);
+			// 처음 레코드로 이동
+			int count = 0;
+			while(cur.moveToNext()){
+				// 읽은값 출력
+				Log.i("MiniApp",cur.getString(0)+"/"+cur.getString(1)+"/"+cur.getString(2));
+				count++;
+			}
+			cur.close();
+			db.close();
+			Log.e("SKY" , "SELECT_Phone count :: " + count);
+
+			return count;
+		}
+		catch (SQLException se) {
+			// TODO: handle exception
+			Log.e("selectData()Error! : ",se.toString());
+			return 0;
+		}   
+
+	}
+	//SELECT COUNT(*) FROM your_table;
 	private void sendSMS(String msg, String number) {
 		Log.e("SKY", "보낼 문자 번호 :: " + number);
+		
 		SmsManager sm = SmsManager.getDefault();
 
 		if(msg.getBytes().length > 80) {
@@ -154,5 +202,31 @@ public class LMSMainActivity extends Activity{
 		}
 		else
 			sm.sendTextMessage(number, null, msg, null, null);
+	}
+	public void SAVE_LMS_HISTORY(String phone, String body){
+		//인서트쿼리
+		try{
+			Date d = new Date();
+	        String s = d.toString();
+	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	        System.out.println("현재날짜 : "+ sdf.format(d));
+			SQLiteDatabase db = openOrCreateDatabase("lms_history.db", Context.MODE_PRIVATE, null);
+			String sql;
+			try {
+				sql = "INSERT INTO `lms_history`(`phone`,`body`,`date`) VALUES (";
+				sql += "'"  + phone  + "'" ;
+				sql += ",'" + body  + "'" ;
+				sql += ",'" + sdf.format(d)  + "'" ;
+				sql +=   ")";
+				Log.e("SKY","sql  : "+ sql);
+				db.execSQL(sql);
+			} catch (Exception e) {
+				db.close();
+				Log.e("SKY","sql error : "+ e.toString());
+			}
+			db.close();
+		}catch (Exception e) {
+			Log.e("SKY","onPostExecute error : "+ e.toString());
+		}
 	}
 }
