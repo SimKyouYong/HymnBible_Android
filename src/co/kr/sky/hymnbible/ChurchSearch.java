@@ -270,6 +270,9 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 					JSONArray ja = new JSONArray(res);
 					if (ja.length() == 0 ) {
 						Toast.makeText(getApplicationContext(), "해당 검색 데이터는 존재하지 않습니다.", 0).show();
+						//지도 꽉차게 표시
+						list_view_11.setVisibility(View.GONE);
+						mMap.clear();
 						customProgressClose();
 						return;
 					}
@@ -478,7 +481,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 		}
 		CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(Double.parseDouble(arrData.get(0).getLatitude()), Double.parseDouble(arrData.get(0).getLongitude())));
 		mMap.moveCamera(update);		//자기 위치로 이동
-		CameraUpdate zoom = CameraUpdateFactory.zoomTo(11);
+		CameraUpdate zoom = CameraUpdateFactory.zoomTo(13);
 		mMap.animateCamera(zoom);
 	}
 	/**

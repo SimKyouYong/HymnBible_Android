@@ -71,6 +71,7 @@ public class MainActivity extends Activity{
 	private static final String TYPE_IMAGE = "file/*";
 	private static final int INPUT_FILE_REQUEST_CODE = 1;
 
+	private String url_copy_progress="";
 	private ValueCallback<Uri[]> mFilePathCallback;
 	private String mCameraPhotoPath;
 	AccumThread mThread;
@@ -81,7 +82,7 @@ public class MainActivity extends Activity{
 
 	private final static int FILECHOOSER_RESULTCODE = 1;
 
-	private Boolean Real_exit = false;
+	private Boolean Real_exit = true;
 	public static WebView BibleWeb;
 	public WebView BibleWeb_s = null;
 	//String url = "http://hoon0319.cafe24.com/index.do";
@@ -612,11 +613,13 @@ public class MainActivity extends Activity{
 		
 			//myTTS.stop();
 			
-			if (url.startsWith("http://shqrp5200.cafe24.com/index.do")) {
+			if (url.matches(".*http://shqrp5200.cafe24.com/index.do.*")) {
 				//메인 페이지이기에 종료하기 띄운다!.
 				Real_exit = true;
+				Log.e("SKY", "set Real_exit = = = = = = = "+Real_exit);
 			}else{
 				Real_exit = false;
+				Log.e("SKY", "set Real_exit = = = = = = = "+Real_exit);
 			}
 			
 			if( url.startsWith("http:") || url.startsWith("https:") ) {
@@ -673,6 +676,7 @@ public class MainActivity extends Activity{
 			super.onPageStarted(view, url, favicon);
 			Log.e("SKY", "onPageStarted = = = = = = = "+url);
 			fix_url = url;
+			
 			if (url.matches(".*sharp5200.*")) {
 				URL_NOW = url;
 			}
@@ -689,7 +693,10 @@ public class MainActivity extends Activity{
 			}
 
 			if (url.matches("http://shqrp5200.cafe24.com/hymn/hymn_list.do")) {
-				customProgressPop();
+				if (url_copy_progress.matches(".*http://shqrp5200.cafe24.com/index.do.*")) {
+					customProgressPop();
+				}
+				
 			}
 			
 
@@ -700,7 +707,7 @@ public class MainActivity extends Activity{
 			super.onPageFinished(view, url); 
 			//String ht = "javascript:window.droid.print(document.getElementsByTagName('html')[0].innerHTML);";
 			//BibleWeb.loadUrl(ht);
-			
+			url_copy_progress = url;
 			Log.e("SKY", "onPageFinished = = = = = = = "+url);
 			customProgressClose();
 			//하단 bottomView visible
