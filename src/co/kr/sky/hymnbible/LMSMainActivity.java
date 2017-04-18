@@ -122,8 +122,8 @@ public class LMSMainActivity extends Activity{
 				startActivity(intent300);
 				break;
 			case R.id.tab2:	
-				//폰주소록
-				Intent intent200 = new Intent(LMSMainActivity.this , LMSMyPhoneActivity.class);
+				//서버주소록
+				Intent intent200 = new Intent(LMSMainActivity.this , LMSServerActivity.class);
 				startActivityForResult(intent200, 200);
 				break;
 			case R.id.send_lms:
