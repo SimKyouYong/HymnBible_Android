@@ -198,23 +198,35 @@ public class LMSMyPhoneActivity extends Activity{
 				DeleteTb();
 				break;
 			case R.id.btn_ok:	
-				for (int i = 0; i < arrData.size(); i++) {
-					if (arrData.get(i).getSELECTED() == 1) {
-						ArrayList<MyPhoneListObj> vo = SELECT_Phone(arrData.get(i).get_ID());
-						for (int j = 0; j < vo.size(); j++) {
-							dataSet.arrData_real.add(new MyPhoneListObj2(0,
-									vo.get(j).getNAME(),
-									vo.get(j).getPHONE(),
-									vo.get(j).getCHECK(),
-									Integer.parseInt(arrData.get(i).get_ID())));
-						}
-					}
-				}
-				LMSMainActivity.onresume_0 = 1;
+				customProgressPop();
 				break;
 			}
 		}
 	};
+	public class AccumThread2 extends Thread{
+		public AccumThread2(){
+		}
+		@Override
+		public void run()
+		{
+			for (int i = 0; i < arrData.size(); i++) {
+				if (arrData.get(i).getSELECTED() == 1) {
+					int key = Integer.parseInt(arrData.get(i).get_ID());
+					ArrayList<MyPhoneListObj> vo = SELECT_Phone(""+(key-1));
+					for (int j = 0; j < vo.size(); j++) {
+						dataSet.arrData_real.add(new MyPhoneListObj2(0,
+								vo.get(j).getNAME(),
+								vo.get(j).getPHONE(),
+								vo.get(j).getCHECK(),
+								Integer.parseInt(arrData.get(i).get_ID())));
+					}
+				}
+			}
+			Message msg2 = mAfterAccum.obtainMessage();
+			msg2.arg1 = 200;
+			mAfterAccum.sendMessage(msg2);
+		}
+	}
 	public ArrayList<MyPhoneListObj> SELECT_Phone(String key)		//디비 값 조회해서 저장하기
 	{
 		ArrayList<MyPhoneListObj> arr = new ArrayList<MyPhoneListObj>();
@@ -255,25 +267,10 @@ public class LMSMyPhoneActivity extends Activity{
 				Log.e("SKY" , "조회 끝 !");
 				customProgressClose();
 				SELECT_GROUP();
-			} else if(msg.arg1  == 2000 ){
-				Log.e("SKY" , "모두 해제 ");
-				int group_id = msg.arg2;
-				for (int i = 0; i < arrData.size(); i++) {
-					if (arrData.get(i).get_ID().equals(""+group_id)) {
-						arrData.get(i).setSELECTED(0);
-					}
-				}
-				m_Adapter.notifyDataSetChanged();
-			} else if(msg.arg1  == 1000 ){
-				Log.e("SKY" , "모두 선택 ");
-				int group_id = msg.arg2;
-				for (int i = 0; i < arrData.size(); i++) {
-					if (arrData.get(i).get_ID().equals(""+group_id)) {
-						arrData.get(i).setSELECTED(1);
-					}
-				}
-				m_Adapter.notifyDataSetChanged();
-				
+			}else if(msg.arg1  == 200 ){
+				LMSMainActivity.onresume_0 = 1;
+				customProgressClose();
+				finish();
 			}
 		}
 	};
@@ -502,6 +499,7 @@ public class LMSMyPhoneActivity extends Activity{
 			Intent board = new Intent(LMSMyPhoneActivity.this, LMSMyPhoneDetailActivity.class);
 			board.putExtra("Object", arrData.get(position));
 			startActivity(board);
+			finish();
 		}
 	};
 	private int getGroupSummaryCount(String groupId) {

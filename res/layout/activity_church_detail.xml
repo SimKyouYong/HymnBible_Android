@@ -125,7 +125,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:text="Prev" />
+                    android:background="@drawable/btn_left" />
 
                 <Button
                     android:id="@+id/btn_next"
@@ -133,7 +133,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
-                    android:text="Next" />
+                    android:background="@drawable/btn_right" />
             </RelativeLayout>
 
             <LinearLayout

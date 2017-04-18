@@ -75,22 +75,10 @@ public class LMSMyPhoneList_Adapter extends BaseAdapter {
 					Log.e("SKY" , "클릭 :: " + isChecked);
 					if (isChecked) {
 						Log.e("SKY" , "클릭");
-						if (!LMSMyPhoneDetailActivity.search_flag) {
-							items.get(position).setCHECK(1);
-						}else{
-							int pp = board.getCopy_position();
-							LMSMyPhoneDetailActivity.arrData.set(pp, new MyPhoneListObj(LMSMyPhoneDetailActivity.arrData.get(pp).getNAME(), LMSMyPhoneDetailActivity.arrData.get(pp).getPHONE(), 1 , 0));
-
-						}
+						items.get(position).setCHECK(1);
 					} else {
 						Log.e("SKY" , "not 클릭" );
-						if (!LMSMyPhoneDetailActivity.search_flag) {
-							items.get(position).setCHECK(0);
-						}else{
-							int pp = board.getCopy_position();
-							LMSMyPhoneDetailActivity.arrData.set(pp, new MyPhoneListObj(LMSMyPhoneDetailActivity.arrData.get(pp).getNAME(), LMSMyPhoneDetailActivity.arrData.get(pp).getPHONE(), 0 , 0));
-
-						}
+						items.get(position).setCHECK(0);
 					}
 				}
 			}

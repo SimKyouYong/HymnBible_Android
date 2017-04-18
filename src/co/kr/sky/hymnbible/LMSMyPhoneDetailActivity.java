@@ -141,21 +141,21 @@ public class LMSMyPhoneDetailActivity extends Activity{
 					.show();
 					return;
 				}
-				if (j > 499) {
-					//499개 보다 많으면.. 다음화면으로 못가게 맊음.!
-					AlertDialog.Builder ab = new AlertDialog.Builder(LMSMyPhoneDetailActivity.this , AlertDialog.THEME_HOLO_LIGHT);
-					//		.setTitle("부적결제 후 전화상담 서비스로 연결 되며 12시간 동안 재연결 무료 입니다.\n(운수대톡 )")
-					ab.setMessage("500개 이상 선택은 불가능합니다.");
-					ab.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int whichButton) {
-							return;
-						}
-					})
-					.show();
-				}else{
-					LMSMyPhoneActivity.onresume_1 = 1;
-					finish();
-				}
+//				if (j > 499) {
+//					//499개 보다 많으면.. 다음화면으로 못가게 맊음.!
+//					AlertDialog.Builder ab = new AlertDialog.Builder(LMSMyPhoneDetailActivity.this , AlertDialog.THEME_HOLO_LIGHT);
+//					//		.setTitle("부적결제 후 전화상담 서비스로 연결 되며 12시간 동안 재연결 무료 입니다.\n(운수대톡 )")
+//					ab.setMessage("500개 이상 선택은 불가능합니다.");
+//					ab.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+//						public void onClick(DialogInterface dialog, int whichButton) {
+//							return;
+//						}
+//					})
+//					.show();
+//				}else{
+//				}
+				LMSMainActivity.onresume_0 = 1;
+				finish();
 				break;
 			}
 		}

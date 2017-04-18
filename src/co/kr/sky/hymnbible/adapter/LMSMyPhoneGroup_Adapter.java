@@ -74,19 +74,25 @@ public class LMSMyPhoneGroup_Adapter extends BaseAdapter {
 				if (buttonView.getId() == R.id.check) {
 					if (isChecked) {
 						Log.e("SKY" , "클릭");
+						board.setSELECTED(1);
+						/*
 						//모두 선택!
 						Message msg2 = mAfterAccum.obtainMessage();
 						msg2.arg1 = 1000;
 						msg2.arg2 = Integer.parseInt(board.get_ID());
 						mAfterAccum.sendMessage(msg2);
+						*/
 						vh.t_name.setText(board.getTITLE() + "(" + board.getGROUP_COUNT() + " / " + board.getGROUP_COUNT() + ")");
 					} else {
 						Log.e("SKY" , "not 클릭" );
+						board.setSELECTED(0);
+						/*
 						//모두 해제!
 						Message msg2 = mAfterAccum.obtainMessage();
 						msg2.arg1 = 2000;
 						msg2.arg2 = Integer.parseInt(board.get_ID());
 						mAfterAccum.sendMessage(msg2);
+						*/
 						vh.t_name.setText(board.getTITLE() + "(" + board.getSELECTED_COUNT() + " / " + board.getGROUP_COUNT() + ")");
 
 					}
