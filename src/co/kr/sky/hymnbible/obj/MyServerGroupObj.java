@@ -66,7 +66,7 @@ public class MyServerGroupObj implements Parcelable{
 		this.my_phone = my_phone;
 	}
 	public MyServerGroupObj(Parcel in) {
-		// TODO Auto-generated constructor stub
+		readFromParcel(in);
 	}
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {

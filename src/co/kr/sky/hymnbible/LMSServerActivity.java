@@ -6,6 +6,7 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,11 +41,11 @@ public class LMSServerActivity extends Activity{
 		title = (TextView)findViewById(R.id.title);
 		ttf = Typeface.createFromAsset(getAssets(), "HANYGO230.TTF");
 		title.setTypeface(ttf);
-		
+
 		m_Adapter = new LMSServerPhoneGroup_Adapter( this , arrData , mAfterAccum);
 		list_number.setOnItemClickListener(mItemClickListener);
 		list_number.setAdapter(m_Adapter);
-		
+
 		customProgressPop();
 		String []val = {"item1","item2","item3","item4" , "item5"};
 		map.put("url", dataSet.SERVER + "Server_Sel.jsp");
@@ -52,34 +53,34 @@ public class LMSServerActivity extends Activity{
 		mThread = new AccumThread(this , mAfterAccum , map , 1 , 0 , val);
 
 		mThread.start();		//스레드 시작!!
-		
-		
+
+
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_reflash).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
 
 	}
 	//버튼 리스너 구현 부분 
-		View.OnClickListener btnListener = new View.OnClickListener() {
-			public void onClick(View v) {
-				switch (v.getId()) {
-				case R.id.btn_back:	
-					finish();
-					break;
-				case R.id.btn_reflash:
-					customProgressPop();
-					String []val = {"item1","item2","item3","item4" , "item5"};
-					map.put("url", dataSet.SERVER + "Server_Sel.jsp");
-					map.put("my_phone", dataSet.PHONE);
-					mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 1 , 0 , val);
+	View.OnClickListener btnListener = new View.OnClickListener() {
+		public void onClick(View v) {
+			switch (v.getId()) {
+			case R.id.btn_back:	
+				finish();
+				break;
+			case R.id.btn_reflash:
+				customProgressPop();
+				String []val = {"item1","item2","item3","item4" , "item5"};
+				map.put("url", dataSet.SERVER + "Server_Sel.jsp");
+				map.put("my_phone", dataSet.PHONE);
+				mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 1 , 0 , val);
 
-					mThread.start();		//스레드 시작!!
-					break;
-				case R.id.btn_ok:	
-					break;
-				}
+				mThread.start();		//스레드 시작!!
+				break;
+			case R.id.btn_ok:	
+				break;
 			}
-		};
+		}
+	};
 	Handler mAfterAccum = new Handler()
 	{
 		@Override
@@ -113,17 +114,17 @@ public class LMSServerActivity extends Activity{
 			}
 		}
 	};
-	
+
 	AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
 			Log.e("SKY", "POSITION :: "+position);
+			Log.e("SKY", "POSITION :: "+arrData.get(position).getG_id());
 			//arrData.get(position).setSELECTED(1);
-			//position_click = position;
-//			Intent board = new Intent(LMSMyPhoneActivity.this, LMSMyPhoneDetailActivity.class);
-//			board.putExtra("Object", arrData.get(position));
-//			startActivity(board);
-//			finish();
+			Intent board = new Intent(LMSServerActivity.this, LMSServerDetailActivity.class);
+			board.putExtra("Object", arrData.get(position));
+			startActivity(board);
+			finish();
 		}
 	};
 	public void customProgressPop(){
