@@ -26,7 +26,10 @@ import co.kr.sky.hymnbible.adapter.LMSMyPhoneGroup_Adapter;
 import co.kr.sky.hymnbible.common.Check_Preferences;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.fun.MySQLiteOpenHelper;
+import co.kr.sky.hymnbible.obj.LMSMainObj;
 import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
+import co.kr.sky.hymnbible.obj.MyPhoneListObj;
+import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
 
 public class LMSMyPhoneActivity extends Activity{
 	LMSMyPhoneGroup_Adapter           m_Adapter;
@@ -37,22 +40,15 @@ public class LMSMyPhoneActivity extends Activity{
 	private Typeface ttf;
 
 	TextView title;
-	public static int position_click = 0;
 	public static int onresume_1 = 0;
+	
 	@Override
 	public void onResume(){
 		super.onResume();
-		if (onresume_1 == 1) {
+		if (onresume_1 ==1) {
 			onresume_1 = 0;
-			int count = 0;
-			for (int i = 0; i < dataSet.arrData_real.size(); i++) {
-				if (position_click == dataSet.arrData_real.get(i).getPosition()) {
-					count++;
-				}
-			}
-			arrData.get(position_click).setSELECTED_COUNT(count);
-			m_Adapter.notifyDataSetChanged();
-			((Button)findViewById(R.id.btn_count)).setText(""+dataSet.arrData_real.size());
+			//그냥 끄기!
+			finish();
 		}
 	}
 	protected void onCreate(Bundle savedInstanceState) {
@@ -202,13 +198,48 @@ public class LMSMyPhoneActivity extends Activity{
 				DeleteTb();
 				break;
 			case R.id.btn_ok:	
+				for (int i = 0; i < arrData.size(); i++) {
+					if (arrData.get(i).getSELECTED() == 1) {
+						ArrayList<MyPhoneListObj> vo = SELECT_Phone(arrData.get(i).get_ID());
+						for (int j = 0; j < vo.size(); j++) {
+							dataSet.arrData_real.add(new MyPhoneListObj2(0,
+									vo.get(j).getNAME(),
+									vo.get(j).getPHONE(),
+									vo.get(j).getCHECK(),
+									Integer.parseInt(arrData.get(i).get_ID())));
+						}
+					}
+				}
 				LMSMainActivity.onresume_0 = 1;
-				finish();
 				break;
-				
 			}
 		}
 	};
+	public ArrayList<MyPhoneListObj> SELECT_Phone(String key)		//디비 값 조회해서 저장하기
+	{
+		ArrayList<MyPhoneListObj> arr = new ArrayList<MyPhoneListObj>();
+		try{
+			//  db파일 읽어오기
+			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
+			// 쿼리로 db의 커서 획득
+			Cursor cur = db.rawQuery("SELECT * FROM `phone` where group_key = '" + key + "';", null);
+			// 처음 레코드로 이동
+			while(cur.moveToNext()){
+				// 읽은값 출력
+				Log.i("MiniApp",cur.getString(0)+"/"+cur.getString(1)+"/"+cur.getString(2));
+				arr.add(new MyPhoneListObj(cur.getString(1), cur.getString(2), 0 ,0));
+			}
+			cur.close();
+			db.close();
+
+		}
+		catch (SQLException se) {
+			// TODO: handle exception
+			Log.e("selectData()Error! : ",se.toString());
+		}   
+		return arr;
+
+	}
 	Handler mAfterAccum = new Handler()
 	{
 		@Override
@@ -224,7 +255,26 @@ public class LMSMyPhoneActivity extends Activity{
 				Log.e("SKY" , "조회 끝 !");
 				customProgressClose();
 				SELECT_GROUP();
-			} 
+			} else if(msg.arg1  == 2000 ){
+				Log.e("SKY" , "모두 해제 ");
+				int group_id = msg.arg2;
+				for (int i = 0; i < arrData.size(); i++) {
+					if (arrData.get(i).get_ID().equals(""+group_id)) {
+						arrData.get(i).setSELECTED(0);
+					}
+				}
+				m_Adapter.notifyDataSetChanged();
+			} else if(msg.arg1  == 1000 ){
+				Log.e("SKY" , "모두 선택 ");
+				int group_id = msg.arg2;
+				for (int i = 0; i < arrData.size(); i++) {
+					if (arrData.get(i).get_ID().equals(""+group_id)) {
+						arrData.get(i).setSELECTED(1);
+					}
+				}
+				m_Adapter.notifyDataSetChanged();
+				
+			}
 		}
 	};
 	private void getGroup() {
@@ -447,8 +497,8 @@ public class LMSMyPhoneActivity extends Activity{
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
 			Log.e("SKY", "POSITION :: "+position);
-			arrData.get(position).setSELECTED(1);
-			position_click = position;
+			//arrData.get(position).setSELECTED(1);
+			//position_click = position;
 			Intent board = new Intent(LMSMyPhoneActivity.this, LMSMyPhoneDetailActivity.class);
 			board.putExtra("Object", arrData.get(position));
 			startActivity(board);

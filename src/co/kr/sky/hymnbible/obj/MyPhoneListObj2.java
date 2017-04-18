@@ -12,14 +12,25 @@ public class MyPhoneListObj2 implements Parcelable{
 	String NAME;
 	String PHONE;
 	int CHECK;
+	int GROUP;
 	
-	public MyPhoneListObj2(int position, String nAME, String pHONE, int cHECK) {
+	public MyPhoneListObj2(int position, String nAME, String pHONE, int cHECK, int GROUP) {
 		super();
 		this.position = position;
 		NAME = nAME;
 		PHONE = pHONE;
 		CHECK = cHECK;
+		this.GROUP = GROUP;
 	}
+	
+	public int getGROUP() {
+		return GROUP;
+	}
+
+	public void setGROUP(int gROUP) {
+		GROUP = gROUP;
+	}
+
 	public int getPosition() {
 		return position;
 	}
@@ -53,6 +64,7 @@ public class MyPhoneListObj2 implements Parcelable{
 		dest.writeString(PHONE);
 		dest.writeInt(CHECK);
 		dest.writeInt(position);
+		dest.writeInt(GROUP);
 
 	}
 	private void readFromParcel(Parcel in){
@@ -60,6 +72,7 @@ public class MyPhoneListObj2 implements Parcelable{
 		PHONE = in.readString();
 		CHECK = in.readInt();
 		position = in.readInt();
+		GROUP = in.readInt();
 		
 	}
 	@SuppressWarnings("rawtypes")

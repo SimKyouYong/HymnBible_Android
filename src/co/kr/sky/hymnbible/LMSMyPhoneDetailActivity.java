@@ -122,10 +122,11 @@ public class LMSMyPhoneDetailActivity extends Activity{
 				for (int i = 0; i < arrData.size(); i++) {
 					if (arrData.get(i).getCHECK() == 1) {
 						j++;
-						dataSet.arrData_real.add(new MyPhoneListObj2(LMSMyPhoneActivity.position_click ,
+						dataSet.arrData_real.add(new MyPhoneListObj2(0 ,
 								arrData.get(i).getNAME(),
 								arrData.get(i).getPHONE(),
-								arrData.get(i).getCHECK()));
+								arrData.get(i).getCHECK(),
+								Integer.parseInt(obj.get_ID())));
 					}
 				}
 				if (j == 0) {

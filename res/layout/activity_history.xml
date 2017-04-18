@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff" >
-
+    android:background="#DCDCDC" >
 
     <RelativeLayout
         android:id="@+id/view1"
@@ -58,13 +57,66 @@
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view1"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#717A86"
+        android:orientation="horizontal"
+        android:padding="5dp" >
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="발송일자"
+            android:id="@+id/font_txt1"
+            android:textColor="#ffffff" />
+
+        <TextView
+            android:layout_width="1dp"
+            android:layout_height="wrap_content"
+            android:background="#000000"
+            android:visibility="invisible" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:id="@+id/font_txt2"
+            android:gravity="center"
+            android:text="성공/실패"
+            android:textColor="#ffffff" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/bottomview_exit"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#007AFF"
+        android:padding="10dp"
+        android:text="닫기"
+        android:textColor="#ffffff"
+        android:textSize="20dp" />
+
     <ListView
         android:id="@+id/list_number"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@+id/view1"
+        android:layout_above="@+id/bottomview_exit"
+        android:layout_below="@+id/view"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:divider="#dfdede"
-        android:dividerHeight="1dp" >
+        android:dividerHeight="10dp" >
     </ListView>
 
 </RelativeLayout>

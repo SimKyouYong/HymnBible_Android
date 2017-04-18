@@ -49,7 +49,7 @@ public class LMSHistory_Adapter extends BaseAdapter {
 	}
 
 	static class ViewHolder {
-		TextView t_date ,t_status , t_body ;
+		TextView t_date , t_body ,t_total_count,t_send_count;
 	}
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		final HistoryObj board = items.get(position);
@@ -57,20 +57,23 @@ public class LMSHistory_Adapter extends BaseAdapter {
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.activity_lms_history_item,null);
 			vh.t_date = (TextView) convertView.findViewById(R.id.t_date); 
-			vh.t_status = (TextView) convertView.findViewById(R.id.t_status); 
+			vh.t_total_count = (TextView) convertView.findViewById(R.id.t_total_count); 
 			vh.t_body = (TextView) convertView.findViewById(R.id.t_body); 
-
+			vh.t_send_count = (TextView) convertView.findViewById(R.id.t_send_count); 
+			
 			convertView.setTag(vh);
 		}else {
 			vh = (ViewHolder) convertView.getTag();
 		}
 		vh.t_date.setTypeface(ttf);
-		vh.t_status.setTypeface(ttf);
+		vh.t_total_count.setTypeface(ttf);
 		vh.t_body.setTypeface(ttf);
+		vh.t_send_count.setTypeface(ttf);
 		
 		vh.t_date.setText(board.getDate());
-		//vh.t_status.setText(board.getName());
+		vh.t_total_count.setText(board.getPhone());
 		vh.t_body.setText(board.getBody());
+		vh.t_send_count.setText(board.getPhone());
 		return convertView;
 	}
 

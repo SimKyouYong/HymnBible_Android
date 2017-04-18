@@ -145,7 +145,9 @@ public class LMSMainActivity extends Activity{
 						sendSMS(lms_msg.getText().toString(),arrData.get(i).getNumber());
 					}
 					//디비 인설트 
-					SAVE_LMS_HISTORY("" , lms_msg.getText().toString());
+					SAVE_LMS_HISTORY(""+arrData.size() , lms_msg.getText().toString());
+					arrData.clear();
+					m_Adapter.notifyDataSetChanged();
 				}
 				break;
 			case R.id.number_plus:	
@@ -175,7 +177,7 @@ public class LMSMainActivity extends Activity{
 			while(cur.moveToNext()){
 				// 읽은값 출력
 				Log.i("MiniApp",cur.getString(0)+"/"+cur.getString(1)+"/"+cur.getString(2));
-				count++;
+				count=+ Integer.parseInt(cur.getString(1));
 			}
 			cur.close();
 			db.close();
