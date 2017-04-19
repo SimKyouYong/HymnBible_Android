@@ -205,7 +205,8 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 			ArrayList<String> result = data
 					.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 			Log.e("SKY" , "RESULT :: " + result.get(0));
-			e_search1.setText(""+result.get(0).trim());
+			String val = result.get(0).trim().replace(" ", "");
+			e_search1.setText(""+val);
 			SendHttp();
 		}
 	}
