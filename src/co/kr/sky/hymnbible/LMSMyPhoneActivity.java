@@ -310,23 +310,21 @@ public class LMSMyPhoneActivity extends Activity{
 		JSONObject obj = new JSONObject();
 		try {
 			JSONArray jArray = new JSONArray();//배열이 필요할때
+			ArrayList<MyPhoneListObj> arr = new ArrayList<MyPhoneListObj>();
 			for (int i = 0; i < arrData.size(); i++)//배열
 			{
-//				JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
-//				if (arrData.get(i).getSELECTED() == 1) {
-//					
-//				}
-//				SELECT_Phone
-//				sObject.put("contentid", arrData.get(i).get());
-//				sObject.put("contenttypeid", arrData.get(i).getContenttypeid());
-//				sObject.put("mapx", arrData.get(i).getMapx());
-//				sObject.put("mapy", arrData.get(i).getMapy());
-//				jArray.put(sObject);
+				JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
+				if (arrData.get(i).getSELECTED() == 1) {
+					arr.clear();
+					arr = SELECT_Phone(arrData.get(i).get_ID());
+					for (int j = 0; j < arr.size(); j++) {
+						sObject.put("NAME", arr.get(i).getNAME());
+						sObject.put("PHONE", arr.get(i).getPHONE());
+						jArray.put(sObject);
+					}
+				}
 			}
-			obj.put("planName", "planA");
-			obj.put("id", "userID");
-			obj.put("item", jArray);//배열을 넣음
-
+			Log.e("SKY","JSON DATA :: " + obj.toString());
 			System.out.println(obj.toString());
 
 		} catch (JSONException e) {
