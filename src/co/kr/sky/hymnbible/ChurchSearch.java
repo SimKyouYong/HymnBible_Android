@@ -482,7 +482,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 		}
 		CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(Double.parseDouble(arrData.get(0).getLatitude()), Double.parseDouble(arrData.get(0).getLongitude())));
 		mMap.moveCamera(update);		//자기 위치로 이동
-		CameraUpdate zoom = CameraUpdateFactory.zoomTo(13);
+		CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
 		mMap.animateCamera(zoom);
 	}
 	/**
