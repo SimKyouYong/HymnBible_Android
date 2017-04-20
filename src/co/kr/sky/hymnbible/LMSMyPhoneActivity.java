@@ -193,12 +193,15 @@ public class LMSMyPhoneActivity extends Activity{
 				finish();
 				break;
 			case R.id.btn_server:	
+				//서버에 그룹 저장
 				break;
 			case R.id.btn_reflash:
 				DeleteTb();
 				break;
 			case R.id.btn_ok:	
 				customProgressPop();
+				AccumThread2 av = new AccumThread2();
+				av.start();
 				break;
 			}
 		}
