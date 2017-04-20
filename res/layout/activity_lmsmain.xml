@@ -1,4 +1,3 @@
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -34,8 +33,8 @@
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LMS전송"
             android:layout_centerInParent="true"
+            android:text="LMS전송"
             android:textColor="#ffffff"
             android:textSize="21dp" />
 
@@ -77,14 +76,15 @@
             android:orientation="vertical" >
 
             <Button
+                android:id="@+id/bottomview_l_copy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/icon_list" />
 
             <TextView
+                android:id="@+id/font_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/font_1"
                 android:text="발송내역"
                 android:textColor="#ffffff" />
         </LinearLayout>
@@ -99,14 +99,15 @@
             android:orientation="vertical" >
 
             <Button
+                android:id="@+id/bottomview_c_copy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/icon_excel" />
 
             <TextView
+                android:id="@+id/font_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/font_2"
                 android:text="엑셀추가"
                 android:textColor="#ffffff" />
         </LinearLayout>
@@ -121,14 +122,15 @@
             android:orientation="vertical" >
 
             <Button
+                android:id="@+id/bottomview_r_copy"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/icon_cancel" />
 
             <TextView
+                android:id="@+id/font_3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/font_3"
                 android:text="발송취소"
                 android:textColor="#ffffff" />
         </LinearLayout>
@@ -206,6 +208,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
+                android:text="보내는 사람 : 0 명"
                 android:textColor="#000000"
                 android:textSize="15dp" />
         </LinearLayout>
