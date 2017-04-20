@@ -473,17 +473,38 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 			}
 		});
 		if (arrData.size() > 1) {
-			//37.5132042,126.846721
-			CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(36.3370879,127.5477928));
-			mMap.moveCamera(update);		//자기 위치로 이동
-			CameraUpdate zoom = CameraUpdateFactory.zoomTo(5);
-			mMap.animateCamera(zoom);
+			
+			
+			
+			//딜레이
+			new Handler().postDelayed(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(36.3370879,127.5477928));
+					mMap.moveCamera(update);		//자기 위치로 이동
+					CameraUpdate zoom = CameraUpdateFactory.zoomTo(5);
+					mMap.animateCamera(zoom);
+				}
+			}, 500);// 0.5초 정도 딜레이를 준 후 시작
 			return;
 		}
-		CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(Double.parseDouble(arrData.get(0).getLatitude()), Double.parseDouble(arrData.get(0).getLongitude())));
-		mMap.moveCamera(update);		//자기 위치로 이동
-		CameraUpdate zoom = CameraUpdateFactory.zoomTo(15);
-		mMap.animateCamera(zoom);
+		
+		//딜레이
+		new Handler().postDelayed(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				CameraUpdate update = CameraUpdateFactory.newLatLng(new LatLng(Double.parseDouble(arrData.get(0).getLatitude()), Double.parseDouble(arrData.get(0).getLongitude())));
+				mMap.moveCamera(update);		//자기 위치로 이동
+				CameraUpdate zoom = CameraUpdateFactory.zoomTo(17);
+				mMap.animateCamera(zoom);
+			}
+		}, 500);// 0.5초 정도 딜레이를 준 후 시작
+		
+		
 	}
 	/**
 	 * 주소로부터 위치정보 취득
