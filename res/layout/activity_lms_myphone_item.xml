@@ -12,6 +12,7 @@
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="2dp"
         android:focusable="false"
+        android:background="@drawable/checkbox_on_off"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="2dp" />
 

@@ -10,19 +10,21 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import co.kr.sky.hymnbible.adapter.LMSMain_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.LMSMainObj;
-import co.kr.sky.hymnbible.obj.MyPhoneListObj;
 
 public class LMSMainActivity extends Activity{
 	EditText lms_msg , phone_number;
@@ -31,7 +33,10 @@ public class LMSMainActivity extends Activity{
 	LMSMain_Adapter           m_Adapter;
 	public static int onresume_0 = 0;
 	CommonUtil dataSet = CommonUtil.getInstance();
+	private Typeface ttf;
 
+	private TextView font_1  , font_2, font_3 ,title;
+	private Button tab1 , tab2 , send_lms;
 	@Override
 	public void onResume(){
 		super.onResume();
@@ -65,11 +70,28 @@ public class LMSMainActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_lmsmain);
+		ttf = Typeface.createFromAsset(getAssets(), "HANYGO230.TTF");
 
 		lms_msg = (EditText)findViewById(R.id.lms_msg);
 		phone_number = (EditText)findViewById(R.id.phone_number);
 		list_number = (ListView)findViewById(R.id.list_number);
+		font_1 = (TextView)findViewById(R.id.font_1);
+		font_2 = (TextView)findViewById(R.id.font_2);
+		font_3 = (TextView)findViewById(R.id.font_3);
+		title = (TextView)findViewById(R.id.title);
+		tab1 = (Button)findViewById(R.id.tab1);
+		tab2 = (Button)findViewById(R.id.tab2);
+		send_lms = (Button)findViewById(R.id.send_lms);
 
+		lms_msg.setTypeface(ttf);
+		phone_number.setTypeface(ttf);
+		font_1.setTypeface(ttf);
+		font_2.setTypeface(ttf);
+		font_3.setTypeface(ttf);
+		tab1.setTypeface(ttf);
+		tab2.setTypeface(ttf);
+		send_lms.setTypeface(ttf);
+		title.setTypeface(ttf);
 
 		findViewById(R.id.bottomview_l).setOnClickListener(btnListener);
 		findViewById(R.id.bottomview_c).setOnClickListener(btnListener);

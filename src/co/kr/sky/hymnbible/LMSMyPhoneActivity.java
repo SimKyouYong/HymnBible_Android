@@ -3,9 +3,15 @@ package co.kr.sky.hymnbible;
 import java.util.ArrayList;
 import java.util.TreeSet;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
@@ -17,16 +23,20 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import co.kr.sky.hymnbible.adapter.LMSMyPhoneGroup_Adapter;
 import co.kr.sky.hymnbible.common.Check_Preferences;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.fun.MySQLiteOpenHelper;
-import co.kr.sky.hymnbible.obj.LMSMainObj;
 import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
@@ -38,10 +48,13 @@ public class LMSMyPhoneActivity extends Activity{
 	CommonUtil dataSet = CommonUtil.getInstance();
 	protected ProgressDialog customDialog = null;
 	private Typeface ttf;
+	CheckBox check_all;
 
-	TextView title;
+	private TextView font_1 , font_2 , font_3 , font_4 , t_count , t_name; 
+	TextView title ;
+	public static TextView check_count;
 	public static int onresume_1 = 0;
-	
+
 	@Override
 	public void onResume(){
 		super.onResume();
@@ -55,24 +68,47 @@ public class LMSMyPhoneActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_myphone);
 		list_number = (ListView)findViewById(R.id.list_number);
+		check_all = (CheckBox)findViewById(R.id.check_all);
 		title = (TextView)findViewById(R.id.title);
+		check_count = (TextView)findViewById(R.id.check_count);
+
+		font_1 = (TextView)findViewById(R.id.font_1);
+		font_2 = (TextView)findViewById(R.id.font_2);
+		font_3 = (TextView)findViewById(R.id.font_3);
+		font_4 = (TextView)findViewById(R.id.font_4);
+		t_count = (TextView)findViewById(R.id.t_count);
+		t_name = (TextView)findViewById(R.id.t_name);
+
 		ttf = Typeface.createFromAsset(getAssets(), "HANYGO230.TTF");
+
+
+
+
 		title.setTypeface(ttf);
+
+		font_1.setTypeface(ttf);
+		font_2.setTypeface(ttf);
+		font_3.setTypeface(ttf);
+		font_4.setTypeface(ttf);
+		t_count.setTypeface(ttf);
+		t_name.setTypeface(ttf);
+		check_count.setTypeface(ttf);
 
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_server).setOnClickListener(btnListener);
+		findViewById(R.id.btn_server1).setOnClickListener(btnListener);
 		findViewById(R.id.btn_reflash).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
 
-		
-		
+
+
 		m_Adapter = new LMSMyPhoneGroup_Adapter( this , arrData , mAfterAccum);
 		list_number.setOnItemClickListener(mItemClickListener);
 		list_number.setAdapter(m_Adapter);
-		
+
 		//디비에 값이 있으면 디비 조
 		if (!Check_Preferences.getAppPreferencesboolean(this, "phonedb")) {
-			
+
 			customProgressPop();
 			AccumThread1 av = new AccumThread1();
 			av.start();
@@ -80,7 +116,27 @@ public class LMSMyPhoneActivity extends Activity{
 			Log.e("SKY", "DB 조회해오기");
 			SELECT_GROUP();
 		}
-		
+
+		check_all.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+
+				if (buttonView.getId() == R.id.check_all) {
+					if (isChecked) {
+						Log.e("SKY" , "all클릭");
+						Message msg2 = mAfterAccum.obtainMessage();
+						msg2.arg1 = 5000;
+						mAfterAccum.sendMessage(msg2);
+					} else {
+						Log.e("SKY" , "all not 클릭" );
+						Message msg2 = mAfterAccum.obtainMessage();
+						msg2.arg1 = 6000;
+						mAfterAccum.sendMessage(msg2);
+					}
+				}
+			}
+		});
+
 	}
 	public class AccumThread1 extends Thread{
 		public AccumThread1(){
@@ -122,6 +178,7 @@ public class LMSMyPhoneActivity extends Activity{
 			Cursor cur = db.rawQuery("SELECT * FROM `group`;", null);
 			// 처음 레코드로 이동
 			while(cur.moveToNext()){
+
 				// 읽은값 출력
 				Log.i("MiniApp",cur.getString(0)+"/"+cur.getString(1)+"/"+cur.getString(2));
 				arrData.add(new MyPhoneGroupObj(""+cur.getString(0), 
@@ -168,7 +225,7 @@ public class LMSMyPhoneActivity extends Activity{
 			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
 			String sql;
 			try {
-				
+
 				sql = "INSERT INTO `group`(`name`,`count`) VALUES (";
 				sql += "'" + name  + "'" ;
 				sql += ",'" + count  + "'" ;
@@ -184,7 +241,7 @@ public class LMSMyPhoneActivity extends Activity{
 			Log.e("SKY","onPostExecute error : "+ e.toString());
 		}
 	}
-	
+
 	//버튼 리스너 구현 부분 
 	View.OnClickListener btnListener = new View.OnClickListener() {
 		public void onClick(View v) {
@@ -193,9 +250,15 @@ public class LMSMyPhoneActivity extends Activity{
 				finish();
 				break;
 			case R.id.btn_server:	
-				//서버에 그룹 저장
+				ServerSave();
+				break;
+			case R.id.btn_server1:	
+				ServerSave();
 				break;
 			case R.id.btn_reflash:
+				DeleteTb();
+				break;
+			case R.id.btn_reflash1:
 				DeleteTb();
 				break;
 			case R.id.btn_ok:	
@@ -203,9 +266,74 @@ public class LMSMyPhoneActivity extends Activity{
 				AccumThread2 av = new AccumThread2();
 				av.start();
 				break;
+			case R.id.btn_ok1:	
+				customProgressPop();
+				AccumThread2 av1 = new AccumThread2();
+				av1.start();
+				break;
 			}
 		}
 	};
+	private void ServerSave(){
+		//서버에 그룹 저장
+		AlertDialog.Builder alert = new AlertDialog.Builder(LMSMyPhoneActivity.this, AlertDialog.THEME_HOLO_LIGHT);
+		alert.setTitle("알림");
+		LinearLayout layout = new LinearLayout(LMSMyPhoneActivity.this);
+		layout.setOrientation(LinearLayout.VERTICAL);
+		layout.setGravity(Gravity.CENTER_HORIZONTAL);
+		final EditText name = new EditText(LMSMyPhoneActivity.this);
+		name.setSingleLine(true);
+		layout.setPadding(20, 0, 20, 0);
+		name.setHint("그룹명을 입력해주세요.");
+		layout.addView(name);
+		alert.setView(layout);
+		alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+				SendDataServer(name.getText().toString());
+				//post 발송
+				//				map.put("url", dataSet.SERVER+"recommender-proc.do");
+				//				map.put("my_id",dataSet.PHONE);
+				//				map.put("user_id",user_phone);
+				//				mThread = new AccumThread(ac , mAfterAccum , map , 0 , 0 , null);
+				//				mThread.start();		//스레드 시작!!
+
+			}
+		});
+		alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+
+			}
+		});
+		alert.show();
+	}
+	private void SendDataServer(String name ){
+		JSONObject obj = new JSONObject();
+		try {
+			JSONArray jArray = new JSONArray();//배열이 필요할때
+			for (int i = 0; i < arrData.size(); i++)//배열
+			{
+//				JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
+//				if (arrData.get(i).getSELECTED() == 1) {
+//					
+//				}
+//				SELECT_Phone
+//				sObject.put("contentid", arrData.get(i).get());
+//				sObject.put("contenttypeid", arrData.get(i).getContenttypeid());
+//				sObject.put("mapx", arrData.get(i).getMapx());
+//				sObject.put("mapy", arrData.get(i).getMapy());
+//				jArray.put(sObject);
+			}
+			obj.put("planName", "planA");
+			obj.put("id", "userID");
+			obj.put("item", jArray);//배열을 넣음
+
+			System.out.println(obj.toString());
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+	}
 	public class AccumThread2 extends Thread{
 		public AccumThread2(){
 		}
@@ -274,6 +402,18 @@ public class LMSMyPhoneActivity extends Activity{
 				LMSMainActivity.onresume_0 = 1;
 				customProgressClose();
 				finish();
+			}else if(msg.arg1  == 5000 ){//전체선택 
+				for (int i = 0; i < arrData.size(); i++) {
+					arrData.get(i).setSELECTED(1);
+				}
+				m_Adapter.notifyDataSetChanged();
+			}else if(msg.arg1  == 6000 ){//전체선택 해제
+				for (int i = 0; i < arrData.size(); i++) {
+					arrData.get(i).setSELECTED(0);
+				}
+				m_Adapter.notifyDataSetChanged();
+				LMSMyPhoneActivity.check_count.setText("0");
+
 			}
 		}
 	};
@@ -341,16 +481,16 @@ public class LMSMyPhoneActivity extends Activity{
 						 */
 						for (int i = 0; i < arrData.size(); i++) {
 							if (arrData.get(i).getTITLE().equals(TITLE)) {
-//								Log.e("SKY" , "for if getTITLE :: " + TITLE);
-//								Log.e("SKY" , "for if GROUP_COUNT :: " + GROUP_COUNT);
+								//								Log.e("SKY" , "for if getTITLE :: " + TITLE);
+								//								Log.e("SKY" , "for if GROUP_COUNT :: " + GROUP_COUNT);
 								//add
 								arrData.get(i).set_Add_ID(""+_ID);
 								arrData.get(i).set_Add_GROUP_COUNT(0);
 							}else{
 								//								Log.e("SKY" , "for else  :: " + i);
 								//default add
-//								Log.e("SKY" , "2for if getTITLE :: " + TITLE);
-//								Log.e("SKY" , "2for if GROUP_COUNT :: " + GROUP_COUNT);
+								//								Log.e("SKY" , "2for if getTITLE :: " + TITLE);
+								//								Log.e("SKY" , "2for if GROUP_COUNT :: " + GROUP_COUNT);
 								arrData.add(new MyPhoneGroupObj(""+_ID, 
 										TITLE, 
 										ACCOUNT_NAME, 
@@ -388,11 +528,11 @@ public class LMSMyPhoneActivity extends Activity{
 				}
 				SAVE_DB_GROUP_COUNT(arrData.get(i).getGROUP_COUNT() , i);
 			}
-			
+
 			Check_Preferences.setAppPreferences(LMSMyPhoneActivity.this, "phonedb", true);
-			
-			
-			
+
+
+
 		}
 	}
 	public void getSampleContactList(int groupID , int ii) {
@@ -407,7 +547,7 @@ public class LMSMyPhoneActivity extends Activity{
 				projection,
 				ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID
 				+ "=" + groupID, null, null);
-		
+
 		while (c.moveToNext()) {
 			String id = c
 					.getString(c
@@ -437,8 +577,8 @@ public class LMSMyPhoneActivity extends Activity{
 
 		}
 		c.close();
-		
-		
+
+
 	}
 	public void SAVE_DB_GROUP_COUNT(String count , int key)
 	{
@@ -497,12 +637,11 @@ public class LMSMyPhoneActivity extends Activity{
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
 			Log.e("SKY", "POSITION :: "+position);
-			//arrData.get(position).setSELECTED(1);
-			//position_click = position;
 			Intent board = new Intent(LMSMyPhoneActivity.this, LMSMyPhoneDetailActivity.class);
 			board.putExtra("Object", arrData.get(position));
 			startActivity(board);
 			finish();
+
 		}
 	};
 	private int getGroupSummaryCount(String groupId) {

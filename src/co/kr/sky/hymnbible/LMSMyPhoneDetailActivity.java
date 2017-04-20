@@ -1,7 +1,6 @@
 package co.kr.sky.hymnbible;
 
 import java.util.ArrayList;
-import java.util.TreeSet;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,17 +9,16 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import co.kr.sky.hymnbible.adapter.LMSMyPhoneGroup_Adapter;
 import co.kr.sky.hymnbible.adapter.LMSMyPhoneList_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
@@ -34,23 +32,36 @@ public class LMSMyPhoneDetailActivity extends Activity{
 	MyPhoneGroupObj obj;
 	CommonUtil dataSet = CommonUtil.getInstance();
 	ArrayList<MyPhoneListObj> arrData_copy = new ArrayList<MyPhoneListObj>();
+	private Typeface ttf;
 
+	private Button btn_ok;
 	EditText e_lms;
 	public static Boolean search_flag = false;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_myphonedetail);
+		
+		ttf = Typeface.createFromAsset(getAssets(), "HANYGO230.TTF");
+
 		list_number = (ListView)findViewById(R.id.list_number);
 		e_lms = (EditText)findViewById(R.id.e_lms);
-		//list_number.setOnItemClickListener(mItemClickListener);
+		btn_ok = (Button)findViewById(R.id.btn_ok);
+		
+		
+		
+		btn_ok.setTypeface(ttf);
+		e_lms.setTypeface(ttf);
 
+		
+
+		
+		
+		
 		Bundle bundle = getIntent().getExtras();
 		obj = bundle.getParcelable("Object");
 		Log.e("SKY", "ID :: " + obj.get_ID());
 
 		//디비 조회해서 값 뿌려주면 끝!!
-
-
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
 		findViewById(R.id.btn_sp2).setOnClickListener(btnListener);

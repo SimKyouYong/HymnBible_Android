@@ -84,6 +84,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/font_1"
                 android:text="발송내역"
                 android:textColor="#ffffff" />
         </LinearLayout>
@@ -105,6 +106,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/font_2"
                 android:text="엑셀추가"
                 android:textColor="#ffffff" />
         </LinearLayout>
@@ -126,6 +128,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:id="@+id/font_3"
                 android:text="발송취소"
                 android:textColor="#ffffff" />
         </LinearLayout>
