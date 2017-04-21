@@ -77,15 +77,17 @@ public class LMSMyPhoneGroup_Adapter extends BaseAdapter {
 						Log.e("SKY" , "클릭");
 						board.setSELECTED(1);
 						vh.t_name.setText(board.getTITLE() + "(" + board.getGROUP_COUNT() + " / " + board.getGROUP_COUNT() + ")");
-						String str = LMSMyPhoneActivity.check_count.getText().toString().replace("", "").replace(" ", "");
+						String str = LMSMyPhoneActivity.check_count.getText().toString().replace("명", "").replace(" ", "");
 						LMSMyPhoneActivity.check_count.setText(""+ (Integer.parseInt(str) + Integer.parseInt(board.getGROUP_COUNT())) + "명");
 					} else {
 						Log.e("SKY" , "not 클릭" );
 						board.setSELECTED(0);
-						String str = LMSMyPhoneActivity.check_count.getText().toString().replace("", "").replace(" ", "");
+						String str = LMSMyPhoneActivity.check_count.getText().toString().replace("명", "").replace(" ", "");
 						LMSMyPhoneActivity.check_count.setText(""+ (Integer.parseInt(str) - Integer.parseInt(board.getGROUP_COUNT())) + "명");
 
 					}
+					Allcheck();
+					
 				}
 			}
 		});
@@ -97,6 +99,29 @@ public class LMSMyPhoneGroup_Adapter extends BaseAdapter {
 		}
 
 		return convertView;
+	}
+	private void Allcheck(){
+		int count = 0;
+		for (int i = 0; i < items.size(); i++) {
+			if (items.get(i).getSELECTED() == 1) {
+				count++;
+			}
+		}
+		Log.e("SKY" , "count :: " + count);
+		Log.e("SKY" , "arrData.size() :: " + items.size());
+		if (count == items.size()) {
+			Message msg2 = mAfterAccum.obtainMessage();
+			msg2.arg1 = 7000;
+			mAfterAccum.sendMessage(msg2);
+		}else if(count > 0){
+			Message msg2 = mAfterAccum.obtainMessage();
+			msg2.arg1 = 9000;
+			mAfterAccum.sendMessage(msg2);
+		}else{
+			Message msg2 = mAfterAccum.obtainMessage();
+			msg2.arg1 = 8000;
+			mAfterAccum.sendMessage(msg2);
+		}
 	}
 
 }

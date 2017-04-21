@@ -218,7 +218,7 @@
                 android:layout_marginBottom="2dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="2dp"
-                android:background="@drawable/checkbox_on_off"
+                android:button="@drawable/checkbox_on_off"
                 android:focusable="false" />
 
             <TextView

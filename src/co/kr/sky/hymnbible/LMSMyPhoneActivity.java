@@ -412,7 +412,22 @@ public class LMSMyPhoneActivity extends Activity{
 				m_Adapter.notifyDataSetChanged();
 				LMSMyPhoneActivity.check_count.setText("0");
 
+			}else if(msg.arg1  == 7000 ){
+				check_all.setEnabled(true);//활성화
+				check_all.setChecked(true);
+				int count = 0;
+				for (int i = 0; i < arrData.size(); i++) {
+					count += Integer.parseInt(arrData.get(i).getGROUP_COUNT());
+				}
+				check_count.setText("" + count);
+			}else if(msg.arg1  == 8000 ){
+				check_all.setEnabled(true);//  ??
+				check_all.setChecked(false);
+			}else if(msg.arg1  == 9000 ){
+				check_all.setEnabled(true); //모두 선택
+				check_all.setChecked(false);
 			}
+			
 		}
 	};
 	private void getGroup() {
