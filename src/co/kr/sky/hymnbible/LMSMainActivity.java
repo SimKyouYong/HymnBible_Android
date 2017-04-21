@@ -1,19 +1,28 @@
 package co.kr.sky.hymnbible;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.View;
@@ -34,8 +43,9 @@ public class LMSMainActivity extends Activity{
 	public static int onresume_0 = 0;
 	CommonUtil dataSet = CommonUtil.getInstance();
 	private Typeface ttf;
+	private static final int INPUT_FILE_REQUEST_CODE = 1;
 
-	private TextView font_1  , font_2, font_3 ,title;
+	private TextView font_1  , font_2, font_3 ,title , t_count;
 	private Button tab1 , tab2 , send_lms;
 	@Override
 	public void onResume(){
@@ -65,6 +75,7 @@ public class LMSMainActivity extends Activity{
 			}
 			dataSet.arrData_real.clear();
 			m_Adapter.notifyDataSetChanged();
+			t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
 		}
 	}
 	protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +90,7 @@ public class LMSMainActivity extends Activity{
 		font_2 = (TextView)findViewById(R.id.font_2);
 		font_3 = (TextView)findViewById(R.id.font_3);
 		title = (TextView)findViewById(R.id.title);
+		t_count = (TextView)findViewById(R.id.t_count);
 		tab1 = (Button)findViewById(R.id.tab1);
 		tab2 = (Button)findViewById(R.id.tab2);
 		send_lms = (Button)findViewById(R.id.send_lms);
@@ -92,10 +104,14 @@ public class LMSMainActivity extends Activity{
 		tab2.setTypeface(ttf);
 		send_lms.setTypeface(ttf);
 		title.setTypeface(ttf);
+		t_count.setTypeface(ttf);
 
 		findViewById(R.id.bottomview_l).setOnClickListener(btnListener);
+		findViewById(R.id.bottomview_l_copy).setOnClickListener(btnListener);
 		findViewById(R.id.bottomview_c).setOnClickListener(btnListener);
+		findViewById(R.id.bottomview_c_copy).setOnClickListener(btnListener);
 		findViewById(R.id.bottomview_r).setOnClickListener(btnListener);
+		findViewById(R.id.bottomview_r_copy).setOnClickListener(btnListener);
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.tab1).setOnClickListener(btnListener);
 		findViewById(R.id.tab2).setOnClickListener(btnListener);
@@ -117,9 +133,30 @@ public class LMSMainActivity extends Activity{
 				Log.e("SKY" , "RESULT  -> " + res);
 				arrData.remove(res);
 				m_Adapter.notifyDataSetChanged();
+				t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
 			} 
 		}
 	};
+	private void Btn_bottomview_c(){
+		Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
+		contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
+		contentSelectionIntent.setType("file/*");
+
+		Intent[] intentArray;
+		intentArray = new Intent[0];
+
+		Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
+		chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
+		chooserIntent.putExtra(Intent.EXTRA_TITLE, "파일을 선택해주세요.");
+		chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+
+		startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
+	}
+	private void Btn_bottomview_l(){
+		Intent intent100 = new Intent(LMSMainActivity.this , LMSHistoryActivity.class);
+		startActivityForResult(intent100, 100);
+	}
+
 	//버튼 리스너 구현 부분 
 	View.OnClickListener btnListener = new View.OnClickListener() {
 		public void onClick(View v) {
@@ -128,13 +165,21 @@ public class LMSMainActivity extends Activity{
 				finish();
 				break;
 			case R.id.bottomview_l:	//발송내역
-				Intent intent100 = new Intent(LMSMainActivity.this , LMSHistoryActivity.class);
-				startActivityForResult(intent100, 100);
+				Btn_bottomview_l();
 				break;
-
+			case R.id.bottomview_l_copy:	//발송내역
+				Btn_bottomview_l();
+				break;
 			case R.id.bottomview_c:	
+				Btn_bottomview_c();
+				break;
+			case R.id.bottomview_c_copy:
+				Btn_bottomview_c();
 				break;
 			case R.id.bottomview_r:	
+				finish();
+				break;
+			case R.id.bottomview_r_copy:	
 				finish();
 				break;
 
@@ -150,8 +195,8 @@ public class LMSMainActivity extends Activity{
 				break;
 			case R.id.send_lms:
 				Date d = new Date();
-		        String s = d.toString();
-		        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+				String s = d.toString();
+				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 				int count = (SELECT_Phone(sdf.format(d))+arrData.size());
 				Log.e("SKY" , "count :: " + count);
 				if (arrData.size() == 0) {
@@ -169,7 +214,20 @@ public class LMSMainActivity extends Activity{
 					//디비 인설트 
 					SAVE_LMS_HISTORY(""+arrData.size() , lms_msg.getText().toString());
 					arrData.clear();
+					lms_msg.setText("");
+					phone_number.setText("");
 					m_Adapter.notifyDataSetChanged();
+					t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
+					AlertDialog.Builder alert = new AlertDialog.Builder(LMSMainActivity.this, AlertDialog.THEME_HOLO_LIGHT);
+					alert.setTitle("알림");
+					alert.setMessage("전송 완료 하였습니다.");
+					alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+
+						}
+					});
+					alert.show();
+
 				}
 				break;
 			case R.id.number_plus:	
@@ -179,6 +237,7 @@ public class LMSMainActivity extends Activity{
 				}
 				arrData.add(new LMSMainObj(phone_number.getText().toString().replace("-", ""), phone_number.getText().toString().replace("-", "")));
 				m_Adapter.notifyDataSetChanged();
+				t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
 				break;
 			case R.id.exel_plus:	
 				break;
@@ -187,6 +246,65 @@ public class LMSMainActivity extends Activity{
 			}
 		}
 	};
+	private String getPath(Uri uri)
+	{
+		String[] projection = { MediaStore.Images.Media.DATA };
+		Cursor cursor = managedQuery(uri, projection, null, null, null);
+		int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+		cursor.moveToFirst();
+		return cursor.getString(column_index);
+	}
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Log.e("SKY" , "RESULT :: " + requestCode);
+		Log.e("SKY" , "resultCode :: " + resultCode);
+		Log.e("SKY" , "data :: " + data);
+		if (data ==null) {
+			return;
+		}
+		switch (requestCode) {
+		case 1:
+			if (requestCode == INPUT_FILE_REQUEST_CODE && resultCode == RESULT_OK) {
+				Uri uri = data.getData();
+				//경로 구하기
+				String PATH = getPath(uri);
+				Log.e("SKY" , "PATH :: " + PATH);
+
+				if (!PATH.matches(".*txt")) {
+					Toast.makeText(getApplicationContext(), "확장자가 txt 파일이 아닙니다.", 0).show();
+					return;
+				}
+				//04-20 22:56:40.193: E/SKY(29127): PATH :: /storage/emulated/0/KakaoTalkDownload/전화번호불러오기샘플데이터.txt
+				String text = null;
+		        try {
+		            File file = new File(getPath(uri));		//파일명
+		            FileInputStream fis = new FileInputStream(file);
+		            Reader in = new InputStreamReader(fis);
+		            int size = fis.available();
+		            char[] buffer = new char[size];
+		            in.read(buffer);
+		            in.close();
+		 
+		            text = new String(buffer);
+		            Log.e("SKY", "text : " + text);
+		            
+		            String arr_txt[] = text.split("\n");
+		            Log.e("SKY", "arr_txt size : " + arr_txt.length);
+		            
+		            for (int i = 0; i < arr_txt.length; i++) {
+			            Log.e("SKY", "arr_txt size1 : " + arr_txt[i]);
+			            String txt[] = arr_txt[i].split(",");
+			            arrData.add(new LMSMainObj(txt[0], txt[1]));
+					}
+					m_Adapter.notifyDataSetChanged();
+		        } catch (IOException e) {
+		            throw new RuntimeException(e);
+		        }
+			} 
+			break;
+		}
+	}
 	public int SELECT_Phone(String date)		//디비 값 조회해서 저장하기
 	{
 		try{
@@ -217,7 +335,7 @@ public class LMSMainActivity extends Activity{
 	//SELECT COUNT(*) FROM your_table;
 	private void sendSMS(String msg, String number) {
 		Log.e("SKY", "보낼 문자 번호 :: " + number);
-		
+
 		SmsManager sm = SmsManager.getDefault();
 
 		if(msg.getBytes().length > 80) {
@@ -231,9 +349,9 @@ public class LMSMainActivity extends Activity{
 		//인서트쿼리
 		try{
 			Date d = new Date();
-	        String s = d.toString();
-	        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-	        System.out.println("현재날짜 : "+ sdf.format(d));
+			String s = d.toString();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			System.out.println("현재날짜 : "+ sdf.format(d));
 			SQLiteDatabase db = openOrCreateDatabase("lms_history.db", Context.MODE_PRIVATE, null);
 			String sql;
 			try {
