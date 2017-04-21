@@ -1,6 +1,8 @@
 package co.kr.sky.hymnbible;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TreeSet;
 
 import org.json.JSONArray;
@@ -33,6 +35,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import co.kr.sky.AccumThread;
 import co.kr.sky.hymnbible.adapter.LMSMyPhoneGroup_Adapter;
 import co.kr.sky.hymnbible.common.Check_Preferences;
 import co.kr.sky.hymnbible.fun.CommonUtil;
@@ -49,7 +52,8 @@ public class LMSMyPhoneActivity extends Activity{
 	protected ProgressDialog customDialog = null;
 	private Typeface ttf;
 	CheckBox check_all;
-
+	Map<String, String> map = new HashMap<String, String>();
+	AccumThread mThread;
 	private TextView font_1 , font_2 , font_3 , font_4 , t_count , t_name; 
 	TextView title ;
 	public static TextView check_count;
@@ -289,14 +293,19 @@ public class LMSMyPhoneActivity extends Activity{
 		alert.setView(layout);
 		alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int whichButton) {
-				SendDataServer(name.getText().toString());
+				customProgressPop();
+				String post_val = SendDataServer();
+				Log.e("SKY" , "post_val :: " + post_val );
+				
 				//post 발송
-				//				map.put("url", dataSet.SERVER+"recommender-proc.do");
-				//				map.put("my_id",dataSet.PHONE);
-				//				map.put("user_id",user_phone);
-				//				mThread = new AccumThread(ac , mAfterAccum , map , 0 , 0 , null);
-				//				mThread.start();		//스레드 시작!!
-
+				map.put("url", dataSet.SERVER+"Server_Insert.jsp");
+				map.put("user_id",dataSet.PHONE);
+				map.put("group_name",name.getText().toString());
+				map.put("val",post_val);
+				
+				//post 발송
+				mThread = new AccumThread(LMSMyPhoneActivity.this , mAfterAccum , map , 0 , 1 , null);
+				mThread.start();		//스레드 시작!!
 			}
 		});
 		alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
@@ -306,29 +315,37 @@ public class LMSMyPhoneActivity extends Activity{
 		});
 		alert.show();
 	}
-	private void SendDataServer(String name ){
+	private String SendDataServer(){
 		JSONObject obj = new JSONObject();
 		try {
 			JSONArray jArray = new JSONArray();//배열이 필요할때
 			ArrayList<MyPhoneListObj> arr = new ArrayList<MyPhoneListObj>();
+			
 			for (int i = 0; i < arrData.size(); i++)//배열
 			{
-				JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
 				if (arrData.get(i).getSELECTED() == 1) {
+					Log.e("SKY","get_ID :: " + arrData.get(i).get_ID());
+
 					arr.clear();
-					arr = SELECT_Phone(arrData.get(i).get_ID());
+					arr = SELECT_Phone("" +(Integer.parseInt(arrData.get(i).get_ID()) - 1));
 					for (int j = 0; j < arr.size(); j++) {
-						sObject.put("NAME", arr.get(i).getNAME());
-						sObject.put("PHONE", arr.get(i).getPHONE());
+						JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
+						Log.e("SKY","NAME :: " + arr.get(j).getNAME());
+						Log.e("SKY","PHONE :: " + arr.get(j).getPHONE());
+						sObject.put("NAME", arr.get(j).getNAME());
+						sObject.put("PHONE", arr.get(j).getPHONE());
 						jArray.put(sObject);
 					}
+					
+					obj.put("data",jArray);
 				}
 			}
 			Log.e("SKY","JSON DATA :: " + obj.toString());
 			System.out.println(obj.toString());
-
+			return obj.toString();
 		} catch (JSONException e) {
 			e.printStackTrace();
+			return "";
 		}
 
 	}
@@ -391,6 +408,11 @@ public class LMSMyPhoneActivity extends Activity{
 				Log.e("SKY" , "RESULT  -> " + res);
 				arrData.remove(Integer.parseInt(res));
 				m_Adapter.notifyDataSetChanged();
+			}else if (msg.arg1  == 1 ) {
+				//서버 저장
+				String res = (String)msg.obj;
+				Log.e("SKY" , "RESULT  -> " + res);
+				customProgressClose();
 			}else if (msg.arg1  == 100 ) {
 				//조회 끝 
 				Log.e("SKY" , "조회 끝 !");
@@ -427,7 +449,7 @@ public class LMSMyPhoneActivity extends Activity{
 				check_all.setEnabled(true); //모두 선택
 				check_all.setChecked(false);
 			}
-			
+
 		}
 	};
 	private void getGroup() {
