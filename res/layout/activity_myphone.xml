@@ -138,7 +138,7 @@
             android:orientation="vertical" >
 
             <Button
-                            android:id="@+id/btn_reflash1"
+                android:id="@+id/btn_reflash1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/icon_refresh" />
@@ -162,8 +162,7 @@
             android:orientation="vertical" >
 
             <Button
-                            android:id="@+id/btn_ok1"
-                
+                android:id="@+id/btn_ok1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/icon_sms_30dp" />
