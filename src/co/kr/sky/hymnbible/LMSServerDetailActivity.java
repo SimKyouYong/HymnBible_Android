@@ -49,7 +49,7 @@ public class LMSServerDetailActivity extends Activity{
 
 		Bundle bundle = getIntent().getExtras();
 		obj = bundle.getParcelable("Object");
-		Log.e("SKY", "ID :: " + obj.getG_id());
+		Log.e("SKY", "ID :: " + obj.getKey_index());
 
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
@@ -59,7 +59,7 @@ public class LMSServerDetailActivity extends Activity{
 		customProgressPop();
 		String []val = {"item1","item2","item3","item4" };
 		map.put("url", dataSet.SERVER + "Server_Phone_Sel.jsp");
-		map.put("g_id", obj.getG_id());
+		map.put("key_index", obj.getKey_index());
 		mThread = new AccumThread(this , mAfterAccum , map , 1 , 0 , val);
 
 		mThread.start();		//스레드 시작!!
@@ -108,7 +108,7 @@ public class LMSServerDetailActivity extends Activity{
 								arrData.get(i).getName(),
 								arrData.get(i).getPhone(),
 								arrData.get(i).getCheck(),
-								Integer.parseInt(obj.getG_id())));
+								1));
 					}
 				}
 				if (j == 0) {

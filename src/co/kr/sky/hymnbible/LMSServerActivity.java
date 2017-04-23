@@ -20,6 +20,7 @@ import co.kr.sky.AccumThread;
 import co.kr.sky.hymnbible.adapter.LMSServerPhoneGroup_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.MyServerGroupObj;
+import co.kr.sky.hymnbible.obj.MyServerListObj;
 
 public class LMSServerActivity extends Activity{
 	protected ProgressDialog customDialog = null;
@@ -27,6 +28,9 @@ public class LMSServerActivity extends Activity{
 	LMSServerPhoneGroup_Adapter           m_Adapter;
 	ListView                list_number;
 	private Typeface ttf;
+	ArrayList<MyServerListObj> arrData_detail = new ArrayList<MyServerListObj>();
+
+	private TextView font_1 , font_2 , font_3 , font_4 , t_count , t_name; 
 
 	Map<String, String> map = new HashMap<String, String>();
 	AccumThread mThread;
@@ -39,8 +43,12 @@ public class LMSServerActivity extends Activity{
 		setContentView(R.layout.activity_server);
 		list_number = (ListView)findViewById(R.id.list_number);
 		title = (TextView)findViewById(R.id.title);
+		t_name = (TextView)findViewById(R.id.t_name);
+		
+		
 		ttf = Typeface.createFromAsset(getAssets(), "HANYGO230.TTF");
 		title.setTypeface(ttf);
+		t_name.setTypeface(ttf);
 
 		m_Adapter = new LMSServerPhoneGroup_Adapter( this , arrData , mAfterAccum);
 		list_number.setOnItemClickListener(mItemClickListener);
@@ -57,7 +65,11 @@ public class LMSServerActivity extends Activity{
 
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_reflash).setOnClickListener(btnListener);
+		findViewById(R.id.btn_reflash1).setOnClickListener(btnListener);
+		
+		
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
+		findViewById(R.id.btn_ok1).setOnClickListener(btnListener);
 
 	}
 	//버튼 리스너 구현 부분 
@@ -76,11 +88,48 @@ public class LMSServerActivity extends Activity{
 
 				mThread.start();		//스레드 시작!!
 				break;
+			case R.id.btn_reflash1:
+				customProgressPop();
+				String []val1 = {"item1","item2","item3","item4" , "item5"};
+				map.put("url", dataSet.SERVER + "Server_Sel.jsp");
+				map.put("my_phone", dataSet.PHONE);
+				mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 1 , 0 , val1);
+
+				mThread.start();		//스레드 시작!!
+				break;
 			case R.id.btn_ok:	
+				btn_ok();
+				break;
+			case R.id.btn_ok1:
+				btn_ok();
 				break;
 			}
 		}
 	};
+	private void btn_ok(){
+		arrData_detail.clear();
+		String key_index_str = "";
+		for (int i = 0; i < arrData.size(); i++) {
+			Log.e("SKY", "체크!!  :: " + arrData.get(i).getCheck());
+			if (arrData.get(i).getCheck() == 1) {
+				
+				if (i == 0) {
+					key_index_str = arrData.get(i).getKey_index();
+				}else{
+					key_index_str += "," + arrData.get(i).getKey_index();
+				}
+			}
+		}
+		customProgressPop();
+		
+		String []val = {"item1","item2","item3","item4" };
+		map.clear();
+		map.put("url", dataSet.SERVER + "Server_Phone_Sel.jsp");
+		map.put("key_index", key_index_str);
+		mThread = new AccumThread(this , mAfterAccum , map , 1 , 1 , val);
+
+		mThread.start();		//스레드 시작!!
+	}
 	Handler mAfterAccum = new Handler()
 	{
 		@Override
@@ -105,12 +154,31 @@ public class LMSServerActivity extends Activity{
 								Object_Array[1][i], 
 								Object_Array[2][i], 
 								Object_Array[3][i], 
-								Object_Array[4][i],
 								0));
 					}
 				}
 				m_Adapter.notifyDataSetChanged();
-			}else if(msg.arg1 == 2){
+			}else if(msg.arg1 == 1){
+				customProgressClose();
+				Object_Array = (String [][]) msg.obj;
+				if (Object_Array.length == 0) {
+					return;
+				}
+				//				Log.e("CHECK" ,"**********************  --->" + Object_Array[0].length);
+				for (int i = 0; i < Object_Array.length; i++) {
+					for (int j = 0; j < Object_Array[0].length; j++) {
+						Log.e("CHECK" ,"value----> ---> Object_Array [" +i+"]["+j+"]"+  Object_Array[i][j]);
+					}
+				}
+				for (int i = 0; i < (Object_Array[0].length); i++){
+					if (Object_Array[0][i] != null) {
+						arrData_detail.add(new MyServerListObj(""+Object_Array[0][i], 
+								Object_Array[1][i], 
+								Object_Array[2][i], 
+								Object_Array[3][i], 
+								0));
+					}
+				}
 			}
 		}
 	};
@@ -119,7 +187,6 @@ public class LMSServerActivity extends Activity{
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
 			Log.e("SKY", "POSITION :: "+position);
-			Log.e("SKY", "POSITION :: "+arrData.get(position).getG_id());
 			//arrData.get(position).setSELECTED(1);
 			Intent board = new Intent(LMSServerActivity.this, LMSServerDetailActivity.class);
 			board.putExtra("Object", arrData.get(position));

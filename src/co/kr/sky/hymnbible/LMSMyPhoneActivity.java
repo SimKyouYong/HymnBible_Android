@@ -58,6 +58,7 @@ public class LMSMyPhoneActivity extends Activity{
 	TextView title ;
 	public static TextView check_count;
 	public static int onresume_1 = 0;
+	int count_server = 0;
 
 	@Override
 	public void onResume(){
@@ -302,7 +303,8 @@ public class LMSMyPhoneActivity extends Activity{
 				map.put("user_id",dataSet.PHONE);
 				map.put("group_name",name.getText().toString());
 				map.put("val",post_val);
-				
+				map.put("count",""+count_server);
+
 				//post 발송
 				mThread = new AccumThread(LMSMyPhoneActivity.this , mAfterAccum , map , 0 , 1 , null);
 				mThread.start();		//스레드 시작!!
@@ -316,6 +318,7 @@ public class LMSMyPhoneActivity extends Activity{
 		alert.show();
 	}
 	private String SendDataServer(){
+		count_server = 0;
 		JSONObject obj = new JSONObject();
 		try {
 			JSONArray jArray = new JSONArray();//배열이 필요할때
@@ -335,6 +338,7 @@ public class LMSMyPhoneActivity extends Activity{
 						sObject.put("NAME", arr.get(j).getNAME());
 						sObject.put("PHONE", arr.get(j).getPHONE());
 						jArray.put(sObject);
+						count_server++;
 					}
 					
 					obj.put("data",jArray);

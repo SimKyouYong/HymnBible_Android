@@ -4,56 +4,6 @@
     android:layout_height="match_parent"
     android:background="#ffffff" >
 
-    <LinearLayout
-        android:id="@+id/bottomview_11"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal" >
-
-        <Button
-            android:id="@+id/bottomview_l"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#007AFF"
-            android:padding="10dp"
-            android:text="1115명"
-            android:textColor="#ffffff"
-            android:textSize="20dp" />
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="fill_parent"
-            android:background="#ffffff" />
-
-        <Button
-            android:id="@+id/btn_reflash"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#007AFF"
-            android:padding="10dp"
-            android:text="새로고침"
-            android:textColor="#ffffff"
-            android:textSize="20dp" />
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="fill_parent"
-            android:background="#ffffff" />
-
-        <Button
-            android:id="@+id/btn_ok"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="#007AFF"
-            android:padding="10dp"
-            android:text="선택완료"
-            android:textColor="#ffffff"
-            android:textSize="20dp" />
-    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/view1"
@@ -109,18 +59,172 @@
                 android:layout_alignParentRight="true" />
         </RelativeLayout>
     </RelativeLayout>
+    <LinearLayout
+        android:id="@+id/bottomview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:id="@+id/btn_count"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#007AFF"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <FrameLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/icon_serversave"
+                    android:visibility="invisible" />
+
+                <TextView
+                    android:id="@+id/check_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="0"
+                    android:textColor="#ffffff"
+                    android:textSize="14dp" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/font_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:text="명 선택"
+                android:textColor="#ffffff" />
+        </LinearLayout>
 
 
+        <LinearLayout
+            android:id="@+id/btn_reflash"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#007AFF"
+            android:gravity="center"
+            android:orientation="vertical" >
 
+            <Button
+                android:id="@+id/btn_reflash1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/icon_refresh" />
 
-    <ListView
-        android:id="@+id/list_number"
+            <TextView
+                android:id="@+id/font_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:text="새로고침"
+                android:textColor="#ffffff" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btn_ok"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="#007AFF"
+            android:gravity="center"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/btn_ok1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/icon_sms_30dp" />
+
+            <TextView
+                android:id="@+id/font_4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:text="선택완료"
+                android:textColor="#ffffff" />
+        </LinearLayout>
+    </LinearLayout>
+	<LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@+id/bottomview_11"
+        android:layout_above="@+id/bottomview"
         android:layout_below="@+id/view1"
-        android:divider="#dfdede"
-        android:dividerHeight="1dp" >
-    </ListView>
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:id="@+id/count_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/view2"
+            android:layout_marginTop="10dp"
+            android:background="#DCDCDC"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/t_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:paddingLeft="10dp"
+                android:text="서버 그룹 선택"
+                android:textColor="#0000fa"
+                android:textSize="15dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:orientation="horizontal" >
+
+            <CheckBox
+                android:id="@+id/check_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="2dp"
+                android:button="@drawable/checkbox_on_off"
+                android:focusable="false" />
+
+            <TextView
+                android:id="@+id/t_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="2dp"
+                android:text="전체선택"
+                android:textColor="#A9A9A9"
+                android:textSize="18dp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1px"
+            android:background="#dfdede" />
+
+        <ListView
+            android:id="@+id/list_number"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:divider="#dfdede"
+            android:dividerHeight="1dp" >
+        </ListView>
+    </LinearLayout>
+
+
+
 
 </RelativeLayout>

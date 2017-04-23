@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="#ffffff"
-    android:orientation="horizontal" >
+    android:orientation="horizontal"
+    android:paddingBottom="5dp"
+    android:paddingTop="5dp" >
 
     <CheckBox
         android:id="@+id/check"
@@ -11,9 +13,10 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_marginBottom="2dp"
-        android:focusable="false"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="2dp" />
+        android:layout_marginTop="2dp"
+        android:button="@drawable/checkbox_on_off"
+        android:focusable="false" />
 
     <TextView
         android:id="@+id/t_name"
