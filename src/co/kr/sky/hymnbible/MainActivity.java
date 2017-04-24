@@ -9,11 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import com.google.android.gcm.GCMRegistrar;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
@@ -22,6 +22,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -38,8 +39,9 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
-import android.speech.tts.TextToSpeech.OnInitListener;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment.InstantiationException;
+import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -56,7 +58,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebChromeClient.CustomViewCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import co.kr.sky.AccumThread;
@@ -113,6 +114,20 @@ public class MainActivity extends Activity{
 	private final static int FILECHOOSER_NORMAL_REQ_CODE = 1;
 	private final static int FILECHOOSER_LOLLIPOP_REQ_CODE = 2;
 	private final static int PICK_IMAGE_REQ_CODE = 3;
+	private HashMap<String, String> group_kr;
+	private HashMap<String, String> group_title;
+	private HashMap<String, Integer> group_count;
+	private static String[] PERMISSIONS_STORAGE = {
+            Manifest.permission.READ_CONTACTS,
+            Manifest.permission.RECORD_AUDIO,
+            Manifest.permission.SEND_SMS,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            
+            
+    };
+
+
+	
 	@Override
 	public void onResume(){
 		super.onResume();
@@ -120,6 +135,23 @@ public class MainActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		
+		int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
+
+		if(permissionCheck== PackageManager.PERMISSION_DENIED){
+		    // 권한 없음
+			Log.e("SKY", "권한 없음");
+			ActivityCompat.requestPermissions(this,
+	                PERMISSIONS_STORAGE,
+	                1);
+		}else{
+		    // 권한 있음
+			Log.e("SKY", "권한 있음");
+//			ActivityCompat.requestPermissions(this,
+//	                PERMISSIONS_STORAGE,
+//	                1);
+		}
+		
 		vc = new MySQLiteOpenHelper(this);
 		bottomview = (LinearLayout)findViewById(R.id.bottomview);
 		bottomview.setVisibility(View.GONE);
@@ -141,7 +173,9 @@ public class MainActivity extends Activity{
 		setting_button();
 		//myTTS = new TextToSpeech(this, this);
 
-
+		group_title=new HashMap<String, String>();
+    	group_count=new HashMap<String, Integer>();
+    	//getGroupContacts();
 
 
 		//push
@@ -173,39 +207,83 @@ public class MainActivity extends Activity{
 //			InputAlert();
 //		}
 	}
+	public void onRequestPermissionsResult(int requestCode,
+	        String permissions[], int[] grantResults) {
+	    switch (requestCode) {
+	        case 1: {
+	        	Log.e("SKY", "TEST");
+	            //권한 획득이 거부되면 결과 배열은 비어있게 됨
+	            if (grantResults.length > 0
+	                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-	private void getGroup() {
-		Cursor cursor = getContentResolver().query(
-				ContactsContract.Groups.CONTENT_URI, 
-				new String[] {
-						ContactsContract.Groups._ID,
-						ContactsContract.Groups.TITLE,
-						ContactsContract.Groups.ACCOUNT_NAME,
-						ContactsContract.Groups.ACCOUNT_TYPE,
-						ContactsContract.Groups.DELETED,
-						ContactsContract.Groups.GROUP_VISIBLE
-				}, 
-				ContactsContract.Groups.DELETED + "=0" + " AND " +
-						ContactsContract.Groups.GROUP_VISIBLE + "=1", 
-						null, 
-						null);
+	                //권한 획득이 허용되면 수행해야 할 작업이 표시됨
+	                //일반적으로 작업을 처리할 메서드를 호출
 
-		try {
-			while (cursor.moveToNext()) {
+	            } else {
 
-				Log.e("SKY" , "_ID :: " + cursor.getInt(0));
-				Log.e("SKY" , "TITLE :: " + cursor.getString(1));
-				Log.e("SKY" , "ACCOUNT_NAME :: " + cursor.getString(2));
-				Log.e("SKY" , "ACCOUNT_TYPE :: " + cursor.getString(3));
-				Log.e("SKY" , "DELETED :: " + cursor.getString(4));
-				Log.e("SKY" , "GROUP_VISIBLE :: " + cursor.getString(5));
-				Log.e("SKY" , "GROUP_COUNT :: " + getGroupSummaryCount(cursor.getString(0)));
-				
-				getSampleContactList(cursor.getInt(0));
+	                //권한 획득이 거부되면 수행해야 할 적업이 표시됨
+	                //일반적으로 작업을 처리할 메서드를 호출
+	            }
+	            return;
+	        }
+	    }
+	}
+
+
+	private void getGroupContacts()
+	{
+	    Log.e("SKY","--getGroupContacts--");
+		Uri uri_group = ContactsContract.Groups.CONTENT_SUMMARY_URI;
+		String[] group_projection = new String[]{
+				ContactsContract.Groups._ID,
+				ContactsContract.Groups.TITLE
+		};
+		String group_selection = ContactsContract.Groups.DELETED + " = 0 AND " + ContactsContract.Groups.GROUP_VISIBLE + " = 1";
+		String orderby = ContactsContract.Groups.TITLE+ " COLLATE LOCALIZED ASC";
+	    Cursor gc = managedQuery(uri_group, group_projection, group_selection, null,orderby);
+	    while(gc.moveToNext())
+	    {
+	    	String gtitle=gc.getString(1);
+	    	if(gtitle!=null && !gtitle.equals(""))
+	    	{
+	    		int people_count=0;
+		    	String selection=ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + "="+gc.getString(0);
+//	    		String[] qry={ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID};
+//		    	Cursor people_rlt = managedQuery(ContactsContract.Data.CONTENT_URI,qry, selection, null,null);//		    	
+//		    	final int people_count = people_rlt.getCount();
+//		    	Log.i("getGroupContacts",gc.getString(0)+" "+gc.getString(1)+" ("+people_count+")");
+	    		Uri lookupUri = Uri.withAppendedPath(ContactsContract.Data.CONTENT_URI, "");
+			    Cursor is_c = getContentResolver().query(
+			    		lookupUri, 
+			    		new String[]{ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID},
+			    		selection,
+			    		null,
+			    		null);
+			    people_count=is_c.getCount();
+			    try {
+			    	people_count=is_c.getCount();
+			    } catch (Exception e) {}
+			    finally{is_c.close();}
+		    	if(group_title.get(gtitle)!=null)
+		    	{
+		    		int g_tcount = group_count.get(gtitle)+people_count;
+		    		group_count.put(gtitle,g_tcount);
+		    	}else{
+		    		group_title.put(gtitle,gtitle);
+		    		group_count.put(gtitle,people_count);
+		    	}
+	    	}
+	    }
+	    Log.e("SKY","DDDD :: " + group_count.toString());
+	    AlertDialog.Builder alert = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
+		alert.setTitle("개발 및 버전 정보");
+		alert.setMessage(group_count.toString());
+		alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int whichButton) {
+
 			}
-		} finally {
-			cursor.close();
-		}
+		});
+		alert.show();
 	}
 	public void getSampleContactList(int groupID) {
 
@@ -969,7 +1047,11 @@ public class MainActivity extends Activity{
 		}
 		if ((keyCode == KeyEvent.KEYCODE_BACK) && BibleWeb.canGoBack()) {
 			if (Real_exit) {
-				EXIT();
+				if (BibleWeb.canGoBack()) {
+					BibleWeb.goBack();
+				}else{
+					EXIT();
+				}
 				return true;
 			}
 			//myTTS.stop();

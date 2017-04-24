@@ -8,6 +8,7 @@ import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -23,6 +24,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.telephony.SmsManager;
 import android.util.Log;
@@ -32,13 +34,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import co.kr.sky.AccumThread;
-import co.kr.sky.hymnbible.LMSMyPhoneActivity.AccumThread2;
 import co.kr.sky.hymnbible.adapter.LMSMain_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.LMSMainObj;
-import co.kr.sky.hymnbible.obj.MyPhoneListObj;
-import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
 
 public class LMSMainActivity extends Activity{
 	EditText lms_msg , phone_number;
@@ -95,6 +93,9 @@ public class LMSMainActivity extends Activity{
 			av.start();
 		}
 	}
+	
+
+
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_lmsmain);
@@ -140,6 +141,10 @@ public class LMSMainActivity extends Activity{
 		m_Adapter = new LMSMain_Adapter( this , arrData , mAfterAccum);
 		list_number.setAdapter(m_Adapter);
 	}
+	
+	
+	
+
 	Handler mAfterAccum = new Handler()
 	{
 		@Override
