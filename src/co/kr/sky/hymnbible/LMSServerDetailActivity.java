@@ -9,23 +9,33 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
+import android.location.LocationListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView.OnEditorActionListener;
 import co.kr.sky.AccumThread;
+import co.kr.sky.hymnbible.adapter.LMSMyPhoneList_Adapter;
 import co.kr.sky.hymnbible.adapter.LMSServerList_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
+import co.kr.sky.hymnbible.obj.MyPhoneListObj;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
 import co.kr.sky.hymnbible.obj.MyServerGroupObj;
 import co.kr.sky.hymnbible.obj.MyServerListObj;
 
-public class LMSServerDetailActivity extends Activity{
+public class LMSServerDetailActivity extends Activity implements OnEditorActionListener{
 	protected ProgressDialog customDialog = null;
 	ArrayList<MyServerListObj> arrData = new ArrayList<MyServerListObj>();
 	LMSServerList_Adapter           m_Adapter;
@@ -37,7 +47,11 @@ public class LMSServerDetailActivity extends Activity{
 	AccumThread mThread;
 	TextView title;
 	EditText e_lms;
+	private TextView font_1 , font_2 , font_3 , font_4 , t_count , t_name; 
+	private Button btn_ok;
+
 	ArrayList<MyServerListObj> arrData_copy = new ArrayList<MyServerListObj>();
+	CheckBox check_all;
 
 	CommonUtil dataSet = CommonUtil.getInstance();
 	String [][]Object_Array;
@@ -46,7 +60,21 @@ public class LMSServerDetailActivity extends Activity{
 		setContentView(R.layout.activity_serverdetail);
 		list_number = (ListView)findViewById(R.id.list_number);
 		e_lms = (EditText)findViewById(R.id.e_lms);
-
+		t_name = (TextView)findViewById(R.id.t_name);
+		check_all = (CheckBox)findViewById(R.id.check_all);
+		btn_ok = (Button)findViewById(R.id.btn_ok);
+		t_count = (TextView)findViewById(R.id.t_count);
+		
+		
+		ttf = Typeface.createFromAsset(getAssets(), "HANYGO230.TTF");
+		
+		btn_ok.setTypeface(ttf);
+		t_name.setTypeface(ttf);
+		t_count.setTypeface(ttf);
+		e_lms.setTypeface(ttf);
+		e_lms.setOnEditorActionListener(this); //mEditText와 onEditorActionListener를 연결
+		
+		
 		Bundle bundle = getIntent().getExtras();
 		obj = bundle.getParcelable("Object");
 		Log.e("SKY", "ID :: " + obj.getKey_index());
@@ -67,8 +95,53 @@ public class LMSServerDetailActivity extends Activity{
 		m_Adapter = new LMSServerList_Adapter( this , arrData , mAfterAccum);
 		list_number.setOnItemClickListener(mItemClickListener);
 		list_number.setAdapter(m_Adapter);
+		check_all.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
 
+				if (buttonView.getId() == R.id.check_all) {
+					if (isChecked) {
+						Log.e("SKY" , "all클릭");
+						Message msg2 = mAfterAccum.obtainMessage();
+						msg2.arg1 = 5000;
+						mAfterAccum.sendMessage(msg2);
+					} else {
+						Log.e("SKY" , "all not 클릭" );
+						Message msg2 = mAfterAccum.obtainMessage();
+						msg2.arg1 = 6000;
+						mAfterAccum.sendMessage(msg2);
+					}
+				}
+			}
+		});
 	}
+	@Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        // TODO Auto-generated method stub
+        if(v.getId()==R.id.e_search1 && actionId==EditorInfo.IME_ACTION_SEARCH){ 
+        	// 뷰의 id를 식별, 키보드의 완료 키 입력 검출
+        	if (e_lms.getText().toString().length() ==0) {
+				//모두 보여주기
+				m_Adapter = new LMSServerList_Adapter( LMSServerDetailActivity.this , arrData , mAfterAccum);
+				list_number.setAdapter(m_Adapter);
+			}else {
+				arrData_copy.clear();
+				for (int i = 0; i < arrData.size(); i++) {
+					if (arrData.get(i).getName().matches(".*" + e_lms.getText().toString() +".*") || arrData.get(i).getPhone().matches(".*" + e_lms.getText().toString() +".*")) {
+						Log.e("SKY", "같은 값! :: " + i);
+						arrData_copy.add(new MyServerListObj(arrData.get(i).getKey_index(), 
+								arrData.get(i).getName(), 
+								arrData.get(i).getPhone(), 
+								arrData.get(i).getG_keyindex(), 
+								0));
+					}
+				}
+				m_Adapter = new LMSServerList_Adapter( LMSServerDetailActivity.this , arrData_copy , mAfterAccum);
+				list_number.setAdapter(m_Adapter);
+			}
+        }
+        return false;
+    }
 	//버튼 리스너 구현 부분 
 	View.OnClickListener btnListener = new View.OnClickListener() {
 		public void onClick(View v) {
@@ -158,6 +231,17 @@ public class LMSServerDetailActivity extends Activity{
 				}
 				m_Adapter.notifyDataSetChanged();
 			}else if(msg.arg1 == 2){
+			}else if(msg.arg1  == 5000 ){//전체선택 
+				for (int i = 0; i < arrData.size(); i++) {
+					arrData.get(i).setCheck(1);
+				}
+				m_Adapter.notifyDataSetChanged();
+			}else if(msg.arg1  == 6000 ){//전체선택 해제
+				for (int i = 0; i < arrData.size(); i++) {
+					arrData.get(i).setCheck(0);
+				}
+				m_Adapter.notifyDataSetChanged();
+
 			}
 		}
 	};

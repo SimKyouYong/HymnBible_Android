@@ -96,6 +96,7 @@ public class LMSServerPhoneGroup_Adapter extends BaseAdapter {
 						vh.t_name.setText(board.getName() + "(" + "0" + " / " + board.getCount() + ")");
 
 					}
+					Allcheck();
 				}
 			}
 		});
@@ -107,6 +108,29 @@ public class LMSServerPhoneGroup_Adapter extends BaseAdapter {
 		}
 
 		return convertView;
+	}
+	private void Allcheck(){
+		int count = 0;
+		for (int i = 0; i < items.size(); i++) {
+			if (items.get(i).getCheck() == 1) {
+				count++;
+			}
+		}
+		Log.e("SKY" , "count :: " + count);
+		Log.e("SKY" , "arrData.size() :: " + items.size());
+		if (count == items.size()) {
+			Message msg2 = mAfterAccum.obtainMessage();
+			msg2.arg1 = 7000;
+			mAfterAccum.sendMessage(msg2);
+		}else if(count > 0){
+			Message msg2 = mAfterAccum.obtainMessage();
+			msg2.arg1 = 9000;
+			mAfterAccum.sendMessage(msg2);
+		}else{
+			Message msg2 = mAfterAccum.obtainMessage();
+			msg2.arg1 = 8000;
+			mAfterAccum.sendMessage(msg2);
+		}
 	}
 
 }

@@ -11,6 +11,7 @@ import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,6 +45,7 @@ public class LMSMainActivity extends Activity{
 	CommonUtil dataSet = CommonUtil.getInstance();
 	private Typeface ttf;
 	private static final int INPUT_FILE_REQUEST_CODE = 1;
+	protected ProgressDialog customDialog = null;
 
 	private TextView font_1  , font_2, font_3 ,title , t_count;
 	private Button tab1 , tab2 , send_lms;
@@ -51,6 +53,7 @@ public class LMSMainActivity extends Activity{
 	public void onResume(){
 		super.onResume();
 		if (onresume_0 ==1) {
+			customProgressPop();
 			onresume_0 = 0;
 			//setting
 			for (int i = 0; i < dataSet.arrData_real.size(); i++) {
@@ -76,6 +79,7 @@ public class LMSMainActivity extends Activity{
 			dataSet.arrData_real.clear();
 			m_Adapter.notifyDataSetChanged();
 			t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
+			customProgressClose();
 		}
 	}
 	protected void onCreate(Bundle savedInstanceState) {
@@ -369,6 +373,24 @@ public class LMSMainActivity extends Activity{
 			db.close();
 		}catch (Exception e) {
 			Log.e("SKY","onPostExecute error : "+ e.toString());
+		}
+	}
+	public void customProgressPop(){
+		try{
+			if (customDialog==null){
+				customDialog = new ProgressDialog( this );
+			}
+			customDialog.show();
+		}catch(Exception ex){}
+	}
+	public void customProgressClose(){
+		if (customDialog!=null && customDialog.isShowing()){
+			try{
+				customDialog.cancel();
+				customDialog.dismiss();
+				customDialog = null;
+			}catch(Exception e)
+			{}
 		}
 	}
 }

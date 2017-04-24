@@ -960,7 +960,13 @@ public class MainActivity extends Activity{
 				return true;
 			}
 		}
-		
+		if (keyCode == KeyEvent.KEYCODE_BACK && Check_Preferences.getAppPreferences(MainActivity.this, "slide").equals("true")) {
+			//slide 메뉴를 닫는다.
+			Log.e("SKY", "CLOSE SLIDE MENU");
+			BibleWeb.loadUrl("javascript:lnbClose()");
+			Check_Preferences.setAppPreferences(MainActivity.this, "slide", "false");
+			return true;
+		}
 		if ((keyCode == KeyEvent.KEYCODE_BACK) && BibleWeb.canGoBack()) {
 			if (Real_exit) {
 				EXIT();
@@ -980,13 +986,7 @@ public class MainActivity extends Activity{
 			EXIT();
 			return true;
 		}
-		if (keyCode == KeyEvent.KEYCODE_BACK && Check_Preferences.getAppPreferences(MainActivity.this, "slide").equals("true")) {
-			//slide 메뉴를 닫는다.
-			Log.e("SKY", "CLOSE SLIDE MENU");
-			BibleWeb.loadUrl("javascript:lnbClose()");
-			Check_Preferences.setAppPreferences(MainActivity.this, "slide", "false");
-			return true;
-		}
+		
 		return super.onKeyDown(keyCode, event);
 	}
 	private void SplitFun(String url){

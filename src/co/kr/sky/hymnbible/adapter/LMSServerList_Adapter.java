@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,7 +53,7 @@ public class LMSServerList_Adapter extends BaseAdapter {
 	}
 
 	static class ViewHolder {
-		TextView t_name;
+		TextView t_name, t_phone;
 		CheckBox check;
 	}
 	public View getView(final int position, View convertView, ViewGroup parent) {
@@ -60,11 +61,15 @@ public class LMSServerList_Adapter extends BaseAdapter {
 		ViewHolder vh = new ViewHolder();
 		convertView = inflater.inflate(R.layout.activity_lms_server_list_item,null);
 		vh.t_name = (TextView) convertView.findViewById(R.id.t_name); 
+		vh.t_phone = (TextView) convertView.findViewById(R.id.t_phone); 
 		vh.check = (CheckBox) convertView.findViewById(R.id.check); 
 
 		convertView.setTag(vh);
 		vh.t_name.setTypeface(ttf);
-		vh.t_name.setText("" + position + ". " + board.getName() + "(" + board.getPhone().replace("-", "") + ")");
+		vh.t_phone.setTypeface(ttf);
+
+		vh.t_name.setText("" +board.getName());
+		vh.t_phone.setText("" +board.getPhone().replace("-", ""));
 		vh.check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
@@ -78,6 +83,7 @@ public class LMSServerList_Adapter extends BaseAdapter {
 						Log.e("SKY" , "not 클릭" );
 						items.get(position).setCheck(0);
 					}
+					Allcheck();
 				}
 			}
 		});
@@ -91,6 +97,29 @@ public class LMSServerList_Adapter extends BaseAdapter {
 	}
 	public void setCheck(int position){
 
+	}
+	private void Allcheck(){
+		int count = 0;
+		for (int i = 0; i < items.size(); i++) {
+			if (items.get(i).getCheck() == 1) {
+				count++;
+			}
+		}
+		Log.e("SKY" , "count :: " + count);
+		Log.e("SKY" , "arrData.size() :: " + items.size());
+		if (count == items.size()) {
+			Message msg2 = mAfterAccum.obtainMessage();
+			msg2.arg1 = 7000;
+			mAfterAccum.sendMessage(msg2);
+		}else if(count > 0){
+			Message msg2 = mAfterAccum.obtainMessage();
+			msg2.arg1 = 9000;
+			mAfterAccum.sendMessage(msg2);
+		}else{
+			Message msg2 = mAfterAccum.obtainMessage();
+			msg2.arg1 = 8000;
+			mAfterAccum.sendMessage(msg2);
+		}
 	}
 
 }

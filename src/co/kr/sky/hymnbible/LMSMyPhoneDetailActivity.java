@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -14,25 +15,36 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView.OnEditorActionListener;
 import co.kr.sky.hymnbible.adapter.LMSMyPhoneList_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
 
-public class LMSMyPhoneDetailActivity extends Activity{
+public class LMSMyPhoneDetailActivity extends Activity implements OnEditorActionListener{
 	LMSMyPhoneList_Adapter           m_Adapter;
 	public static ArrayList<MyPhoneListObj> arrData = new ArrayList<MyPhoneListObj>();
 	ListView                list_number;
+	protected ProgressDialog customDialog = null;
+
 	MyPhoneGroupObj obj;
 	CommonUtil dataSet = CommonUtil.getInstance();
 	ArrayList<MyPhoneListObj> arrData_copy = new ArrayList<MyPhoneListObj>();
 	private Typeface ttf;
+	CheckBox check_all;
+	private TextView font_1 , font_2 , font_3 , font_4 , t_count , t_name; 
 
 	private Button btn_ok;
 	EditText e_lms;
@@ -46,13 +58,17 @@ public class LMSMyPhoneDetailActivity extends Activity{
 		list_number = (ListView)findViewById(R.id.list_number);
 		e_lms = (EditText)findViewById(R.id.e_lms);
 		btn_ok = (Button)findViewById(R.id.btn_ok);
-		
+		check_all = (CheckBox)findViewById(R.id.check_all);
+		t_name = (TextView)findViewById(R.id.t_name);
+
 		
 		
 		btn_ok.setTypeface(ttf);
 		e_lms.setTypeface(ttf);
+		t_name.setTypeface(ttf);
 
 		
+		e_lms.setOnEditorActionListener(this); //mEditText와 onEditorActionListener를 연결
 
 		
 		
@@ -73,8 +89,53 @@ public class LMSMyPhoneDetailActivity extends Activity{
 
 		int key = Integer.parseInt(obj.get_ID());
 		SELECT_Phone(""+(key-1));
+		
+		check_all.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
+
+				if (buttonView.getId() == R.id.check_all) {
+					if (isChecked) {
+						Log.e("SKY" , "all클릭");
+						Message msg2 = mAfterAccum.obtainMessage();
+						msg2.arg1 = 5000;
+						mAfterAccum.sendMessage(msg2);
+					} else {
+						Log.e("SKY" , "all not 클릭" );
+						Message msg2 = mAfterAccum.obtainMessage();
+						msg2.arg1 = 6000;
+						mAfterAccum.sendMessage(msg2);
+					}
+				}
+			}
+		});
 
 	}
+	@Override
+    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+        // TODO Auto-generated method stub
+        if(v.getId()==R.id.e_search1 && actionId==EditorInfo.IME_ACTION_SEARCH){ 
+        	// 뷰의 id를 식별, 키보드의 완료 키 입력 검출
+        	if (e_lms.getText().toString().length() ==0) {
+				//모두 보여주기
+				search_flag = false;
+				m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData , mAfterAccum);
+				list_number.setAdapter(m_Adapter);
+			}else {
+				arrData_copy.clear();
+				for (int i = 0; i < arrData.size(); i++) {
+					if (arrData.get(i).getNAME().matches(".*" + e_lms.getText().toString() +".*") || arrData.get(i).getPHONE().matches(".*" + e_lms.getText().toString() +".*")) {
+						Log.e("SKY", "같은 값! :: " + i);
+						search_flag = true;
+						arrData_copy.add(new MyPhoneListObj(arrData.get(i).getNAME(), arrData.get(i).getPHONE(), arrData.get(i).getCHECK() , i));
+					}
+				}
+				m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData_copy , mAfterAccum);
+				list_number.setAdapter(m_Adapter);
+			}
+        }
+        return false;
+    }
 	public void SELECT_Phone(String key)		//디비 값 조회해서 저장하기
 	{
 		arrData.clear();
@@ -129,6 +190,7 @@ public class LMSMyPhoneDetailActivity extends Activity{
 			case R.id.btn_sp3:	
 				break;
 			case R.id.btn_ok:
+				customProgressPop();
 				int j = 0;
 				for (int i = 0; i < arrData.size(); i++) {
 					if (arrData.get(i).getCHECK() == 1) {
@@ -166,6 +228,7 @@ public class LMSMyPhoneDetailActivity extends Activity{
 //				}else{
 //				}
 				LMSMainActivity.onresume_0 = 1;
+				customProgressClose();
 				finish();
 				break;
 			}
@@ -181,7 +244,18 @@ public class LMSMyPhoneDetailActivity extends Activity{
 				Log.e("SKY" , "RESULT  -> " + res);
 				//arrData.remove(Integer.parseInt(res));
 				//m_Adapter.notifyDataSetChanged();
-			} 
+			} else if(msg.arg1  == 5000 ){//전체선택 
+				for (int i = 0; i < arrData.size(); i++) {
+					arrData.get(i).setCHECK(1);
+				}
+				m_Adapter.notifyDataSetChanged();
+			}else if(msg.arg1  == 6000 ){//전체선택 해제
+				for (int i = 0; i < arrData.size(); i++) {
+					arrData.get(i).setCHECK(0);
+				}
+				m_Adapter.notifyDataSetChanged();
+
+			}
 		}
 	};
 	AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
@@ -214,4 +288,22 @@ public class LMSMyPhoneDetailActivity extends Activity{
 			}
 		}
 	};
+	public void customProgressPop(){
+		try{
+			if (customDialog==null){
+				customDialog = new ProgressDialog( this );
+			}
+			customDialog.show();
+		}catch(Exception ex){}
+	}
+	public void customProgressClose(){
+		if (customDialog!=null && customDialog.isShowing()){
+			try{
+				customDialog.cancel();
+				customDialog.dismiss();
+				customDialog = null;
+			}catch(Exception e)
+			{}
+		}
+	}
 }
