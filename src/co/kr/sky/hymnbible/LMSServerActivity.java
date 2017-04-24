@@ -19,6 +19,7 @@ import android.widget.TextView;
 import co.kr.sky.AccumThread;
 import co.kr.sky.hymnbible.adapter.LMSServerPhoneGroup_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
+import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
 import co.kr.sky.hymnbible.obj.MyServerGroupObj;
 import co.kr.sky.hymnbible.obj.MyServerListObj;
 
@@ -55,7 +56,7 @@ public class LMSServerActivity extends Activity{
 		list_number.setAdapter(m_Adapter);
 
 		customProgressPop();
-		String []val = {"item1","item2","item3","item4" , "item5"};
+		String []val = {"item1","item2","item3","item4" };
 		map.put("url", dataSet.SERVER + "Server_Sel.jsp");
 		map.put("my_phone", dataSet.PHONE);
 		mThread = new AccumThread(this , mAfterAccum , map , 1 , 0 , val);
@@ -81,7 +82,7 @@ public class LMSServerActivity extends Activity{
 				break;
 			case R.id.btn_reflash:
 				customProgressPop();
-				String []val = {"item1","item2","item3","item4" , "item5"};
+				String []val = {"item1","item2","item3","item4" };
 				map.put("url", dataSet.SERVER + "Server_Sel.jsp");
 				map.put("my_phone", dataSet.PHONE);
 				mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 1 , 0 , val);
@@ -90,7 +91,7 @@ public class LMSServerActivity extends Activity{
 				break;
 			case R.id.btn_reflash1:
 				customProgressPop();
-				String []val1 = {"item1","item2","item3","item4" , "item5"};
+				String []val1 = {"item1","item2","item3","item4" };
 				map.put("url", dataSet.SERVER + "Server_Sel.jsp");
 				map.put("my_phone", dataSet.PHONE);
 				mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 1 , 0 , val1);
@@ -112,8 +113,7 @@ public class LMSServerActivity extends Activity{
 		for (int i = 0; i < arrData.size(); i++) {
 			Log.e("SKY", "체크!!  :: " + arrData.get(i).getCheck());
 			if (arrData.get(i).getCheck() == 1) {
-				
-				if (i == 0) {
+				if (key_index_str.equals("")) {
 					key_index_str = arrData.get(i).getKey_index();
 				}else{
 					key_index_str += "," + arrData.get(i).getKey_index();
@@ -159,7 +159,7 @@ public class LMSServerActivity extends Activity{
 				}
 				m_Adapter.notifyDataSetChanged();
 			}else if(msg.arg1 == 1){
-				customProgressClose();
+				
 				Object_Array = (String [][]) msg.obj;
 				if (Object_Array.length == 0) {
 					return;
@@ -177,8 +177,18 @@ public class LMSServerActivity extends Activity{
 								Object_Array[2][i], 
 								Object_Array[3][i], 
 								0));
+						
+						dataSet.arrData_real.add(new MyPhoneListObj2(0,
+								arrData_detail.get(i).getName(),
+								arrData_detail.get(i).getPhone(),
+								1,
+								0));
+						
 					}
 				}
+				customProgressClose();
+				LMSMainActivity.onresume_0 = 1;
+				finish();
 			}
 		}
 	};

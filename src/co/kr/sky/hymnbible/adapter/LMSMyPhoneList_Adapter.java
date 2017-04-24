@@ -54,7 +54,7 @@ public class LMSMyPhoneList_Adapter extends BaseAdapter {
 	}
 
 	static class ViewHolder {
-		TextView t_name;
+		TextView t_name , t_phone;
 		CheckBox check;
 	}
 	public View getView(final int position, View convertView, ViewGroup parent) {
@@ -62,11 +62,14 @@ public class LMSMyPhoneList_Adapter extends BaseAdapter {
 		ViewHolder vh = new ViewHolder();
 		convertView = inflater.inflate(R.layout.activity_lms_myphone_list_item,null);
 		vh.t_name = (TextView) convertView.findViewById(R.id.t_name); 
+		vh.t_phone = (TextView) convertView.findViewById(R.id.t_phone); 
 		vh.check = (CheckBox) convertView.findViewById(R.id.check); 
 
 		convertView.setTag(vh);
 		vh.t_name.setTypeface(ttf);
-		vh.t_name.setText("" + position + ". " + board.getNAME() + "(" + board.getPHONE().replace("-", "") + ")");
+		vh.t_phone.setTypeface(ttf);
+		vh.t_name.setText("" +board.getNAME());
+		vh.t_phone.setText("" +board.getPHONE().replace("-", ""));
 		vh.check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
