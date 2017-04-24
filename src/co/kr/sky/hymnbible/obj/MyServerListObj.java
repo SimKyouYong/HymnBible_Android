@@ -13,15 +13,26 @@ public class MyServerListObj implements Parcelable{
 	String phone;
 	String g_keyindex;
 	int check;
+	int copy_position;
+
 	
-	
-	public MyServerListObj(String key_index, String name, String phone, String g_keyindex, int check) {
+	public MyServerListObj(String key_index, String name, String phone, String g_keyindex, int check, int copy_position) {
 		super();
 		this.key_index = key_index;
 		this.name = name;
 		this.phone = phone;
 		this.g_keyindex = g_keyindex;
 		this.check = check;
+		this.copy_position = copy_position;
+
+	}
+
+	public int getCopy_position() {
+		return copy_position;
+	}
+
+	public void setCopy_position(int copy_position) {
+		this.copy_position = copy_position;
 	}
 
 	public String getKey_index() {
@@ -74,7 +85,7 @@ public class MyServerListObj implements Parcelable{
 		dest.writeString(phone);
 		dest.writeString(g_keyindex);
 		dest.writeInt(check);
-		
+		dest.writeInt(copy_position);
 	}
 	private void readFromParcel(Parcel in){
 		key_index = in.readString();
@@ -82,6 +93,7 @@ public class MyServerListObj implements Parcelable{
 		phone = in.readString();
 		g_keyindex = in.readString();
 		check = in.readInt();
+		copy_position = in.readInt();
 
 	}
 	@SuppressWarnings("rawtypes")

@@ -114,11 +114,18 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 	@Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         // TODO Auto-generated method stub
-        if(v.getId()==R.id.e_search1 && actionId==EditorInfo.IME_ACTION_SEARCH){ 
+        if(v.getId()==R.id.e_lms && actionId==EditorInfo.IME_ACTION_SEARCH){ 
         	// 뷰의 id를 식별, 키보드의 완료 키 입력 검출
         	if (e_lms.getText().toString().length() ==0) {
+				Log.e("SKY","모두 보여주기");
 				//모두 보여주기
 				search_flag = false;
+				for (int i = 0; i < arrData_copy.size(); i++) {
+					if (arrData_copy.get(i).getCHECK() == 1) {
+						Log.e("SKY","POSITION :: "  + arrData_copy.get(i).getCopy_position());
+						arrData.set(arrData_copy.get(i).getCopy_position(), new MyPhoneListObj(arrData_copy.get(i).getNAME(), arrData_copy.get(i).getPHONE(), arrData_copy.get(i).getCHECK(),0));
+					}
+				}
 				m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData , mAfterAccum);
 				list_number.setAdapter(m_Adapter);
 			}else {
@@ -170,8 +177,15 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 				break;
 			case R.id.btn_sp2:	
 				if (e_lms.getText().toString().length() ==0) {
+					Log.e("SKY","모두 보여주기");
 					//모두 보여주기
 					search_flag = false;
+					for (int i = 0; i < arrData_copy.size(); i++) {
+						if (arrData_copy.get(i).getCHECK() == 1) {
+							Log.e("SKY","POSITION :: "  + arrData_copy.get(i).getCopy_position());
+							arrData.set(arrData_copy.get(i).getCopy_position(), new MyPhoneListObj(arrData_copy.get(i).getNAME(), arrData_copy.get(i).getPHONE(), arrData_copy.get(i).getCHECK(),0));
+						}
+					}
 					m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData , mAfterAccum);
 					list_number.setAdapter(m_Adapter);
 				}else {

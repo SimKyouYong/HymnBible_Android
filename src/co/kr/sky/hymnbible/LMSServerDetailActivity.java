@@ -28,6 +28,7 @@ import android.widget.TextView.OnEditorActionListener;
 import co.kr.sky.AccumThread;
 import co.kr.sky.hymnbible.adapter.LMSServerList_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
+import co.kr.sky.hymnbible.obj.MyPhoneListObj;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
 import co.kr.sky.hymnbible.obj.MyServerGroupObj;
 import co.kr.sky.hymnbible.obj.MyServerListObj;
@@ -39,6 +40,7 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 	ListView                list_number;
 	private Typeface ttf;
 	MyServerGroupObj obj;
+	public static Boolean search_flag = false;
 
 	Map<String, String> map = new HashMap<String, String>();
 	AccumThread mThread;
@@ -115,10 +117,22 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 	@Override
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
         // TODO Auto-generated method stub
-        if(v.getId()==R.id.e_search1 && actionId==EditorInfo.IME_ACTION_SEARCH){ 
+        if(v.getId()==R.id.e_lms && actionId==EditorInfo.IME_ACTION_SEARCH){ 
         	// 뷰의 id를 식별, 키보드의 완료 키 입력 검출
         	if (e_lms.getText().toString().length() ==0) {
 				//모두 보여주기
+        		search_flag = false;
+        		for (int i = 0; i < arrData_copy.size(); i++) {
+					if (arrData_copy.get(i).getCheck() == 1) {
+						Log.e("SKY","POSITION :: "  + arrData_copy.get(i).getCopy_position());
+						arrData.set(arrData_copy.get(i).getCopy_position(), new MyServerListObj(arrData_copy.get(i).getKey_index(),
+								arrData_copy.get(i).getName(), 
+								arrData_copy.get(i).getPhone(), 
+								arrData_copy.get(i).getG_keyindex(), 
+								arrData_copy.get(i).getCheck(),
+								0));
+					}
+				}
 				m_Adapter = new LMSServerList_Adapter( LMSServerDetailActivity.this , arrData , mAfterAccum);
 				list_number.setAdapter(m_Adapter);
 			}else {
@@ -126,11 +140,13 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 				for (int i = 0; i < arrData.size(); i++) {
 					if (arrData.get(i).getName().matches(".*" + e_lms.getText().toString() +".*") || arrData.get(i).getPhone().matches(".*" + e_lms.getText().toString() +".*")) {
 						Log.e("SKY", "같은 값! :: " + i);
+						search_flag = true;
 						arrData_copy.add(new MyServerListObj(arrData.get(i).getKey_index(), 
 								arrData.get(i).getName(), 
 								arrData.get(i).getPhone(), 
 								arrData.get(i).getG_keyindex(), 
-								0));
+								arrData.get(i).getCheck(),
+								i));
 					}
 				}
 				m_Adapter = new LMSServerList_Adapter( LMSServerDetailActivity.this , arrData_copy , mAfterAccum);
@@ -149,6 +165,7 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 			case R.id.btn_sp2:	
 				if (e_lms.getText().toString().length() ==0) {
 					//모두 보여주기
+					search_flag = false;
 					m_Adapter = new LMSServerList_Adapter( LMSServerDetailActivity.this , arrData , mAfterAccum);
 					list_number.setAdapter(m_Adapter);
 				}else {
@@ -156,11 +173,13 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 					for (int i = 0; i < arrData.size(); i++) {
 						if (arrData.get(i).getName().matches(".*" + e_lms.getText().toString() +".*") || arrData.get(i).getPhone().matches(".*" + e_lms.getText().toString() +".*")) {
 							Log.e("SKY", "같은 값! :: " + i);
+							search_flag = true;
 							arrData_copy.add(new MyServerListObj(arrData.get(i).getKey_index(), 
 									arrData.get(i).getName(), 
 									arrData.get(i).getPhone(), 
 									arrData.get(i).getG_keyindex(), 
-									0));
+									arrData.get(i).getCheck(),
+									i));
 						}
 					}
 					m_Adapter = new LMSServerList_Adapter( LMSServerDetailActivity.this , arrData_copy , mAfterAccum);
@@ -223,6 +242,7 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 								Object_Array[1][i], 
 								Object_Array[2][i], 
 								Object_Array[3][i], 
+								0,
 								0));
 					}
 				}
@@ -242,11 +262,33 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 			}
 		}
 	};
-
 	AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
-			Log.e("SKY", "POSITION :: "+position);
+			Log.e("SKY", "POSITION : " + position);
+			if (!search_flag) {
+				if (arrData.get(position).getCheck() == 0) {
+					arrData.get(position).setCheck(1);
+				}else{
+					arrData.get(position).setCheck(0);
+				}
+				m_Adapter.notifyDataSetChanged();
+			}else{
+				//검색시에 원본 데이터 셋팅! 
+				Log.e("SKY", "else : " + arrData_copy.get(position).getCheck());
+				if (arrData_copy.get(position).getCheck() == 0) {
+					arrData_copy.get(position).setCheck(1);
+					int pp = arrData_copy.get(position).getCopy_position();
+					Log.e("SKY", "1pp : " + pp);
+					arrData.set(pp, new MyServerListObj(arrData.get(pp).getKey_index() , arrData.get(pp).getName(), arrData.get(pp).getPhone(),arrData.get(pp).getG_keyindex(), 1,1));
+				}else{
+					arrData_copy.get(position).setCheck(0);
+					int pp = arrData_copy.get(position).getCopy_position();
+					Log.e("SKY", "2pp : " + pp);
+					arrData.set(pp, new MyServerListObj(arrData.get(pp).getKey_index() , arrData.get(pp).getName(), arrData.get(pp).getPhone(),arrData.get(pp).getG_keyindex(), 0,0));
+				}
+				m_Adapter.notifyDataSetChanged();
+			}
 		}
 	};
 	public void customProgressPop(){

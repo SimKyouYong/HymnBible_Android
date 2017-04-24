@@ -391,6 +391,7 @@ public class LMSServerActivity extends Activity{
 								Object_Array[1][i], 
 								Object_Array[2][i], 
 								Object_Array[3][i], 
+								0,
 								0));
 
 						dataSet.arrData_real.add(new MyPhoneListObj2(0,
