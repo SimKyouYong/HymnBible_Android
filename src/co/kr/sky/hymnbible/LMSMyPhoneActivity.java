@@ -63,8 +63,7 @@ public class LMSMyPhoneActivity extends Activity{
 	@Override
 	public void onResume(){
 		super.onResume();
-		if (onresume_1 ==1) {
-			onresume_1 = 0;
+		if (LMSMainActivity.onresume_0 ==1) {
 			//그냥 끄기!
 			finish();
 		}
@@ -679,7 +678,6 @@ public class LMSMyPhoneActivity extends Activity{
 			Intent board = new Intent(LMSMyPhoneActivity.this, LMSMyPhoneDetailActivity.class);
 			board.putExtra("Object", arrData.get(position));
 			startActivity(board);
-			finish();
 
 		}
 	};

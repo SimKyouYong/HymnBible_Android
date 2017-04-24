@@ -32,9 +32,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import co.kr.sky.AccumThread;
+import co.kr.sky.hymnbible.LMSMyPhoneActivity.AccumThread2;
 import co.kr.sky.hymnbible.adapter.LMSMain_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.LMSMainObj;
+import co.kr.sky.hymnbible.obj.MyPhoneListObj;
+import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
 
 public class LMSMainActivity extends Activity{
 	EditText lms_msg , phone_number;
@@ -49,12 +53,12 @@ public class LMSMainActivity extends Activity{
 
 	private TextView font_1  , font_2, font_3 ,title , t_count;
 	private Button tab1 , tab2 , send_lms;
-	@Override
-	public void onResume(){
-		super.onResume();
-		if (onresume_0 ==1) {
-			customProgressPop();
-			onresume_0 = 0;
+	public class AccumThread extends Thread{
+		public AccumThread(){
+		}
+		@Override
+		public void run()
+		{
 			//setting
 			for (int i = 0; i < dataSet.arrData_real.size(); i++) {
 				Log.e("SKY", "dataSet.arrData_real.get(i).getNAME() :: " + dataSet.arrData_real.get(i).getNAME());
@@ -76,10 +80,19 @@ public class LMSMainActivity extends Activity{
 					}
 				}
 			}
-			dataSet.arrData_real.clear();
-			m_Adapter.notifyDataSetChanged();
-			t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
-			customProgressClose();
+			Message msg2 = mAfterAccum.obtainMessage();
+			msg2.arg1 = 200;
+			mAfterAccum.sendMessage(msg2);
+		}
+	}
+	@Override
+	public void onResume(){
+		super.onResume();
+		if (onresume_0 ==1) {
+			customProgressPop();
+			onresume_0 = 0;
+			AccumThread av = new AccumThread();
+			av.start();
 		}
 	}
 	protected void onCreate(Bundle savedInstanceState) {
@@ -138,7 +151,13 @@ public class LMSMainActivity extends Activity{
 				arrData.remove(res);
 				m_Adapter.notifyDataSetChanged();
 				t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
-			} 
+			} else if (msg.arg1  == 200 ) {
+				dataSet.arrData_real.clear();
+				m_Adapter.notifyDataSetChanged();
+				t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
+				customProgressClose();
+			}
+
 		}
 	};
 	private void Btn_bottomview_c(){

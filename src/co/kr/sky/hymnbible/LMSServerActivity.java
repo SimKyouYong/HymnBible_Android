@@ -65,6 +65,15 @@ public class LMSServerActivity extends Activity{
 
 	CommonUtil dataSet = CommonUtil.getInstance();
 	String [][]Object_Array;
+	
+	@Override
+	public void onResume(){
+		super.onResume();
+		if (LMSMainActivity.onresume_0 ==1) {
+			//그냥 끄기!
+			finish();
+		}
+	}
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_server);
@@ -433,7 +442,6 @@ public class LMSServerActivity extends Activity{
 			Intent board = new Intent(LMSServerActivity.this, LMSServerDetailActivity.class);
 			board.putExtra("Object", arrData.get(position));
 			startActivity(board);
-			finish();
 		}
 	};
 	public void customProgressPop(){
