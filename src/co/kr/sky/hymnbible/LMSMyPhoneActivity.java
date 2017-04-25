@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.Data;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -59,7 +60,10 @@ public class LMSMyPhoneActivity extends Activity{
 	public static TextView check_count;
 	public static int onresume_1 = 0;
 	int count_server = 0;
-
+	
+	private HashMap<String, String> group_kr;
+	private HashMap<String, String> group_title;
+	private HashMap<String, Integer> group_count;
 	@Override
 	public void onResume(){
 		super.onResume();
@@ -104,7 +108,8 @@ public class LMSMyPhoneActivity extends Activity{
 		findViewById(R.id.btn_reflash).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
 
-
+		group_title=new HashMap<String, String>();
+    	group_count=new HashMap<String, Integer>();
 
 		m_Adapter = new LMSMyPhoneGroup_Adapter( this , arrData , mAfterAccum);
 		list_number.setOnItemClickListener(mItemClickListener);
@@ -148,30 +153,247 @@ public class LMSMyPhoneActivity extends Activity{
 		@Override
 		public void run()
 		{
-			getGroup();
+			getGroupContacts();
+			//getGroup();
 			Message msg2 = mAfterAccum.obtainMessage();
 			msg2.arg1 = 100;
 			mAfterAccum.sendMessage(msg2);
 		}
 	}
-	public void customProgressPop(){
-		try{
-			if (customDialog==null){
-				customDialog = new ProgressDialog( this );
+	private void getGroupContacts(){
+	    Log.e("SKY","--getGroupContacts--");
+	    ArrayList<String > arr = new ArrayList<String>();
+		Uri uri_group = ContactsContract.Groups.CONTENT_SUMMARY_URI;
+		String[] group_projection = new String[]{
+				ContactsContract.Groups._ID,
+				ContactsContract.Groups.TITLE
+		};
+		String group_selection = ContactsContract.Groups.DELETED + " = 0 AND " + ContactsContract.Groups.GROUP_VISIBLE + " = 1";
+		String orderby = ContactsContract.Groups.TITLE+ " COLLATE LOCALIZED ASC";
+	    Cursor gc = managedQuery(uri_group, group_projection, group_selection, null,orderby);
+	    while(gc.moveToNext())
+	    {
+	    	String gtitle=gc.getString(1);
+	    	if(gtitle!=null && !gtitle.equals(""))
+	    	{
+	    		int _ID = gc.getInt(0);
+	    		int people_count=0;
+		    	String selection=ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + "="+gc.getString(0);
+//	    		String[] qry={ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID};
+//		    	Cursor people_rlt = managedQuery(ContactsContract.Data.CONTENT_URI,qry, selection, null,null);//		    	
+//		    	final int people_count = people_rlt.getCount();
+//		    	Log.i("getGroupContacts",gc.getString(0)+" "+gc.getString(1)+" ("+people_count+")");
+	    		Uri lookupUri = Uri.withAppendedPath(ContactsContract.Data.CONTENT_URI, "");
+			    Cursor is_c = getContentResolver().query(
+			    		lookupUri, 
+			    		new String[]{ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID},
+			    		selection,
+			    		null,
+			    		null);
+			    
+			    people_count=is_c.getCount();
+			    try {
+			    	people_count=is_c.getCount();
+			    	
+			    } catch (Exception e) {}
+			    finally{is_c.close();}
+		    	if(group_title.get(gtitle)!=null)
+		    	{
+		    		int g_tcount = group_count.get(gtitle)+people_count;
+		    		group_count.put(gtitle,g_tcount);
+		    		Log.e("SKY" , "1::_ID :: " + _ID);
+		    		Log.e("SKY" , "1::gtitle :: " + gtitle);
+		    		Log.e("SKY" , "1::g_tcount :: " + g_tcount);
+		    		arr.add(""+_ID);
+		    		SAVE_DB_Group(gtitle ,""+g_tcount ,""+ _ID );
+		    		getSampleContactList(_ID);
+		    	}else{
+		    		group_title.put(gtitle,gtitle);
+		    		group_count.put(gtitle,people_count);
+		    		Log.e("SKY" , "2::_ID :: " + _ID);
+		    		Log.e("SKY" , "2::gtitle :: " + gtitle);
+		    		Log.e("SKY" , "2::people_count :: " + people_count);
+		    		arr.add(""+_ID);
+		    		
+		    		SAVE_DB_Group(gtitle ,""+people_count ,""+ _ID );
+		    		getSampleContactList(_ID);
+		    	}
+	    	}
+	    }
+	    //getGroupall(and_where);
+	    String[] array = new String[arr.size()];
+	    int size=0;
+	    for(String temp : arr){
+	      array[size++] = temp;
+	    }
+	    //getGroupall(array);
+	    getSampleContactList2(array);
+	    //미지정 가져오기
+	}
+	public void getSampleContactList2(String[] groupID) {
+		Log.e("SKY" , "--getSampleContactList2-- :: " + groupID);
+		String var = "";
+		for (int i = 0; i < groupID.length; i++) {
+			Log.e("SKY" , "--var-- :: " + groupID[i]);
+			if (i ==0) {
+				var += ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + " not like ?";
+			}else{
+				var += " and " + ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + " not like ?";
 			}
-			customDialog.show();
-		}catch(Exception ex){}
-	}
-	public void customProgressClose(){
-		if (customDialog!=null && customDialog.isShowing()){
-			try{
-				customDialog.cancel();
-				customDialog.dismiss();
-				customDialog = null;
-			}catch(Exception e)
-			{}
 		}
+		Log.e("SKY" , "--var-- :: " + var);
+
+	    Uri groupURI = ContactsContract.Data.CONTENT_URI;
+	    String[] projection = new String[] {
+	            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+	            ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID
+	            };
+
+	    Cursor c = getContentResolver().query(
+	            groupURI,
+	            projection,
+	            var, 
+	            groupID, 
+	            null);
+
+	    int count_all = 0;
+	    while (c.moveToNext()) {
+	        String id = c
+	                .getString(c
+	                        .getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
+	        Cursor pCur = getContentResolver().query(
+	                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+	                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+	                new String[] { id }, null);
+
+	        int i =0;
+	        while (pCur.moveToNext()) {
+	        	i++;
+	            String name = pCur
+	                    .getString(pCur
+	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+
+	            String phone = pCur
+	                    .getString(pCur
+	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+				Log.e("SKY" , "aaa" + count_all + ".name:: " + name + " // phone :: " + phone + "//contact :: " +c.getString(1));
+				Phone_ox(name.replace(" ", "") , phone.replace("-", ""));
+				
+				//SAVE_DB_Phone(name, phone, ""+groupID);
+				count_all++;
+	        }
+	        pCur.close();
+	    }
+	    
 	}
+	public Boolean Phone_ox(String name, String phone)
+	{
+		Boolean ox= false;
+		try{
+			//인서트쿼리
+			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
+			String sql;
+			try {
+				
+				Cursor cur = db.rawQuery("SELECT COUNT(*) FROM phone where name ='" + name +"' and phone = '" + phone +"'", null);
+				// 처음 레코드로 이동
+				while(cur.moveToNext()){
+					Log.e("SKY" , "cur :: " + cur.getString(0));
+					if (cur.getString(0).equals("0")) {
+						ox = true;
+					}
+				}
+				cur.close();
+				db.close();
+			} catch (Exception e) {
+				db.close();
+				Log.e("MiniApp","sql error : "+ e.toString());
+			}
+			db.close();
+		}catch (Exception e) {
+			Log.e("SKY","onPostExecute error : "+ e.toString());
+		}
+		if (ox) {
+			Log.e("SKY" , "ox :: INSERT GOGO");
+			Log.e("SKY" , "ox :: name ::" + name + " -- phone :: " + phone);
+			//db 인설트! 미지정
+		}else{
+			Log.e("SKY" , "ox :: INSERT XXXX");
+		}
+		
+		return ox;
+	}
+	private void getGroupall(String[] groupID){
+		String var = "";
+		for (int i = 0; i < groupID.length; i++) {
+			Log.e("SKY" , "--var-- :: " + groupID[i]);
+			if (i ==0) {
+				var += ContactsContract.Contacts._ID + " not like " + groupID[i];
+			}else{
+				var += " and " + ContactsContract.Contacts._ID + " not like "+groupID[i];
+			}
+		}
+		Log.e("SKY" , "--var-- :: " + var);
+		Cursor pCur = getContentResolver().query(
+                ContactsContract.Contacts.CONTENT_URI, 
+                null,
+                var,
+                null, 
+                null);
+
+        int i =0;
+        while (pCur.moveToNext()) {
+        	i++;
+			Log.e("SKY" , "aaa" + i );
+        }
+        pCur.close();
+		
+
+		
+	}
+	public void getSampleContactList(int groupID) {
+		Log.e("SKY" , "--getSampleContactList-- :: " + groupID);
+	    Uri groupURI = ContactsContract.Data.CONTENT_URI;
+	    String[] projection = new String[] {
+	            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+	            ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID };
+
+	    Cursor c = getContentResolver().query(
+	            groupURI,
+	            projection,
+	            ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID
+	                    + "=" + groupID, null, null);
+
+	    int count_all = 0;
+	    while (c.moveToNext()) {
+	        String id = c
+	                .getString(c
+	                        .getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
+	        Cursor pCur = getContentResolver().query(
+	                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+	                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+	                new String[] { id }, null);
+
+	        int i =0;
+	        while (pCur.moveToNext()) {
+	        	i++;
+	            String name = pCur
+	                    .getString(pCur
+	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+
+	            String phone = pCur
+	                    .getString(pCur
+	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+				Log.e("SKY" , "" + i + ".name:: " + name + " // phone :: " + phone);
+				SAVE_DB_Phone(name.replace(" ", ""), phone.replace("-", ""), ""+groupID);
+				count_all++;
+	        }
+	        pCur.close();
+	    }
+	    SAVE_DB_GROUP_COUNT(""+count_all, groupID);
+	    
+	}
+	
 	public void SELECT_GROUP()		//디비 값 조회해서 저장하기
 	{
 		arrData.clear();
@@ -179,13 +401,13 @@ public class LMSMyPhoneActivity extends Activity{
 			//  db파일 읽어오기
 			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
 			// 쿼리로 db의 커서 획득
-			Cursor cur = db.rawQuery("SELECT * FROM `group`;", null);
+			Cursor cur = db.rawQuery("SELECT * FROM `group` where count is not 0;", null);
 			// 처음 레코드로 이동
 			while(cur.moveToNext()){
 
 				// 읽은값 출력
 				Log.i("MiniApp",cur.getString(0)+"/"+cur.getString(1)+"/"+cur.getString(2));
-				arrData.add(new MyPhoneGroupObj(""+cur.getString(0), 
+				arrData.add(new MyPhoneGroupObj(""+cur.getString(3), 
 						cur.getString(1), 
 						"", 
 						"", 
@@ -221,7 +443,7 @@ public class LMSMyPhoneActivity extends Activity{
 		}   
 
 	}
-	public void SAVE_DB_Group(String name, String count)
+	public void SAVE_DB_Group(String name, String count , String group_key)
 	{
 		try{
 			//인서트쿼리
@@ -230,9 +452,10 @@ public class LMSMyPhoneActivity extends Activity{
 			String sql;
 			try {
 
-				sql = "INSERT INTO `group`(`name`,`count`) VALUES (";
+				sql = "INSERT INTO `group`(`name`,`count`,`group_id`) VALUES (";
 				sql += "'" + name  + "'" ;
 				sql += ",'" + count  + "'" ;
+				sql += ",'" + group_key  + "'" ;
 				sql +=   ")";
 				Log.e("SKY","sql  : "+ sql);
 				db.execSQL(sql);
@@ -421,6 +644,7 @@ public class LMSMyPhoneActivity extends Activity{
 				Log.e("SKY" , "조회 끝 !");
 				customProgressClose();
 				SELECT_GROUP();
+				Check_Preferences.setAppPreferences(LMSMyPhoneActivity.this, "phonedb", true);
 			}else if(msg.arg1  == 200 ){
 				LMSMainActivity.onresume_0 = 1;
 				customProgressClose();
@@ -455,177 +679,16 @@ public class LMSMyPhoneActivity extends Activity{
 
 		}
 	};
-	private void getGroup() {
-		arrData.clear();
-		dataSet.arrData_real.clear();
-		Cursor cursor = getContentResolver().query(
-				ContactsContract.Groups.CONTENT_URI, 
-				new String[] {
-						ContactsContract.Groups._ID,
-						ContactsContract.Groups.TITLE,
-						ContactsContract.Groups.ACCOUNT_NAME,
-						ContactsContract.Groups.ACCOUNT_TYPE,
-						ContactsContract.Groups.DELETED,
-						ContactsContract.Groups.GROUP_VISIBLE
-				}, 
-				ContactsContract.Groups.DELETED + "=0" + " AND " +
-						ContactsContract.Groups.GROUP_VISIBLE + "=1", 
-						null, 
-						null);
-
-
-		try {
-			while (cursor.moveToNext()) {
-				int _ID = 				cursor.getInt(0);
-				String TITLE = 			cursor.getString(1);
-				String ACCOUNT_NAME = 		cursor.getString(2);
-				String ACCOUNT_TYPE = 		cursor.getString(3);
-				String DELETED = 			cursor.getString(4);
-				String GROUP_VISIBLE = 	cursor.getString(5);
-				int GROUP_COUNT = 		getGroupSummaryCount(cursor.getString(0));
-				Log.e("SKY" , "1.GROUP_COUNT :: " + GROUP_COUNT);
-				if (GROUP_COUNT  > 0) {
-					if (arrData.size() == 0) {
-						/*
-						Log.e("SKY" , "최초 등록!");
-						Log.e("SKY" , "_ID :: " + _ID);
-						Log.e("SKY" , "TITLE :: " + TITLE);
-						Log.e("SKY" , "ACCOUNT_NAME :: " + ACCOUNT_NAME);
-						Log.e("SKY" , "ACCOUNT_TYPE :: " + ACCOUNT_TYPE);
-						Log.e("SKY" , "DELETED :: " + DELETED);
-						Log.e("SKY" , "GROUP_VISIBLE :: " + GROUP_VISIBLE);
-						Log.e("SKY" , "GROUP_COUNT :: " + GROUP_COUNT);
-						 */
-						arrData.add(new MyPhoneGroupObj(""+_ID, 
-								TITLE, 
-								ACCOUNT_NAME, 
-								ACCOUNT_TYPE, 
-								DELETED,
-								GROUP_VISIBLE, 
-								""+0, 
-								"false",
-								0,
-								0));
-					}else{
-						/*
-						Log.e("SKY" , "_ID :: " + _ID);
-						Log.e("SKY" , "TITLE :: " + TITLE);
-						Log.e("SKY" , "ACCOUNT_NAME :: " + ACCOUNT_NAME);
-						Log.e("SKY" , "ACCOUNT_TYPE :: " + ACCOUNT_TYPE);
-						Log.e("SKY" , "DELETED :: " + DELETED);
-						Log.e("SKY" , "GROUP_VISIBLE :: " + GROUP_VISIBLE);
-						Log.e("SKY" , "GROUP_COUNT :: " + GROUP_COUNT);
-						Log.e("SKY" , "arrDataSIZE i  :: " + arrData.size());
-						 */
-						for (int i = 0; i < arrData.size(); i++) {
-							if (arrData.get(i).getTITLE().equals(TITLE)) {
-								//								Log.e("SKY" , "for if getTITLE :: " + TITLE);
-								//								Log.e("SKY" , "for if GROUP_COUNT :: " + GROUP_COUNT);
-								//add
-								arrData.get(i).set_Add_ID(""+_ID);
-								arrData.get(i).set_Add_GROUP_COUNT(0);
-							}else{
-								//								Log.e("SKY" , "for else  :: " + i);
-								//default add
-								//								Log.e("SKY" , "2for if getTITLE :: " + TITLE);
-								//								Log.e("SKY" , "2for if GROUP_COUNT :: " + GROUP_COUNT);
-								arrData.add(new MyPhoneGroupObj(""+_ID, 
-										TITLE, 
-										ACCOUNT_NAME, 
-										ACCOUNT_TYPE, 
-										DELETED,
-										GROUP_VISIBLE, 
-										""+0, 
-										"false",
-										0,
-										0));
-							}
-							continue;
-						}
-					}
-				}
-			}
-		} finally {
-			cursor.close();
-			for (int i = 0; i < arrData.size(); i++) {
-				//그룹 테이블인설트 !
-				//key // name // count 
-				Log.e("SKY" , "그룹 테이블인설트 ! :: " +  arrData.get(i).get_ID() );
-				SAVE_DB_Group(arrData.get(i).getTITLE() ,  "0");
-				if (arrData.get(i).get_ID().indexOf(",") == -1) {
-					//없을떄
-					getSampleContactList(Integer.parseInt(arrData.get(i).get_ID()) , i);
-				}else{
-					String id_str[] = arrData.get(i).get_ID().split(",");
-					String[] dupArray=id_str;
-					Object[] noDupArray=removeDuplicateArray(dupArray);
-					for(int j=0; j<noDupArray.length; j++){
-						//Log.e("SKY" , "for if GROUP_COUNT :: " + (String)noDupArray[j] +"//i :: "+ i  );
-						getSampleContactList(Integer.parseInt((String)noDupArray[j]) , i);
-					}
-				}
-				SAVE_DB_GROUP_COUNT(arrData.get(i).getGROUP_COUNT() , i);
-			}
-
-			Check_Preferences.setAppPreferences(LMSMyPhoneActivity.this, "phonedb", true);
-
-
-
-		}
-	}
-	public void getSampleContactList(int groupID , int ii) {
-
-		Uri groupURI = ContactsContract.Data.CONTENT_URI;
-		String[] projection = new String[] {
-				ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-				ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID };
-
-		Cursor c = getContentResolver().query(
-				groupURI,
-				projection,
-				ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID
-				+ "=" + groupID, null, null);
-
-		while (c.moveToNext()) {
-			String id = c
-					.getString(c
-							.getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
-			Cursor pCur = getContentResolver().query(
-					ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-					ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-					new String[] { id }, null);
-
-			int i =0;
-			while (pCur.moveToNext()) {
-				i++;
-				String name = pCur
-						.getString(pCur
-								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-				String phone = pCur
-						.getString(pCur
-								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-				Log.e("SKY" , "" + i + ".name:: " + name + " // phone :: " + phone);
-				arrData.get(ii).set_Add_GROUP_COUNT(1);
-				//회원 테이블인설트 !
-				//key // name // phone // group_key 
-				SAVE_DB_Phone(name , phone  , ""+ii);
-				//arrData.add(new MyPhoneListObj(name, phone , 0));
-			}
-			pCur.close();
-
-		}
-		c.close();
-
-
-	}
 	public void SAVE_DB_GROUP_COUNT(String count , int key)
 	{
+		Log.e("SKY","count  : "+ count);
+		Log.e("SKY","key  : "+ key);
 		try{
 			//인서트쿼리
 			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
 			String sql;
 			try {
-				sql = "UPDATE `group` SET count = '" + count + "' WHERE key=" +  (key+1);
+				sql = "UPDATE `group` SET count = '" + count + "' WHERE group_id='" +  (key)+"'";
 				Log.e("SKY","sql2  : "+ sql);
 				db.execSQL(sql);
 			} catch (Exception e) {
@@ -681,19 +744,24 @@ public class LMSMyPhoneActivity extends Activity{
 
 		}
 	};
-	private int getGroupSummaryCount(String groupId) {
-		Uri uri = ContactsContract.Groups.CONTENT_SUMMARY_URI;
-		String[] projection = new String[]  { 
-				ContactsContract.Groups.SUMMARY_COUNT,
-				ContactsContract.Groups.ACCOUNT_NAME,
-				ContactsContract.Groups.ACCOUNT_TYPE
-		};
-		String selection = ContactsContract.Groups._ID + "=" + groupId;
-		Cursor cursor = managedQuery(uri, projection, selection, null, null);
-		int cnt = 0;
-		while (cursor.moveToNext()) {
-			cnt = cursor.getInt(0);
+	
+	public void customProgressPop(){
+		try{
+			if (customDialog==null){
+				customDialog = new ProgressDialog( this );
+			}
+			customDialog.setCancelable(false);
+			customDialog.show();
+		}catch(Exception ex){}
+	}
+	public void customProgressClose(){
+		if (customDialog!=null && customDialog.isShowing()){
+			try{
+				customDialog.cancel();
+				customDialog.dismiss();
+				customDialog = null;
+			}catch(Exception e)
+			{}
 		}
-		return cnt;
 	}
 }

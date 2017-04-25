@@ -88,7 +88,7 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 		list_number.setAdapter(m_Adapter);
 
 		int key = Integer.parseInt(obj.get_ID());
-		SELECT_Phone(""+(key-1));
+		SELECT_Phone(""+(key));
 		
 		check_all.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override

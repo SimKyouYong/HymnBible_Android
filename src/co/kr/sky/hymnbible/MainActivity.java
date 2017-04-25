@@ -206,6 +206,51 @@ public class MainActivity extends Activity{
 //		if("".equals(Check_Preferences.getAppPreferences(MainActivity.this, "ch"))){
 //			InputAlert();
 //		}
+	    //getGroupall(and_where);
+	    getSampleContactList2(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + "= " + 4);
+	}
+	public void getSampleContactList2(String groupID) {
+		Log.e("SKY" , "--getSampleContactList2-- :: " + groupID);
+	    Uri groupURI = ContactsContract.Data.CONTENT_URI;
+	    String[] projection = new String[] {
+	            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+	            ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID };
+
+	    Cursor c = getContentResolver().query(
+	            groupURI,
+	            projection,
+	            ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID
+                + "=" + 4, 
+	            null, 
+	            null);
+
+	    int count_all = 0;
+	    while (c.moveToNext()) {
+	        String id = c
+	                .getString(c
+	                        .getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
+	        Cursor pCur = getContentResolver().query(
+	                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+	                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+	                new String[] { id }, null);
+
+	        int i =0;
+	        while (pCur.moveToNext()) {
+	        	i++;
+	            String name = pCur
+	                    .getString(pCur
+	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+
+	            String phone = pCur
+	                    .getString(pCur
+	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+				Log.e("SKY" , "aaa" + count_all + ".name:: " + name + " // phone :: " + phone);
+				//SAVE_DB_Phone(name, phone, ""+groupID);
+				count_all++;
+	        }
+	        pCur.close();
+	    }
+	    
 	}
 	public void onRequestPermissionsResult(int requestCode,
 	        String permissions[], int[] grantResults) {
@@ -246,6 +291,7 @@ public class MainActivity extends Activity{
 	    	String gtitle=gc.getString(1);
 	    	if(gtitle!=null && !gtitle.equals(""))
 	    	{
+	    		int _ID = gc.getInt(0);
 	    		int people_count=0;
 		    	String selection=ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + "="+gc.getString(0);
 //	    		String[] qry={ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID};
@@ -268,9 +314,17 @@ public class MainActivity extends Activity{
 		    	{
 		    		int g_tcount = group_count.get(gtitle)+people_count;
 		    		group_count.put(gtitle,g_tcount);
+		    		Log.e("SKY" , "1_ID :: " + _ID);
+		    		Log.e("SKY" , "1gtitle :: " + gtitle);
+		    		Log.e("SKY" , "1g_tcount :: " + g_tcount);
+		    		getSampleContactList(_ID);
 		    	}else{
 		    		group_title.put(gtitle,gtitle);
 		    		group_count.put(gtitle,people_count);
+		    		Log.e("SKY" , "2_ID :: " + _ID);
+		    		Log.e("SKY" , "2gtitle :: " + gtitle);
+		    		Log.e("SKY" , "2people_count :: " + people_count);
+		    		getSampleContactList(_ID);
 		    	}
 	    	}
 	    }
@@ -286,7 +340,7 @@ public class MainActivity extends Activity{
 		alert.show();
 	}
 	public void getSampleContactList(int groupID) {
-
+		Log.e("SKY" , "--getSampleContactList-- :: " + groupID);
 	    Uri groupURI = ContactsContract.Data.CONTENT_URI;
 	    String[] projection = new String[] {
 	            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
