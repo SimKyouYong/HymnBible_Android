@@ -49,6 +49,8 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 	private Button btn_ok;
 	EditText e_lms;
 	public static Boolean search_flag = false;
+	int key;
+	int all_count = 0;
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_myphonedetail);
@@ -87,7 +89,7 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 		list_number.setOnItemClickListener(mItemClickListener);
 		list_number.setAdapter(m_Adapter);
 
-		int key = Integer.parseInt(obj.get_ID());
+		key = Integer.parseInt(obj.get_ID());
 		SELECT_Phone(""+(key));
 		
 		check_all.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -123,7 +125,7 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 				for (int i = 0; i < arrData_copy.size(); i++) {
 					if (arrData_copy.get(i).getCHECK() == 1) {
 						Log.e("SKY","POSITION :: "  + arrData_copy.get(i).getCopy_position());
-						arrData.set(arrData_copy.get(i).getCopy_position(), new MyPhoneListObj(arrData_copy.get(i).getNAME(), arrData_copy.get(i).getPHONE(), arrData_copy.get(i).getCHECK(),0));
+						arrData.set(arrData_copy.get(i).getCopy_position(), new MyPhoneListObj(arrData_copy.get(i).getKey(),arrData_copy.get(i).getNAME(), arrData_copy.get(i).getPHONE(), arrData_copy.get(i).getCHECK(),0));
 					}
 				}
 				m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData , mAfterAccum);
@@ -134,7 +136,7 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 					if (arrData.get(i).getNAME().matches(".*" + e_lms.getText().toString() +".*") || arrData.get(i).getPHONE().matches(".*" + e_lms.getText().toString() +".*")) {
 						Log.e("SKY", "같은 값! :: " + i);
 						search_flag = true;
-						arrData_copy.add(new MyPhoneListObj(arrData.get(i).getNAME(), arrData.get(i).getPHONE(), arrData.get(i).getCHECK() , i));
+						arrData_copy.add(new MyPhoneListObj(arrData.get(i).getKey(),arrData.get(i).getNAME(), arrData.get(i).getPHONE(), arrData.get(i).getCHECK() , i));
 					}
 				}
 				m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData_copy , mAfterAccum);
@@ -154,8 +156,9 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 			// 처음 레코드로 이동
 			while(cur.moveToNext()){
 				// 읽은값 출력
+				all_count++;
 				Log.i("MiniApp",cur.getString(0)+"/"+cur.getString(1)+"/"+cur.getString(2));
-				arrData.add(new MyPhoneListObj(cur.getString(1), cur.getString(2), 0 ,0));
+				arrData.add(new MyPhoneListObj(cur.getString(0),cur.getString(1), cur.getString(2), 0 ,0));
 			}
 			cur.close();
 			db.close();
@@ -183,7 +186,7 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 					for (int i = 0; i < arrData_copy.size(); i++) {
 						if (arrData_copy.get(i).getCHECK() == 1) {
 							Log.e("SKY","POSITION :: "  + arrData_copy.get(i).getCopy_position());
-							arrData.set(arrData_copy.get(i).getCopy_position(), new MyPhoneListObj(arrData_copy.get(i).getNAME(), arrData_copy.get(i).getPHONE(), arrData_copy.get(i).getCHECK(),0));
+							arrData.set(arrData_copy.get(i).getCopy_position(), new MyPhoneListObj(arrData_copy.get(i).getKey(),arrData_copy.get(i).getNAME(), arrData_copy.get(i).getPHONE(), arrData_copy.get(i).getCHECK(),0));
 						}
 					}
 					m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData , mAfterAccum);
@@ -194,7 +197,7 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 						if (arrData.get(i).getNAME().matches(".*" + e_lms.getText().toString() +".*") || arrData.get(i).getPHONE().matches(".*" + e_lms.getText().toString() +".*")) {
 							Log.e("SKY", "같은 값! :: " + i);
 							search_flag = true;
-							arrData_copy.add(new MyPhoneListObj(arrData.get(i).getNAME(), arrData.get(i).getPHONE(), arrData.get(i).getCHECK() , i));
+							arrData_copy.add(new MyPhoneListObj(arrData.get(i).getKey(),arrData.get(i).getNAME(), arrData.get(i).getPHONE(), arrData.get(i).getCHECK() , i));
 						}
 					}
 					m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData_copy , mAfterAccum);
@@ -269,9 +272,58 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 				}
 				m_Adapter.notifyDataSetChanged();
 
+			}else if(msg.arg1  == 9001 ){//해당 삭제
+				int del_position = (int)msg.arg2;
+				DEL_Phone(del_position);
+				SELECT_Phone(""+(key));
 			}
+			
+			
 		}
 	};
+	public void DEL_Phone(int del)		//디비 값 조회해서 저장하기
+	{
+		arrData.clear();
+		try{
+			//  db파일 읽어오기
+			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
+			// 쿼리로 db의 커서 획득
+
+			String sql = "delete from `phone` where group_key = '" + key + "' AND key =" + del;
+			Log.e("SKY","sql2  : "+ sql);
+			db.execSQL(sql);
+			db.close();
+			all_count = all_count -1;
+			UPDATE_GROUP_COUNT(all_count);
+		}
+		catch (SQLException se) {
+			// TODO: handle exception
+			Log.e("selectData()Error! : ",se.toString());
+		}   
+
+	}
+	public void UPDATE_GROUP_COUNT(int count)
+	{
+		Log.e("SKY","count  : "+ count);
+		Log.e("SKY","key  : "+ key);
+		try{
+			//인서트쿼리
+			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
+			String sql;
+			try {
+				sql = "UPDATE `group` SET count = '" + count + "' WHERE group_id='" +  (key)+"'";
+				Log.e("SKY","sql2  : "+ sql);
+				db.execSQL(sql);
+				all_count = 0;
+			} catch (Exception e) {
+				db.close();
+				Log.e("MiniApp","sql error : "+ e.toString());
+			}
+			db.close();
+		}catch (Exception e) {
+			Log.e("SKY","onPostExecute error : "+ e.toString());
+		}
+	}
 	AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
@@ -290,12 +342,12 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 					arrData_copy.get(position).setCHECK(1);
 					int pp = arrData_copy.get(position).getCopy_position();
 					Log.e("SKY", "1pp : " + pp);
-					arrData.set(pp, new MyPhoneListObj(arrData.get(pp).getNAME(), arrData.get(pp).getPHONE(), 1,1));
+					arrData.set(pp, new MyPhoneListObj(arrData.get(pp).getKey(),arrData.get(pp).getNAME(), arrData.get(pp).getPHONE(), 1,1));
 				}else{
 					arrData_copy.get(position).setCHECK(0);
 					int pp = arrData_copy.get(position).getCopy_position();
 					Log.e("SKY", "2pp : " + pp);
-					arrData.set(pp, new MyPhoneListObj(arrData.get(pp).getNAME(), arrData.get(pp).getPHONE(), 0 ,0));
+					arrData.set(pp, new MyPhoneListObj(arrData.get(pp).getKey(),arrData.get(pp).getNAME(), arrData.get(pp).getPHONE(), 0 ,0));
 				}
 
 				m_Adapter.notifyDataSetChanged();

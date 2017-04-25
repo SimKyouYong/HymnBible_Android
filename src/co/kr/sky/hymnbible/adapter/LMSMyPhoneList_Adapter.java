@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -57,6 +58,7 @@ public class LMSMyPhoneList_Adapter extends BaseAdapter {
 	static class ViewHolder {
 		TextView t_name , t_phone;
 		CheckBox check;
+		Button del;
 	}
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		final MyPhoneListObj board = items.get(position);
@@ -65,12 +67,14 @@ public class LMSMyPhoneList_Adapter extends BaseAdapter {
 		vh.t_name = (TextView) convertView.findViewById(R.id.t_name); 
 		vh.t_phone = (TextView) convertView.findViewById(R.id.t_phone); 
 		vh.check = (CheckBox) convertView.findViewById(R.id.check); 
+		vh.del = (Button) convertView.findViewById(R.id.del); 
 
 		convertView.setTag(vh);
 		vh.t_name.setTypeface(ttf);
 		vh.t_phone.setTypeface(ttf);
 		vh.t_name.setText("" + position + "." +board.getNAME());
 		vh.t_phone.setText("" +board.getPHONE().replace("-", ""));
+		
 		vh.check.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView,	boolean isChecked) {
@@ -88,7 +92,16 @@ public class LMSMyPhoneList_Adapter extends BaseAdapter {
 				}
 			}
 		});
-
+		vh.del.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Log.e("SKY", "KEY :: " + board.getKey());
+				Message msg2 = mAfterAccum.obtainMessage();
+				msg2.arg1 = 9001;
+				msg2.arg2 = Integer.parseInt(board.getKey());
+				mAfterAccum.sendMessage(msg2);
+			}
+		});
 		if (items.get(position).getCHECK() == 0) {
 			vh.check.setChecked(false);
 		}else{

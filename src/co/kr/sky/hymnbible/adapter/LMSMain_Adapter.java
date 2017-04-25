@@ -52,7 +52,7 @@ public class LMSMain_Adapter extends BaseAdapter {
 	}
 
 	static class ViewHolder {
-		TextView t_name;
+		TextView t_name , t_phone;
 		Button del;
 	}
 	public View getView(final int position, View convertView, ViewGroup parent) {
@@ -61,6 +61,7 @@ public class LMSMain_Adapter extends BaseAdapter {
 		if (convertView == null) {
 			convertView = inflater.inflate(R.layout.activity_lms_main_item,null);
 			vh.t_name = (TextView) convertView.findViewById(R.id.t_name); 
+			vh.t_phone = (TextView) convertView.findViewById(R.id.t_phone); 
 			vh.del = (Button) convertView.findViewById(R.id.del); 
 
 			convertView.setTag(vh);
@@ -68,8 +69,10 @@ public class LMSMain_Adapter extends BaseAdapter {
 			vh = (ViewHolder) convertView.getTag();
 		}
 		vh.t_name.setTypeface(ttf);
+		vh.t_phone.setTypeface(ttf);
 		
 		vh.t_name.setText(board.getName());
+		vh.t_phone.setText(board.getNumber());
 		vh.del.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				Message msg2 = mAfterAccum.obtainMessage();

@@ -8,18 +8,32 @@ public class MyPhoneListObj implements Parcelable{
 	public static Parcelable.Creator<MyPhoneListObj> getCreator() {
 		return CREATOR;
 	}	
+	String key;
 	String NAME;
 	String PHONE;
 	int CHECK;
 	int copy_position;
 	
-	public MyPhoneListObj(String nAME, String pHONE, int cHECK, int copy_position) {
+	public MyPhoneListObj(String key,String nAME, String pHONE, int cHECK, int copy_position) {
 		super();
+		this.key = key;
 		NAME = nAME;
 		PHONE = pHONE;
 		CHECK = cHECK;
 		this.copy_position = copy_position;
 	}
+	
+	
+	public String getKey() {
+		return key;
+	}
+
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+
 	public String getNAME() {
 		return NAME;
 	}
@@ -49,6 +63,7 @@ public class MyPhoneListObj implements Parcelable{
 	}
 	@Override
 	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(key);
 		dest.writeString(NAME);
 		dest.writeString(PHONE);
 		dest.writeInt(CHECK);
@@ -56,6 +71,7 @@ public class MyPhoneListObj implements Parcelable{
 
 	}
 	private void readFromParcel(Parcel in){
+		key = in.readString();
 		NAME = in.readString();
 		PHONE = in.readString();
 		CHECK = in.readInt();

@@ -284,8 +284,15 @@ public class LMSMyPhoneActivity extends Activity{
 	        }
 	        pCur.close();
 	    }
+	    if (ox_flag) {
+	    	SAVE_DB_Group("미지정" ,""+all_count_position ,"9999");
+		}
+		
+
 	    
 	}
+	Boolean ox_flag;
+	int all_count_position = 0;
 	public Boolean Phone_ox(String name, String phone)
 	{
 		Boolean ox= false;
@@ -314,8 +321,15 @@ public class LMSMyPhoneActivity extends Activity{
 			Log.e("SKY","onPostExecute error : "+ e.toString());
 		}
 		if (ox) {
+			
+			ox_flag = true;
 			Log.e("SKY" , "ox :: INSERT GOGO");
 			Log.e("SKY" , "ox :: name ::" + name + " -- phone :: " + phone);
+			if (phone.startsWith("010")) {
+				all_count_position ++;
+				SAVE_DB_Phone(name, phone, "9999");
+			}
+			
 			//db 인설트! 미지정
 		}else{
 			Log.e("SKY" , "ox :: INSERT XXXX");
@@ -552,7 +566,7 @@ public class LMSMyPhoneActivity extends Activity{
 					Log.e("SKY","get_ID :: " + arrData.get(i).get_ID());
 
 					arr.clear();
-					arr = SELECT_Phone("" +(Integer.parseInt(arrData.get(i).get_ID()) - 1));
+					arr = SELECT_Phone("" +(Integer.parseInt(arrData.get(i).get_ID())));
 					for (int j = 0; j < arr.size(); j++) {
 						JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
 						Log.e("SKY","NAME :: " + arr.get(j).getNAME());
@@ -584,7 +598,7 @@ public class LMSMyPhoneActivity extends Activity{
 			for (int i = 0; i < arrData.size(); i++) {
 				if (arrData.get(i).getSELECTED() == 1) {
 					int key = Integer.parseInt(arrData.get(i).get_ID());
-					ArrayList<MyPhoneListObj> vo = SELECT_Phone(""+(key-1));
+					ArrayList<MyPhoneListObj> vo = SELECT_Phone(""+(key));
 					for (int j = 0; j < vo.size(); j++) {
 						dataSet.arrData_real.add(new MyPhoneListObj2(0,
 								vo.get(j).getNAME(),
@@ -611,7 +625,7 @@ public class LMSMyPhoneActivity extends Activity{
 			while(cur.moveToNext()){
 				// 읽은값 출력
 				Log.i("MiniApp",cur.getString(0)+"/"+cur.getString(1)+"/"+cur.getString(2));
-				arr.add(new MyPhoneListObj(cur.getString(1), cur.getString(2), 0 ,0));
+				arr.add(new MyPhoneListObj(cur.getString(0),cur.getString(1), cur.getString(2), 0 ,0));
 			}
 			cur.close();
 			db.close();
@@ -751,6 +765,7 @@ public class LMSMyPhoneActivity extends Activity{
 				customDialog = new ProgressDialog( this );
 			}
 			customDialog.setCancelable(false);
+			customDialog.setMessage("전화번호 불러오는중");
 			customDialog.show();
 		}catch(Exception ex){}
 	}

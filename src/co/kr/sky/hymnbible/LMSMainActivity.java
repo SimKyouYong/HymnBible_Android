@@ -8,7 +8,6 @@ import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,9 +23,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.telephony.SmsManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -49,7 +49,7 @@ public class LMSMainActivity extends Activity{
 	private static final int INPUT_FILE_REQUEST_CODE = 1;
 	protected ProgressDialog customDialog = null;
 
-	private TextView font_1  , font_2, font_3 ,title , t_count;
+	private TextView font_1  , font_2, font_3 ,title , t_count , txt_byte;
 	private Button tab1 , tab2 , send_lms;
 	public class AccumThread extends Thread{
 		public AccumThread(){
@@ -106,6 +106,7 @@ public class LMSMainActivity extends Activity{
 		list_number = (ListView)findViewById(R.id.list_number);
 		font_1 = (TextView)findViewById(R.id.font_1);
 		font_2 = (TextView)findViewById(R.id.font_2);
+		txt_byte = (TextView)findViewById(R.id.txt_byte);
 		font_3 = (TextView)findViewById(R.id.font_3);
 		title = (TextView)findViewById(R.id.title);
 		t_count = (TextView)findViewById(R.id.t_count);
@@ -116,6 +117,7 @@ public class LMSMainActivity extends Activity{
 		lms_msg.setTypeface(ttf);
 		phone_number.setTypeface(ttf);
 		font_1.setTypeface(ttf);
+		txt_byte.setTypeface(ttf);
 		font_2.setTypeface(ttf);
 		font_3.setTypeface(ttf);
 		tab1.setTypeface(ttf);
@@ -134,17 +136,46 @@ public class LMSMainActivity extends Activity{
 		findViewById(R.id.tab1).setOnClickListener(btnListener);
 		findViewById(R.id.tab2).setOnClickListener(btnListener);
 		findViewById(R.id.number_plus).setOnClickListener(btnListener);
-		findViewById(R.id.exel_plus).setOnClickListener(btnListener);
+		findViewById(R.id.number_plus).setOnClickListener(btnListener);
+		findViewById(R.id.number_minus).setOnClickListener(btnListener);
 		findViewById(R.id.send_lms).setOnClickListener(btnListener);
 
 
 		m_Adapter = new LMSMain_Adapter( this , arrData , mAfterAccum);
 		list_number.setAdapter(m_Adapter);
-	}
-	
-	
-	
+		lms_msg.addTextChangedListener(editEvent);
 
+
+	}
+	private TextWatcher editEvent = new TextWatcher() {
+		@Override
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
+			if(lms_msg.isFocusable())
+			{
+				try
+				{
+					byte[] bytetext = lms_msg.getText().toString().getBytes("KSC5601");
+					txt_byte.setText(Integer.toString(bytetext.length)+" Byte");
+				}catch(Exception ex){}
+			}
+		}
+		@Override
+		public void beforeTextChanged(CharSequence s, int start, int count,
+				int after) {
+		}
+		@Override
+		public void afterTextChanged(Editable s) {
+			String after_text = s.toString();
+			try
+			{
+				byte[] getbyte = after_text.getBytes("KSC5601");
+				if(getbyte.length > 80)
+				{
+					s.delete(s.length()-2, s.length()-1);
+				}
+			}catch (Exception e) {}
+		}
+	};
 	Handler mAfterAccum = new Handler()
 	{
 		@Override
@@ -267,9 +298,12 @@ public class LMSMainActivity extends Activity{
 				m_Adapter.notifyDataSetChanged();
 				t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
 				break;
-			case R.id.exel_plus:	
+			case R.id.number_minus:	
+				
+				arrData.clear();
+				m_Adapter.notifyDataSetChanged();
+				t_count.setText("보내는 사람 : " + "0"+ " 명");
 				break;
-
 
 			}
 		}
@@ -404,6 +438,8 @@ public class LMSMainActivity extends Activity{
 			if (customDialog==null){
 				customDialog = new ProgressDialog( this );
 			}
+			customDialog.setCancelable(false);
+			customDialog.setMessage("전화번호 불러오는중");
 			customDialog.show();
 		}catch(Exception ex){}
 	}

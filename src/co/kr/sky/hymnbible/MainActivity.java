@@ -121,7 +121,8 @@ public class MainActivity extends Activity{
             Manifest.permission.READ_CONTACTS,
             Manifest.permission.RECORD_AUDIO,
             Manifest.permission.SEND_SMS,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.READ_PHONE_STATE
             
             
     };
@@ -147,9 +148,9 @@ public class MainActivity extends Activity{
 		}else{
 		    // 권한 있음
 			Log.e("SKY", "권한 있음");
-//			ActivityCompat.requestPermissions(this,
-//	                PERMISSIONS_STORAGE,
-//	                1);
+			ActivityCompat.requestPermissions(this,
+	                PERMISSIONS_STORAGE,
+	                1);
 		}
 		
 		vc = new MySQLiteOpenHelper(this);
@@ -165,8 +166,8 @@ public class MainActivity extends Activity{
 			//dataSet.PHONE = telManager.getDeviceId();
 		} catch (Exception e) {
 			// TODO: handle exception
-			dataSet.PHONE = "01027065915";
-			//confirmDialog("휴대폰 번호가 없는 기기는 가입할수 없습니다.");
+			//dataSet.PHONE = "01027065915";
+			confirmDialog("휴대폰 번호가 없는 기기는 가입할수 없습니다.");
 			//return;
 		}
 		setting_web();

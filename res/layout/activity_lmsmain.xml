@@ -223,11 +223,27 @@
             android:layout_marginTop="5dp"
             android:orientation="vertical" >
 
-            <EditText
-                android:id="@+id/lms_msg"
+            <FrameLayout
                 android:layout_width="fill_parent"
-                android:layout_height="150dp"
-                android:hint="문자를 입력해주세요." />
+                android:layout_height="150dp" >
+
+                <EditText
+                    android:id="@+id/lms_msg"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:gravity="left|top"
+                    android:hint="문자를 입력해주세요." />
+                
+                <TextView 
+                    android:id="@+id/txt_byte"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="right|bottom"
+                    android:layout_gravity="right|bottom"
+                    android:text="0 Byte"/>
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -251,12 +267,12 @@
                     android:background="@drawable/icon_sms_add" />
 
                 <Button
-                    android:id="@+id/exel_plus"
-                    android:layout_width="fill_parent"
+                    android:id="@+id/number_minus"
+                    android:layout_width="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
-                    android:text="+"
-                    android:visibility="gone" />
+                    android:background="@drawable/icon_sms_del" />
             </LinearLayout>
         </LinearLayout>
 
