@@ -257,7 +257,6 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 				mThread = new AccumThread(LMSServerDetailActivity.this , mAfterAccum , map , 1 , 0 , val);
 
 				mThread.start();		//스레드 시작!!
-			}else if(msg.arg1 == 2){
 			}else if(msg.arg1  == 5000 ){//전체선택 
 				for (int i = 0; i < arrData.size(); i++) {
 					arrData.get(i).setCheck(1);
@@ -275,7 +274,7 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 				customProgressPop();
 				map.put("url", dataSet.SERVER + "Server_Phone_Del.jsp");
 				map.put("key_index", ""+del_position);
-				mThread = new AccumThread(LMSServerDetailActivity.this , mAfterAccum , map , 0 , 1 , null);
+				mThread = new AccumThread(LMSServerDetailActivity.this , mAfterAccum , map , 0 , 2 , null);
 				mThread.start();		//스레드 시작!!
 				
 
