@@ -117,7 +117,8 @@ public class LMSServerActivity extends Activity{
 		findViewById(R.id.btn_reflash).setOnClickListener(btnListener);
 		findViewById(R.id.btn_reflash1).setOnClickListener(btnListener);
 		findViewById(R.id.bottomview_c).setOnClickListener(btnListener);
-
+		findViewById(R.id.bottomview_c_copy).setOnClickListener(btnListener);
+		
 
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok1).setOnClickListener(btnListener);

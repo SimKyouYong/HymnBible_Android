@@ -106,7 +106,9 @@ public class LMSMyPhoneActivity extends Activity{
 		findViewById(R.id.btn_server).setOnClickListener(btnListener);
 		findViewById(R.id.btn_server1).setOnClickListener(btnListener);
 		findViewById(R.id.btn_reflash).setOnClickListener(btnListener);
+		findViewById(R.id.btn_reflash1).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
+		findViewById(R.id.btn_ok1).setOnClickListener(btnListener);
 
 		group_title=new HashMap<String, String>();
     	group_count=new HashMap<String, Integer>();
