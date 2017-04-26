@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -55,6 +56,8 @@ public class LMSServerPhoneGroup_Adapter extends BaseAdapter {
 	static class ViewHolder {
 		TextView t_name;
 		CheckBox check;
+		Button del;
+
 	}
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		final MyServerGroupObj board = items.get(position);
@@ -62,6 +65,7 @@ public class LMSServerPhoneGroup_Adapter extends BaseAdapter {
 		convertView = inflater.inflate(R.layout.activity_lms_server_group_item,null);
 		vh.t_name = (TextView) convertView.findViewById(R.id.t_name); 
 		vh.check = (CheckBox) convertView.findViewById(R.id.check); 
+		vh.del = (Button) convertView.findViewById(R.id.del); 
 
 		convertView.setTag(vh);
 		vh.t_name.setTypeface(ttf);
@@ -100,7 +104,15 @@ public class LMSServerPhoneGroup_Adapter extends BaseAdapter {
 				}
 			}
 		});
-
+		vh.del.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Message msg2 = mAfterAccum.obtainMessage();
+				msg2.arg1 = 9001;
+				msg2.arg2 = Integer.parseInt(board.getKey_index());
+				mAfterAccum.sendMessage(msg2);
+			}
+		});
 		if (board.getCheck() == 0) {
 			vh.check.setChecked(false);
 		}else{

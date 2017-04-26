@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="LMS전송"
+            android:text="무료단체문자"
             android:textColor="#ffffff"
             android:textSize="21dp" />
 
@@ -293,19 +293,24 @@
             <LinearLayout
                 android:id="@+id/list_noti"
                 android:layout_width="fill_parent"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:layout_height="fill_parent"
-                android:background="#DCDCDC"
-                android:gravity="center"
+                android:layout_gravity="center_vertical|left"
+                android:background="#eCeCeC"
                 android:orientation="vertical" >
 
                 <TextView
                     android:id="@+id/txt_notice"
+                    android:padding="10dp"
                     android:layout_width="wrap_content"
+                    android:textSize="17dp"
+                    android:lineSpacingExtra="8dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:textColor="#000000"
-                    android:text="울라우라울라" />
+                    android:layout_gravity="center_vertical|left"
+                    android:gravity="center_vertical|left"
+                    android:text="본서비스는 단체문자를 한번에 편하게 이용하실 수 있는 서비스 입니다.\n귀하의 통신요금제를 확인해 주시고 불이익을 당하지 않도록 주의해 주시기 바랍니다."
+                    android:textColor="#808080" />
             </LinearLayout>
         </FrameLayout>
     </RelativeLayout>

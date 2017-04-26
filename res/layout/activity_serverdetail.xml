@@ -55,7 +55,7 @@
             android:layout_toLeftOf="@+id/sspp"
             android:layout_toRightOf="@+id/btn_back"
             android:background="@drawable/search"
-            android:hint="내용을 입력해주세요."
+            android:hint="이름,전화번호"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:paddingLeft="25dp"

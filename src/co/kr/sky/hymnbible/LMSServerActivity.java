@@ -406,6 +406,9 @@ public class LMSServerActivity extends Activity{
 				customProgressClose();
 				LMSMainActivity.onresume_0 = 1;
 				finish();
+			}else if(msg.arg1  == 2 ){//전체선택 
+				
+				
 			}else if(msg.arg1  == 5000 ){//전체선택 
 				for (int i = 0; i < arrData.size(); i++) {
 					arrData.get(i).setCheck(1);
@@ -432,6 +435,14 @@ public class LMSServerActivity extends Activity{
 			}else if(msg.arg1  == 9000 ){
 				check_all.setEnabled(true); //모두 선택
 				check_all.setChecked(false);
+			}else if(msg.arg1  == 9001 ){//삭제
+				int del_position = (int)msg.arg2;
+				customProgressPop();
+				map.put("url", dataSet.SERVER + "Server_Group_Del.jsp");
+				map.put("key_index", ""+del_position);
+				mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 0 , 2 , null);
+
+				mThread.start();		//스레드 시작!!
 			}
 		}
 	};
