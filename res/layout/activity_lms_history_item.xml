@@ -29,6 +29,7 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_weight="1.5"
             android:gravity="center"
             android:orientation="horizontal" >
@@ -37,6 +38,8 @@
                 android:id="@+id/t_total_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical"
                 android:text="100"
                 android:textColor="#0000ff"
                 android:textSize="14dp" />
@@ -56,6 +59,18 @@
                 android:textColor="#ff0000"
                 android:textSize="14dp" />
         </LinearLayout>
+
+        <Button
+            android:id="@+id/del"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/icon_delete_24dp"
+            android:focusable="false" />
     </LinearLayout>
 
     <View
