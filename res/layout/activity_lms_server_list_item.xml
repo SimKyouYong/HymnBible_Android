@@ -19,29 +19,42 @@
         android:focusable="false" />
 
     <TextView
-        android:id="@+id/t_phone"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="2dp"
-        android:layout_marginTop="2dp"
-        android:layout_centerVertical="true"
-        android:text="aaaaa"
-        android:textColor="#A9A9A9"
-        android:layout_marginRight="40dp"
-        android:textSize="18dp" />
-
-    <TextView
         android:id="@+id/t_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_marginBottom="2dp"
-        android:layout_toRightOf="@+id/check"
-        android:layout_marginLeft="10dp"
+        android:layout_marginRight="20dp"
         android:layout_marginTop="2dp"
+        android:layout_toLeftOf="@+id/t_phone"
+        android:layout_toRightOf="@+id/check"
+        android:text="aaaaa"
+        android:textColor="#A9A9A9"
+        android:textSize="16dp" />
+
+    <TextView
+        android:id="@+id/t_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="2dp"
+        android:layout_toLeftOf="@+id/del"
         android:text="adsfsa"
         android:textColor="#A9A9A9"
-        android:textSize="18dp" />
+        android:textSize="16dp" />
+
+    <Button
+        android:id="@+id/del"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/icon_delete_24dp"
+        android:focusable="false" />
 
 </RelativeLayout>

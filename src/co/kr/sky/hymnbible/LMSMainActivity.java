@@ -31,6 +31,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,8 +49,9 @@ public class LMSMainActivity extends Activity{
 	private Typeface ttf;
 	private static final int INPUT_FILE_REQUEST_CODE = 1;
 	protected ProgressDialog customDialog = null;
-
-	private TextView font_1  , font_2, font_3 ,title , t_count , txt_byte;
+	
+	private LinearLayout list_noti;
+	private TextView font_1  , font_2, font_3 ,title , t_count , txt_byte , txt_notice;
 	private Button tab1 , tab2 , send_lms;
 	public class AccumThread extends Thread{
 		public AccumThread(){
@@ -113,7 +115,10 @@ public class LMSMainActivity extends Activity{
 		tab1 = (Button)findViewById(R.id.tab1);
 		tab2 = (Button)findViewById(R.id.tab2);
 		send_lms = (Button)findViewById(R.id.send_lms);
-
+		list_noti = (LinearLayout)findViewById(R.id.list_noti);
+		txt_notice = (TextView)findViewById(R.id.txt_notice);
+		
+		
 		lms_msg.setTypeface(ttf);
 		phone_number.setTypeface(ttf);
 		font_1.setTypeface(ttf);
@@ -125,7 +130,8 @@ public class LMSMainActivity extends Activity{
 		send_lms.setTypeface(ttf);
 		title.setTypeface(ttf);
 		t_count.setTypeface(ttf);
-
+		txt_notice.setTypeface(ttf);
+		
 		findViewById(R.id.bottomview_l).setOnClickListener(btnListener);
 		findViewById(R.id.bottomview_l_copy).setOnClickListener(btnListener);
 		findViewById(R.id.bottomview_c).setOnClickListener(btnListener);
@@ -190,6 +196,7 @@ public class LMSMainActivity extends Activity{
 			} else if (msg.arg1  == 200 ) {
 				dataSet.arrData_real.clear();
 				m_Adapter.notifyDataSetChanged();
+				list_noti.setVisibility(View.GONE);
 				t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
 				customProgressClose();
 			}
@@ -297,6 +304,7 @@ public class LMSMainActivity extends Activity{
 				arrData.add(new LMSMainObj(phone_number.getText().toString().replace("-", ""), phone_number.getText().toString().replace("-", "")));
 				m_Adapter.notifyDataSetChanged();
 				t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
+				list_noti.setVisibility(View.GONE);
 				break;
 			case R.id.number_minus:	
 				

@@ -689,10 +689,33 @@ public class LMSMyPhoneActivity extends Activity{
 			}else if(msg.arg1  == 9000 ){
 				check_all.setEnabled(true); //모두 선택
 				check_all.setChecked(false);
+			}else if(msg.arg1  == 9001 ){//삭제
+				int del_position = (int)msg.arg2;
+				DEL_Group(del_position);
 			}
 
 		}
 	};
+	public void DEL_Group(int del)		//디비 값 조회해서 저장하기
+	{
+		arrData.clear();
+		try{
+			//  db파일 읽어오기
+			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
+			// 쿼리로 db의 커서 획득
+
+			String sql = "delete from `group` where group_id = '" + del + "'";
+			Log.e("SKY","sql2  : "+ sql);
+			db.execSQL(sql);
+			db.close();
+			SELECT_GROUP();
+		}
+		catch (SQLException se) {
+			// TODO: handle exception
+			Log.e("selectData()Error! : ",se.toString());
+		}   
+
+	}
 	public void SAVE_DB_GROUP_COUNT(String count , int key)
 	{
 		Log.e("SKY","count  : "+ count);

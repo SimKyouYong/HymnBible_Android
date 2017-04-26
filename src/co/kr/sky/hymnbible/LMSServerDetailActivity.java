@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 import co.kr.sky.AccumThread;
 import co.kr.sky.hymnbible.adapter.LMSServerList_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
@@ -248,6 +249,15 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 				}
 				m_Adapter.notifyDataSetChanged();
 			}else if(msg.arg1 == 2){
+				customProgressClose();
+				customProgressPop();
+				String []val = {"item1","item2","item3","item4" };
+				map.put("url", dataSet.SERVER + "Server_Phone_Sel.jsp");
+				map.put("key_index", obj.getKey_index());
+				mThread = new AccumThread(LMSServerDetailActivity.this , mAfterAccum , map , 1 , 0 , val);
+
+				mThread.start();		//스레드 시작!!
+			}else if(msg.arg1 == 2){
 			}else if(msg.arg1  == 5000 ){//전체선택 
 				for (int i = 0; i < arrData.size(); i++) {
 					arrData.get(i).setCheck(1);
@@ -258,6 +268,16 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 					arrData.get(i).setCheck(0);
 				}
 				m_Adapter.notifyDataSetChanged();
+
+			}else if(msg.arg1  == 9001 ){//SERVER DEL
+				int del_position = (int)msg.arg2;
+				//Server_Phone_Del
+				customProgressPop();
+				map.put("url", dataSet.SERVER + "Server_Phone_Del.jsp");
+				map.put("key_index", ""+del_position);
+				mThread = new AccumThread(LMSServerDetailActivity.this , mAfterAccum , map , 0 , 1 , null);
+				mThread.start();		//스레드 시작!!
+				
 
 			}
 		}

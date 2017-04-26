@@ -117,15 +117,7 @@ public class MainActivity extends Activity{
 	private HashMap<String, String> group_kr;
 	private HashMap<String, String> group_title;
 	private HashMap<String, Integer> group_count;
-	private static String[] PERMISSIONS_STORAGE = {
-            Manifest.permission.READ_CONTACTS,
-            Manifest.permission.RECORD_AUDIO,
-            Manifest.permission.SEND_SMS,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.READ_PHONE_STATE
-            
-            
-    };
+	
 
 
 	
@@ -137,6 +129,7 @@ public class MainActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
+		/*
 		int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
 
 		if(permissionCheck== PackageManager.PERMISSION_DENIED){
@@ -152,7 +145,7 @@ public class MainActivity extends Activity{
 	                PERMISSIONS_STORAGE,
 	                1);
 		}
-		
+		*/
 		vc = new MySQLiteOpenHelper(this);
 		bottomview = (LinearLayout)findViewById(R.id.bottomview);
 		bottomview.setVisibility(View.GONE);
