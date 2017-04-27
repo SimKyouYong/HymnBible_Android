@@ -177,36 +177,10 @@ public class LMSServerActivity extends Activity{
 				btn_ok();
 				break;
 			case R.id.bottomview_c:	
-				Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
-				contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
-				contentSelectionIntent.setType("file/*");
-
-				Intent[] intentArray;
-				intentArray = new Intent[0];
-
-				Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
-				chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
-				chooserIntent.putExtra(Intent.EXTRA_TITLE, "파일을 선택해주세요.");
-				chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
-
-				startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
-				//Btn_bottomview_c();
+				Btn_bottomview_c();
 				break;
 			case R.id.bottomview_c_copy:
-				Intent contentSelectionIntent1 = new Intent(Intent.ACTION_GET_CONTENT);
-				contentSelectionIntent1.addCategory(Intent.CATEGORY_OPENABLE);
-				contentSelectionIntent1.setType("file/*");
-
-				Intent[] intentArray1;
-				intentArray1 = new Intent[0];
-
-				Intent chooserIntent1 = new Intent(Intent.ACTION_CHOOSER);
-				chooserIntent1.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent1);
-				chooserIntent1.putExtra(Intent.EXTRA_TITLE, "파일을 선택해주세요.");
-				chooserIntent1.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray1);
-
-				startActivityForResult(chooserIntent1, INPUT_FILE_REQUEST_CODE);
-				//Btn_bottomview_c();
+				Btn_bottomview_c();
 				break;
 			}
 		}
@@ -262,9 +236,8 @@ public class LMSServerActivity extends Activity{
 						Log.e("SKY", "arr_txt size1 : " + arr_txt[i]);
 						String txt[] = arr_txt[i].split(",");
 						JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
-						sObject.put("GROUP", txt[0]);
-						sObject.put("NAME", txt[1]);
-						sObject.put("PHONE", txt[2]);
+						sObject.put("NAME", txt[0]);
+						sObject.put("PHONE", txt[1]);
 						jArray.put(sObject);
 						count_all++;
 					}
@@ -273,6 +246,7 @@ public class LMSServerActivity extends Activity{
 					
 					
 					//post 발송
+					map.clear();
 					map.put("url", dataSet.SERVER+"Server_Insert.jsp");
 					map.put("user_id",dataSet.PHONE);
 					map.put("group_name", gg_name);
