@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -22,12 +23,14 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView.OnEditorActionListener;
 import co.kr.sky.hymnbible.adapter.LMSMyPhoneList_Adapter;
+import co.kr.sky.hymnbible.common.Check_Preferences;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj;
@@ -325,9 +328,10 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 		}
 	}
 	AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
-		public void onItemClick(AdapterView parent, View view, int position,
+		public void onItemClick(AdapterView parent, View view, final int position,
 				long id) {
 			Log.e("SKY", "POSITION : " + position);
+			/*
 			if (!search_flag) {
 				if (arrData.get(position).getCHECK() == 0) {
 					arrData.get(position).setCHECK(1);
@@ -352,8 +356,62 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 
 				m_Adapter.notifyDataSetChanged();
 			}
+			*/
+			//수정 팝업
+			AlertDialog.Builder alert = new AlertDialog.Builder(LMSMyPhoneDetailActivity.this, AlertDialog.THEME_HOLO_LIGHT);
+			alert.setTitle("알림");
+			LinearLayout layout = new LinearLayout(LMSMyPhoneDetailActivity.this);
+			layout.setOrientation(LinearLayout.VERTICAL);
+			layout.setGravity(Gravity.CENTER_HORIZONTAL);
+			final EditText name = new EditText(LMSMyPhoneDetailActivity.this);
+			final EditText phone = new EditText(LMSMyPhoneDetailActivity.this);
+			name.setSingleLine(true);
+			phone.setSingleLine(true);
+			layout.setPadding(20, 0, 20, 0);
+			name.setHint("추천인(휴대폰 번호)을 입력해주세요.");
+			layout.addView(name);
+			layout.addView(phone);
+			
+			name.setText(""+arrData.get(position).getNAME());
+			phone.setText(""+arrData.get(position).getPHONE());
+			
+			alert.setView(layout);
+			alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					String user_phone = name.getText().toString();
+					UPDATE_Phone(name.getText().toString(), phone.getText().toString(), arrData.get(position).getKey());
+				}
+			});
+			alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					Check_Preferences.setAppPreferences(LMSMyPhoneDetailActivity.this, "ch", "true");
+
+				}
+			});
+			alert.show();
 		}
 	};
+	public void UPDATE_Phone(String name , String phone , String key_index)
+	{
+		try{
+			//인서트쿼리
+			SQLiteDatabase db = openOrCreateDatabase("phonedb.db", Context.MODE_PRIVATE, null);
+			String sql;
+			try {
+				sql = "UPDATE `phone` SET name = '" + name + "' , phone = '" + phone + "' WHERE key=" +  key_index + "";
+				Log.e("SKY","sql2  : "+ sql);
+				db.execSQL(sql);
+				all_count = 0;
+			} catch (Exception e) {
+				db.close();
+				Log.e("MiniApp","sql error : "+ e.toString());
+			}
+			db.close();
+			SELECT_Phone(""+(key));
+		}catch (Exception e) {
+			Log.e("SKY","onPostExecute error : "+ e.toString());
+		}
+	}
 	public void customProgressPop(){
 		try{
 			if (customDialog==null){

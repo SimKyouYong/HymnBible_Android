@@ -285,6 +285,7 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 		public void onItemClick(AdapterView parent, View view, int position,
 				long id) {
 			Log.e("SKY", "POSITION : " + position);
+			/*
 			if (!search_flag) {
 				if (arrData.get(position).getCheck() == 0) {
 					arrData.get(position).setCheck(1);
@@ -308,6 +309,39 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 				}
 				m_Adapter.notifyDataSetChanged();
 			}
+			*/
+			//수정 팝업
+//			AlertDialog.Builder alert = new AlertDialog.Builder(ac, AlertDialog.THEME_HOLO_LIGHT);
+//			alert.setTitle("알림");
+//			LinearLayout layout = new LinearLayout(ac);
+//			layout.setOrientation(LinearLayout.VERTICAL);
+//			layout.setGravity(Gravity.CENTER_HORIZONTAL);
+//			final EditText name = new EditText(ac);
+//			final EditText phone = new EditText(ac);
+//			name.setSingleLine(true);
+//			phone.setSingleLine(true);
+//			layout.setPadding(20, 0, 20, 0);
+//			name.setHint("추천인(휴대폰 번호)을 입력해주세요.");
+//			layout.addView(name);
+//			layout.addView(phone);
+//			
+//			name.sette
+//			
+//			alert.setView(layout);
+//			alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+//				public void onClick(DialogInterface dialog, int whichButton) {
+//					String user_phone = name.getText().toString();
+//
+//					UPDATE_Phone(name.getText().toString(), phone.getText().toString(), arrData.get(position).get);
+//				}
+//			});
+//			alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
+//				public void onClick(DialogInterface dialog, int whichButton) {
+//					Check_Preferences.setAppPreferences(ac, "ch", "true");
+//
+//				}
+//			});
+//			alert.show();
 		}
 	};
 	public void customProgressPop(){
