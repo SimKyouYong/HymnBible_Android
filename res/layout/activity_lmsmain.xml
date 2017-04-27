@@ -108,7 +108,7 @@
                 android:id="@+id/font_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="엑셀추가"
+                android:text="텍스트추가"
                 android:textColor="#ffffff" />
         </LinearLayout>
 
@@ -171,7 +171,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="#717A86"
+                android:paddingLeft="10dp"
+                            android:background="@drawable/lms_main_tap1"
+                
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp"
                 android:text="폰 주소록"

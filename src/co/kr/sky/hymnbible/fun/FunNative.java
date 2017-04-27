@@ -512,6 +512,7 @@ public class FunNative  {
 	 * return :: 재생후 리턴 함수에 true 반환 
 	 * window.location.href = "js2ios://TTS_Start?url=not&str=tts 문구 스트&return=리턴함수(재생중:true)";
 	 * */
+	@SuppressWarnings("deprecation")
 	public void TTS_Start(String url , Activity ac , WebView vc , String return_fun){
 		Log.e("SKY" , "--TTS_Start-- :: ");
 		String val[] = url.split(",");

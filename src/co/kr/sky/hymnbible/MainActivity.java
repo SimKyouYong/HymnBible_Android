@@ -9,11 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import com.google.android.gcm.GCMRegistrar;
 
-import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
@@ -39,9 +39,7 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment.InstantiationException;
-import android.support.v4.content.ContextCompat;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -173,7 +171,14 @@ public class MainActivity extends Activity{
 		setting_web();
 		setting_button();
 		//myTTS = new TextToSpeech(this, this);
-
+		myTTS=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+	         @Override
+	         public void onInit(int status) {
+	            if(status != TextToSpeech.ERROR) {
+	            	myTTS.setLanguage(Locale.KOREA);
+	            }
+	         }
+	      });
 		group_title=new HashMap<String, String>();
     	group_count=new HashMap<String, Integer>();
     	//getGroupContacts();
@@ -491,9 +496,11 @@ public class MainActivity extends Activity{
 		Log.e("SKY" , "data :: " + data);
 		if (data == null) {
 			Log.e("SKY" , "data null:: ");
-			Uri[] results = new Uri[]{Uri.parse("")};
-			mFilePathCallback.onReceiveValue(results);
-			mFilePathCallback = null;
+			if (mFilePathCallback != null) {
+				Uri[] results = new Uri[]{Uri.parse("")};
+				mFilePathCallback.onReceiveValue(results);
+				mFilePathCallback = null;
+			}
 			return;
 		}
 		switch (requestCode) {

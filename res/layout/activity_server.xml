@@ -147,7 +147,7 @@
                 android:id="@+id/font_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="엑셀추가"
+                android:text="텍스트추가"
                 android:textColor="#ffffff" />
         </LinearLayout>
 
@@ -198,8 +198,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
                 android:paddingLeft="10dp"
-                android:text="서버 그룹 선택"
-                android:textColor="#0000fa"
+                android:text="서버주소록"
+                android:textColor="#000000"
                 android:textSize="15dp" />
         </LinearLayout>
 
@@ -226,11 +226,10 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginBottom="2dp"
-                android:layout_marginLeft="10dp"
                 android:layout_marginTop="2dp"
                 android:text="전체선택"
                 android:textColor="#A9A9A9"
-                android:textSize="18dp" />
+                android:textSize="16dp" />
         </LinearLayout>
 
         <View

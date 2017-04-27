@@ -285,7 +285,9 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 				//Server_Phone_Del
 				customProgressPop();
 				map.put("url", dataSet.SERVER + "Server_Phone_Del.jsp");
-				map.put("key_index", ""+del_position);
+				map.put("key_index", ""+arrData.get(del_position).getKey_index());
+				map.put("group_key_index", ""+arrData.get(del_position).getG_keyindex());
+				map.put("count", ""+(arrData.size()-1));
 				mThread = new AccumThread(LMSServerDetailActivity.this , mAfterAccum , map , 0 , 2 , null);
 				mThread.start();		//스레드 시작!!
 				

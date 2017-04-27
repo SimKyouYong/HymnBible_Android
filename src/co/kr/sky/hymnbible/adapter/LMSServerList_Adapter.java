@@ -97,7 +97,7 @@ public class LMSServerList_Adapter extends BaseAdapter {
 				Log.e("SKY", "KEY :: " + board.getKey_index());
 				Message msg2 = mAfterAccum.obtainMessage();
 				msg2.arg1 = 9001;
-				msg2.arg2 = Integer.parseInt(board.getKey_index());
+				msg2.arg2 = position;
 				mAfterAccum.sendMessage(msg2);
 			}
 		});

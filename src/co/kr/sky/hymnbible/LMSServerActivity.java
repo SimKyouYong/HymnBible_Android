@@ -237,16 +237,18 @@ public class LMSServerActivity extends Activity{
 						String txt[] = arr_txt[i].split(",");
 						JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
 						sObject.put("NAME", txt[0]);
-						sObject.put("PHONE", txt[1]);
+						sObject.put("PHONE", txt[1].replace("\u0000", "").replace("\n", "").replace("\r", "").trim());
 						jArray.put(sObject);
 						count_all++;
 					}
+
 					obj.put("data",jArray);
 					Log.e("SKY","JSON DATA :: " + obj.toString());
 					
 					
 					//post 발송
 					map.clear();
+					//map.put("url", dataSet.SERVER+"Server_Group_Txt_Insert.jsp");
 					map.put("url", dataSet.SERVER+"Server_Insert.jsp");
 					map.put("user_id",dataSet.PHONE);
 					map.put("group_name", gg_name);

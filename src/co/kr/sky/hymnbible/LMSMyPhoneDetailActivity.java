@@ -65,12 +65,13 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 		btn_ok = (Button)findViewById(R.id.btn_ok);
 		check_all = (CheckBox)findViewById(R.id.check_all);
 		t_name = (TextView)findViewById(R.id.t_name);
+		t_count = (TextView)findViewById(R.id.t_count);
 
-		
 		
 		btn_ok.setTypeface(ttf);
 		e_lms.setTypeface(ttf);
 		t_name.setTypeface(ttf);
+		t_count.setTypeface(ttf);
 
 		
 		e_lms.setOnEditorActionListener(this); //mEditText와 onEditorActionListener를 연결
