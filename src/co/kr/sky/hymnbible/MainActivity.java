@@ -65,7 +65,14 @@ import co.kr.sky.hymnbible.common.Check_Preferences;
 import co.kr.sky.hymnbible.common.RealPathUtil;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.fun.MySQLiteOpenHelper;
-
+/*
+ * 남은 기능 : 
+ * 
+ * @ 문자 전송  :   
+ * * 폰주소록 수정 기능(상세만 있음!,그룹 xxx)
+ * * 그룹 주소록 수정 기능(상세만 있음!,그룹 xxx)
+ * * 그룹 엑셀추가 기능(txt 파일에 그룹,이름,전화번호 형식으로 변경)
+ * */
 public class MainActivity extends Activity{
 
 	//업로드
