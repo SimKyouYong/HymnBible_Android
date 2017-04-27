@@ -368,7 +368,7 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 			name.setSingleLine(true);
 			phone.setSingleLine(true);
 			layout.setPadding(20, 0, 20, 0);
-			name.setHint("추천인(휴대폰 번호)을 입력해주세요.");
+			//name.setHint("추천인(휴대폰 번호)을 입력해주세요.");
 			layout.addView(name);
 			layout.addView(phone);
 			
@@ -378,7 +378,6 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 			alert.setView(layout);
 			alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int whichButton) {
-					String user_phone = name.getText().toString();
 					UPDATE_Phone(name.getText().toString(), phone.getText().toString(), arrData.get(position).getKey());
 				}
 			});

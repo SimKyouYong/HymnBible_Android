@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -22,12 +23,14 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import co.kr.sky.AccumThread;
 import co.kr.sky.hymnbible.adapter.LMSServerList_Adapter;
+import co.kr.sky.hymnbible.common.Check_Preferences;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
@@ -257,6 +260,15 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 				mThread = new AccumThread(LMSServerDetailActivity.this , mAfterAccum , map , 1 , 0 , val);
 
 				mThread.start();		//스레드 시작!!
+			}else if(msg.arg1 == 2000){
+				customProgressClose();
+				customProgressPop();
+				String []val = {"item1","item2","item3","item4" };
+				map.put("url", dataSet.SERVER + "Server_Phone_Sel.jsp");
+				map.put("key_index", obj.getKey_index());
+				mThread = new AccumThread(LMSServerDetailActivity.this , mAfterAccum , map , 1 , 0 , val);
+
+				mThread.start();		//스레드 시작!!
 			}else if(msg.arg1  == 5000 ){//전체선택 
 				for (int i = 0; i < arrData.size(); i++) {
 					arrData.get(i).setCheck(1);
@@ -282,7 +294,7 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 		}
 	};
 	AdapterView.OnItemClickListener mItemClickListener = new AdapterView.OnItemClickListener() {
-		public void onItemClick(AdapterView parent, View view, int position,
+		public void onItemClick(AdapterView parent, View view, final int position,
 				long id) {
 			Log.e("SKY", "POSITION : " + position);
 			/*
@@ -311,37 +323,43 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 			}
 			*/
 			//수정 팝업
-//			AlertDialog.Builder alert = new AlertDialog.Builder(ac, AlertDialog.THEME_HOLO_LIGHT);
-//			alert.setTitle("알림");
-//			LinearLayout layout = new LinearLayout(ac);
-//			layout.setOrientation(LinearLayout.VERTICAL);
-//			layout.setGravity(Gravity.CENTER_HORIZONTAL);
-//			final EditText name = new EditText(ac);
-//			final EditText phone = new EditText(ac);
-//			name.setSingleLine(true);
-//			phone.setSingleLine(true);
-//			layout.setPadding(20, 0, 20, 0);
-//			name.setHint("추천인(휴대폰 번호)을 입력해주세요.");
-//			layout.addView(name);
-//			layout.addView(phone);
-//			
-//			name.sette
-//			
-//			alert.setView(layout);
-//			alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-//				public void onClick(DialogInterface dialog, int whichButton) {
-//					String user_phone = name.getText().toString();
-//
-//					UPDATE_Phone(name.getText().toString(), phone.getText().toString(), arrData.get(position).get);
-//				}
-//			});
-//			alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
-//				public void onClick(DialogInterface dialog, int whichButton) {
-//					Check_Preferences.setAppPreferences(ac, "ch", "true");
-//
-//				}
-//			});
-//			alert.show();
+			AlertDialog.Builder alert = new AlertDialog.Builder(LMSServerDetailActivity.this, AlertDialog.THEME_HOLO_LIGHT);
+			alert.setTitle("알림");
+			LinearLayout layout = new LinearLayout(LMSServerDetailActivity.this);
+			layout.setOrientation(LinearLayout.VERTICAL);
+			layout.setGravity(Gravity.CENTER_HORIZONTAL);
+			final EditText name = new EditText(LMSServerDetailActivity.this);
+			final EditText phone = new EditText(LMSServerDetailActivity.this);
+			name.setSingleLine(true);
+			phone.setSingleLine(true);
+			layout.setPadding(20, 0, 20, 0);
+			layout.addView(name);
+			layout.addView(phone);
+			
+			name.setText(""+arrData.get(position).getName());
+			phone.setText(""+arrData.get(position).getPhone());
+			
+			alert.setView(layout);
+			alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					//UPDATE_Phone(name.getText().toString(), phone.getText().toString(), arrData.get(position).getKey_index()());
+					customProgressPop();
+					map.clear();
+					map.put("url", dataSet.SERVER + "Server_Phone_update.jsp");
+					map.put("name", name.getText().toString());
+					map.put("phone", phone.getText().toString());
+					map.put("key_index", arrData.get(position).getKey_index());
+					mThread = new AccumThread(LMSServerDetailActivity.this , mAfterAccum , map , 0 , 2000 , null);
+					mThread.start();		//스레드 시작!!
+				}
+			});
+			alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+					Check_Preferences.setAppPreferences(LMSServerDetailActivity.this, "ch", "true");
+
+				}
+			});
+			alert.show();
 		}
 	};
 	public void customProgressPop(){
