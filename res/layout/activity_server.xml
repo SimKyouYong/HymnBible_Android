@@ -228,7 +228,7 @@
                 android:layout_marginBottom="2dp"
                 android:layout_marginTop="2dp"
                 android:text="전체선택"
-                android:textColor="#A9A9A9"
+                android:textColor="#000000"
                 android:textSize="16dp" />
         </LinearLayout>
 
