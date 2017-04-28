@@ -1,5 +1,6 @@
 package co.kr.sky.hymnbible;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -7,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -31,16 +33,16 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import co.kr.sky.AccumThread;
+import co.kr.sky.hymnbible.LMSMyPhoneActivity.AccumThread2;
 import co.kr.sky.hymnbible.adapter.LMSServerPhoneGroup_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
-import co.kr.sky.hymnbible.obj.LMSMainObj;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
 import co.kr.sky.hymnbible.obj.MyServerGroupObj;
@@ -158,6 +160,7 @@ public class LMSServerActivity extends Activity{
 			case R.id.btn_reflash:
 				customProgressPop();
 				String []val = {"item1","item2","item3","item4" };
+				map.clear();
 				map.put("url", dataSet.SERVER + "Server_Sel.jsp");
 				map.put("my_phone", dataSet.PHONE);
 				mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 1 , 0 , val);
@@ -167,6 +170,7 @@ public class LMSServerActivity extends Activity{
 			case R.id.btn_reflash1:
 				customProgressPop();
 				String []val1 = {"item1","item2","item3","item4" };
+				map.clear();
 				map.put("url", dataSet.SERVER + "Server_Sel.jsp");
 				map.put("my_phone", dataSet.PHONE);
 				mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 1 , 0 , val1);
@@ -233,49 +237,65 @@ public class LMSServerActivity extends Activity{
 					JSONArray jArray = new JSONArray();//배열이 필요할때
 					String arr_txt[] = text.split("\n");
 					Log.e("SKY", "arr_txt size : " + arr_txt.length);
-//					04-28 17:42:22.905: E/SKY(17815): text : test1		01027065911
-//					04-28 17:42:22.905: E/SKY(17815): test2		01027065912
-//					04-28 17:42:22.905: E/SKY(17815): arr_txt size : 2
-//					04-28 17:42:22.905: E/SKY(17815): arr_txt size1 : test1		01027065911
-//					04-28 17:42:22.905: E/SKY(17815): arr_txt size1 : test2		01027065912
-//					04-28 17:42:22.905: E/SKY(17815): JSON DATA :: {"data":[{"NAME":"test1","PHONE":""},{"NAME":"test2","PHONE":""}]}
 
 					int count_all = 0;
 					for (int i = 0; i < arr_txt.length; i++) {
 						Log.e("SKY", "arr_txt size1 : " + arr_txt[i]);
-						String txt[] = arr_txt[i].split("\t");
-						JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
-						sObject.put("NAME", txt[0]);
-						sObject.put("PHONE", txt[1].replace("\u0000", "").replace("\n", "").replace("\r", "").trim());
-						jArray.put(sObject);
-						count_all++;
+						if (arr_txt[i].length() > 1) {
+							String txt[] = arr_txt[i].split("\t");
+							JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
+							sObject.put("NAME", txt[0]);
+							sObject.put("PHONE", txt[1].replace("\u0000", "").replace("\n", "").replace("\r", "").replace("-", ""));
+							jArray.put(sObject);
+							count_all++;
+						}
+						
 					}
-
 					obj.put("data",jArray);
 					Log.e("SKY","JSON DATA :: " + obj.toString());
 					
 					
+					
 					//post 발송
-					map.clear();
-					//map.put("url", dataSet.SERVER+"Server_Group_Txt_Insert.jsp");
-					map.put("url", dataSet.SERVER+"Server_Insert.jsp");
-					map.put("user_id",dataSet.PHONE);
-					map.put("group_name", gg_name);
-					map.put("val",obj.toString());
-					map.put("count",""+count_all);
-					Log.e("SKY","JSON DATA GOGO:: ");
+					AccumThread2 av = new AccumThread2(obj.toString() ,"" +count_all);
+					av.start();
+
 					//post 발송
-					mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 0 , 2 , null);
-					mThread.start();		//스레드 시작!!
+					//mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 0 , 2 , null);
+					//mThread.start();		//스레드 시작!!
 				} catch (IOException e) {
-					Log.e("SKY","1ERROR ::  " + e.toString());
 					throw new RuntimeException(e);
 				}catch (JSONException e) {
-					Log.e("SKY","2ERROR ::  " + e.toString());
 					e.printStackTrace();
 				}
 			} 
 			break;
+		}
+	}
+	public class AccumThread2 extends Thread{
+		String val , count ;
+		public AccumThread2(String _val , String _count){
+			this.val = _val;
+			this.count = _count;
+		}
+		@Override
+		public void run()
+		{
+			map.clear();
+			map.put("url", dataSet.SERVER+"Server_Insert.jsp");
+			map.put("user_id",dataSet.PHONE);
+			map.put("group_name", gg_name);
+			map.put("val",val);
+			map.put("count",""+count);
+			
+			
+			Message msg2 = mAfterAccum.obtainMessage();
+			msg2.obj = mThread.HttpGetConnection(map);
+			msg2.arg1 = 2;
+			mAfterAccum.sendMessage(msg2);
+
+			
+			
 		}
 	}
 	String gg_name = "";
@@ -379,9 +399,8 @@ public class LMSServerActivity extends Activity{
 			}else if(msg.arg1 == 2){
 				String res = (String)msg.obj;
 				Log.e("SKY" , "RESULT  -> " + res);
-				customProgressClose();
 				
-				customProgressPop();
+				map.clear();
 				String []val = {"item1","item2","item3","item4" };
 				map.put("url", dataSet.SERVER + "Server_Sel.jsp");
 				map.put("my_phone", dataSet.PHONE);
@@ -420,9 +439,6 @@ public class LMSServerActivity extends Activity{
 				customProgressClose();
 				LMSMainActivity.onresume_0 = 1;
 				finish();
-			}else if(msg.arg1  == 2 ){//전체선택 
-				
-				
 			}else if(msg.arg1  == 5000 ){//전체선택 
 				for (int i = 0; i < arrData.size(); i++) {
 					arrData.get(i).setCheck(1);
@@ -457,6 +473,7 @@ public class LMSServerActivity extends Activity{
 				alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
 						customProgressPop();
+						map.clear();
 						map.put("url", dataSet.SERVER + "Server_Group_Del.jsp");
 						map.put("key_index", ""+del_position);
 						mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 0 , 2 , null);
