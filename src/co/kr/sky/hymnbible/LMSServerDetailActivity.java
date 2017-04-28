@@ -2,21 +2,28 @@ package co.kr.sky.hymnbible;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.WebChromeClient;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -81,6 +88,7 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 		Bundle bundle = getIntent().getExtras();
 		obj = bundle.getParcelable("Object");
 		Log.e("SKY", "ID :: " + obj.getKey_index());
+		t_count.setText("서버주소록>" +obj.getName() );
 
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
@@ -190,7 +198,17 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 					list_number.setAdapter(m_Adapter);
 				}
 				break;
-			case R.id.btn_sp3:	
+			case R.id.btn_sp3:
+				Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+						RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+				intent.putExtra(RecognizerIntent.EXTRA_PROMPT,MainActivity.TTS_str);
+				try {
+					startActivityForResult(intent, 999);
+				} catch (ActivityNotFoundException a) {
+					Toast.makeText(getApplicationContext(),"다시 시도해주세요.",Toast.LENGTH_SHORT).show();
+				}
 				break;
 			case R.id.btn_ok:
 				int j = 0;
@@ -222,6 +240,50 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 			}
 		}
 	};
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Log.e("SKY" , "RESULT :: " + requestCode);
+		Log.e("SKY" , "resultCode :: " + resultCode);
+		Log.e("SKY" , "data :: " + data);
+		if (data == null) {
+			Log.e("SKY" , "data null:: ");
+			return;
+		}
+		switch (requestCode) {
+		case 999:
+			if (resultCode == RESULT_OK && null != data) {
+				ArrayList<String> result = data
+						.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+				Log.e("SKY" , "RESULT :: " + result.get(0).trim());
+				e_lms.setText(""+result.get(0).trim());
+				if (e_lms.getText().toString().length() ==0) {
+					//모두 보여주기
+					search_flag = false;
+					m_Adapter = new LMSServerList_Adapter( LMSServerDetailActivity.this , arrData , mAfterAccum);
+					list_number.setAdapter(m_Adapter);
+				}else {
+					arrData_copy.clear();
+					for (int i = 0; i < arrData.size(); i++) {
+						if (arrData.get(i).getName().matches(".*" + e_lms.getText().toString() +".*") || arrData.get(i).getPhone().matches(".*" + e_lms.getText().toString() +".*")) {
+							Log.e("SKY", "같은 값! :: " + i);
+							search_flag = true;
+							arrData_copy.add(new MyServerListObj(arrData.get(i).getKey_index(), 
+									arrData.get(i).getName(), 
+									arrData.get(i).getPhone(), 
+									arrData.get(i).getG_keyindex(), 
+									arrData.get(i).getCheck(),
+									i));
+						}
+					}
+					m_Adapter = new LMSServerList_Adapter( LMSServerDetailActivity.this , arrData_copy , mAfterAccum);
+					list_number.setAdapter(m_Adapter);
+				}
+			}
+			break;
+
+		}
+	}
 	Handler mAfterAccum = new Handler()
 	{
 		@Override
@@ -281,17 +343,28 @@ public class LMSServerDetailActivity extends Activity implements OnEditorActionL
 				m_Adapter.notifyDataSetChanged();
 
 			}else if(msg.arg1  == 9001 ){//SERVER DEL
-				int del_position = (int)msg.arg2;
-				//Server_Phone_Del
-				customProgressPop();
-				map.put("url", dataSet.SERVER + "Server_Phone_Del.jsp");
-				map.put("key_index", ""+arrData.get(del_position).getKey_index());
-				map.put("group_key_index", ""+arrData.get(del_position).getG_keyindex());
-				map.put("count", ""+(arrData.size()-1));
-				mThread = new AccumThread(LMSServerDetailActivity.this , mAfterAccum , map , 0 , 2 , null);
-				mThread.start();		//스레드 시작!!
-				
-
+				final int del_position = (int)msg.arg2;
+				AlertDialog.Builder alert = new AlertDialog.Builder(LMSServerDetailActivity.this, AlertDialog.THEME_HOLO_LIGHT);
+				alert.setTitle("알림");
+				alert.setMessage("삭제하시겠습니까?");
+				alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						customProgressPop();
+						map.put("url", dataSet.SERVER + "Server_Phone_Del.jsp");
+						map.put("key_index", ""+arrData.get(del_position).getKey_index());
+						map.put("group_key_index", ""+arrData.get(del_position).getG_keyindex());
+						map.put("count", ""+(arrData.size()-1));
+						mThread = new AccumThread(LMSServerDetailActivity.this , mAfterAccum , map , 0 , 2 , null);
+						mThread.start();		//스레드 시작!!
+					}
+				});
+				// Cancel 버튼 이벤트
+				alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				});
+				alert.show();
 			}
 		}
 	};

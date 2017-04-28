@@ -72,7 +72,7 @@ public class LMSMyPhoneList_Adapter extends BaseAdapter {
 		convertView.setTag(vh);
 		vh.t_name.setTypeface(ttf);
 		vh.t_phone.setTypeface(ttf);
-		vh.t_name.setText("" + position + "." +board.getNAME());
+		vh.t_name.setText("" + board.getNAME());
 		vh.t_phone.setText("" +board.getPHONE().replace("-", ""));
 		
 		vh.check.setOnCheckedChangeListener(new OnCheckedChangeListener() {

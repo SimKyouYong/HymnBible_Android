@@ -72,17 +72,23 @@ public class LMSServerActivity extends Activity{
 		if (LMSMainActivity.onresume_0 ==1) {
 			//그냥 끄기!
 			finish();
+		}else{
+			init();
 		}
 	}
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_server);
+		
+		init();
+
+	}
+	private void init(){
 		list_number = (ListView)findViewById(R.id.list_number);
 		title = (TextView)findViewById(R.id.title);
 		t_name = (TextView)findViewById(R.id.t_name);
 		check_all = (CheckBox)findViewById(R.id.check_all);
 		check_count = (TextView)findViewById(R.id.check_count);
-		
 		t_count = (TextView)findViewById(R.id.t_count);
 		font_1 = (TextView)findViewById(R.id.font_1);
 		font_2 = (TextView)findViewById(R.id.font_2);
@@ -106,6 +112,7 @@ public class LMSServerActivity extends Activity{
 
 		customProgressPop();
 		String []val = {"item1","item2","item3","item4" };
+		map.clear();
 		map.put("url", dataSet.SERVER + "Server_Sel.jsp");
 		map.put("my_phone", dataSet.PHONE);
 		mThread = new AccumThread(this , mAfterAccum , map , 1 , 0 , val);
@@ -118,8 +125,6 @@ public class LMSServerActivity extends Activity{
 		findViewById(R.id.btn_reflash1).setOnClickListener(btnListener);
 		findViewById(R.id.bottomview_c).setOnClickListener(btnListener);
 		findViewById(R.id.bottomview_c_copy).setOnClickListener(btnListener);
-		
-
 		findViewById(R.id.btn_ok).setOnClickListener(btnListener);
 		findViewById(R.id.btn_ok1).setOnClickListener(btnListener);
 
@@ -142,8 +147,6 @@ public class LMSServerActivity extends Activity{
 				}
 			}
 		});
-
-
 	}
 	//버튼 리스너 구현 부분 
 	View.OnClickListener btnListener = new View.OnClickListener() {
@@ -230,11 +233,17 @@ public class LMSServerActivity extends Activity{
 					JSONArray jArray = new JSONArray();//배열이 필요할때
 					String arr_txt[] = text.split("\n");
 					Log.e("SKY", "arr_txt size : " + arr_txt.length);
+//					04-28 17:42:22.905: E/SKY(17815): text : test1		01027065911
+//					04-28 17:42:22.905: E/SKY(17815): test2		01027065912
+//					04-28 17:42:22.905: E/SKY(17815): arr_txt size : 2
+//					04-28 17:42:22.905: E/SKY(17815): arr_txt size1 : test1		01027065911
+//					04-28 17:42:22.905: E/SKY(17815): arr_txt size1 : test2		01027065912
+//					04-28 17:42:22.905: E/SKY(17815): JSON DATA :: {"data":[{"NAME":"test1","PHONE":""},{"NAME":"test2","PHONE":""}]}
 
 					int count_all = 0;
 					for (int i = 0; i < arr_txt.length; i++) {
 						Log.e("SKY", "arr_txt size1 : " + arr_txt[i]);
-						String txt[] = arr_txt[i].split(",");
+						String txt[] = arr_txt[i].split("\t");
 						JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
 						sObject.put("NAME", txt[0]);
 						sObject.put("PHONE", txt[1].replace("\u0000", "").replace("\n", "").replace("\r", "").trim());
@@ -254,13 +263,15 @@ public class LMSServerActivity extends Activity{
 					map.put("group_name", gg_name);
 					map.put("val",obj.toString());
 					map.put("count",""+count_all);
-
+					Log.e("SKY","JSON DATA GOGO:: ");
 					//post 발송
 					mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 0 , 2 , null);
 					mThread.start();		//스레드 시작!!
 				} catch (IOException e) {
+					Log.e("SKY","1ERROR ::  " + e.toString());
 					throw new RuntimeException(e);
 				}catch (JSONException e) {
+					Log.e("SKY","2ERROR ::  " + e.toString());
 					e.printStackTrace();
 				}
 			} 
@@ -439,13 +450,27 @@ public class LMSServerActivity extends Activity{
 				check_all.setEnabled(true); //모두 선택
 				check_all.setChecked(false);
 			}else if(msg.arg1  == 9001 ){//삭제
-				int del_position = (int)msg.arg2;
-				customProgressPop();
-				map.put("url", dataSet.SERVER + "Server_Group_Del.jsp");
-				map.put("key_index", ""+del_position);
-				mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 0 , 2 , null);
+				final int del_position = (int)msg.arg2;
+				AlertDialog.Builder alert = new AlertDialog.Builder(LMSServerActivity.this, AlertDialog.THEME_HOLO_LIGHT);
+				alert.setTitle("알림");
+				alert.setMessage("삭제하시겠습니까?");
+				alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						customProgressPop();
+						map.put("url", dataSet.SERVER + "Server_Group_Del.jsp");
+						map.put("key_index", ""+del_position);
+						mThread = new AccumThread(LMSServerActivity.this , mAfterAccum , map , 0 , 2 , null);
 
-				mThread.start();		//스레드 시작!!
+						mThread.start();		//스레드 시작!!
+					}
+				});
+				// Cancel 버튼 이벤트
+				alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				});
+				alert.show();
 			}
 		}
 	};

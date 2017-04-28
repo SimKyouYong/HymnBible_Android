@@ -1,12 +1,15 @@
 package co.kr.sky.hymnbible;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -14,6 +17,7 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -28,13 +32,16 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
 import co.kr.sky.hymnbible.adapter.LMSMyPhoneList_Adapter;
+import co.kr.sky.hymnbible.adapter.LMSServerList_Adapter;
 import co.kr.sky.hymnbible.common.Check_Preferences;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.MyPhoneGroupObj;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
+import co.kr.sky.hymnbible.obj.MyServerListObj;
 
 public class LMSMyPhoneDetailActivity extends Activity implements OnEditorActionListener{
 	LMSMyPhoneList_Adapter           m_Adapter;
@@ -78,10 +85,10 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 
 		
 		
-		
 		Bundle bundle = getIntent().getExtras();
 		obj = bundle.getParcelable("Object");
 		Log.e("SKY", "ID :: " + obj.get_ID());
+		t_count.setText("폰주소록>" +obj.getTITLE() );
 
 		//디비 조회해서 값 뿌려주면 끝!!
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
@@ -209,6 +216,17 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 				}
 				break;
 			case R.id.btn_sp3:	
+				//tts
+				Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+						RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+				intent.putExtra(RecognizerIntent.EXTRA_PROMPT,MainActivity.TTS_str);
+				try {
+					startActivityForResult(intent, 999);
+				} catch (ActivityNotFoundException a) {
+					Toast.makeText(getApplicationContext(),"다시 시도해주세요.",Toast.LENGTH_SHORT).show();
+				}
 				break;
 			case R.id.btn_ok:
 				customProgressPop();
@@ -224,6 +242,7 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 					}
 				}
 				if (j == 0) {
+					customProgressClose();
 					AlertDialog.Builder ab = new AlertDialog.Builder(LMSMyPhoneDetailActivity.this , AlertDialog.THEME_HOLO_LIGHT);
 					//		.setTitle("부적결제 후 전화상담 서비스로 연결 되며 12시간 동안 재연결 무료 입니다.\n(운수대톡 )")
 					ab.setMessage("1개 이상은 선택해야 합니다.");
@@ -255,6 +274,52 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 			}
 		}
 	};
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Log.e("SKY" , "RESULT :: " + requestCode);
+		Log.e("SKY" , "resultCode :: " + resultCode);
+		Log.e("SKY" , "data :: " + data);
+		if (data == null) {
+			Log.e("SKY" , "data null:: ");
+			return;
+		}
+		switch (requestCode) {
+		case 999:
+			if (resultCode == RESULT_OK && null != data) {
+				ArrayList<String> result = data
+						.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+				Log.e("SKY" , "RESULT :: " + result.get(0).trim());
+				e_lms.setText(""+result.get(0).trim());
+				if (e_lms.getText().toString().length() ==0) {
+					Log.e("SKY","모두 보여주기");
+					//모두 보여주기
+					search_flag = false;
+					for (int i = 0; i < arrData_copy.size(); i++) {
+						if (arrData_copy.get(i).getCHECK() == 1) {
+							Log.e("SKY","POSITION :: "  + arrData_copy.get(i).getCopy_position());
+							arrData.set(arrData_copy.get(i).getCopy_position(), new MyPhoneListObj(arrData_copy.get(i).getKey(),arrData_copy.get(i).getNAME(), arrData_copy.get(i).getPHONE(), arrData_copy.get(i).getCHECK(),0));
+						}
+					}
+					m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData , mAfterAccum);
+					list_number.setAdapter(m_Adapter);
+				}else {
+					arrData_copy.clear();
+					for (int i = 0; i < arrData.size(); i++) {
+						if (arrData.get(i).getNAME().matches(".*" + e_lms.getText().toString() +".*") || arrData.get(i).getPHONE().matches(".*" + e_lms.getText().toString() +".*")) {
+							Log.e("SKY", "같은 값! :: " + i);
+							search_flag = true;
+							arrData_copy.add(new MyPhoneListObj(arrData.get(i).getKey(),arrData.get(i).getNAME(), arrData.get(i).getPHONE(), arrData.get(i).getCHECK() , i));
+						}
+					}
+					m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData_copy , mAfterAccum);
+					list_number.setAdapter(m_Adapter);
+				}
+			}
+			break;
+
+		}
+	}
 	Handler mAfterAccum = new Handler()
 	{
 		@Override
@@ -277,12 +342,24 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 				m_Adapter.notifyDataSetChanged();
 
 			}else if(msg.arg1  == 9001 ){//해당 삭제
-				int del_position = (int)msg.arg2;
-				DEL_Phone(del_position);
-				SELECT_Phone(""+(key));
+				final int del_position = (int)msg.arg2;
+				AlertDialog.Builder alert = new AlertDialog.Builder(LMSMyPhoneDetailActivity.this, AlertDialog.THEME_HOLO_LIGHT);
+				alert.setTitle("알림");
+				alert.setMessage("삭제하시겠습니까?");
+				alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						DEL_Phone(del_position);
+						SELECT_Phone(""+(key));
+					}
+				});
+				// Cancel 버튼 이벤트
+				alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				});
+				alert.show();
 			}
-			
-			
 		}
 	};
 	public void DEL_Phone(int del)		//디비 값 조회해서 저장하기

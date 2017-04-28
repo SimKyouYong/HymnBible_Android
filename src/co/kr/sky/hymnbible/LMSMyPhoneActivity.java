@@ -70,16 +70,19 @@ public class LMSMyPhoneActivity extends Activity{
 		if (LMSMainActivity.onresume_0 ==1) {
 			//그냥 끄기!
 			finish();
+		}else{
+			init();
 		}
 	}
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_myphone);
+	}
+	private void init(){
 		list_number = (ListView)findViewById(R.id.list_number);
 		check_all = (CheckBox)findViewById(R.id.check_all);
 		title = (TextView)findViewById(R.id.title);
 		check_count = (TextView)findViewById(R.id.check_count);
-
 		font_1 = (TextView)findViewById(R.id.font_1);
 		font_2 = (TextView)findViewById(R.id.font_2);
 		font_3 = (TextView)findViewById(R.id.font_3);
@@ -89,11 +92,7 @@ public class LMSMyPhoneActivity extends Activity{
 
 		ttf = Typeface.createFromAsset(getAssets(), "HANYGO230.TTF");
 
-
-
-
 		title.setTypeface(ttf);
-
 		font_1.setTypeface(ttf);
 		font_2.setTypeface(ttf);
 		font_3.setTypeface(ttf);
@@ -147,7 +146,6 @@ public class LMSMyPhoneActivity extends Activity{
 				}
 			}
 		});
-
 	}
 	public class AccumThread1 extends Thread{
 		public AccumThread1(){
@@ -692,8 +690,22 @@ public class LMSMyPhoneActivity extends Activity{
 				check_all.setEnabled(true); //모두 선택
 				check_all.setChecked(false);
 			}else if(msg.arg1  == 9001 ){//삭제
-				int del_position = (int)msg.arg2;
-				DEL_Group(del_position);
+				final int del_position = (int)msg.arg2;
+				AlertDialog.Builder alert = new AlertDialog.Builder(LMSMyPhoneActivity.this, AlertDialog.THEME_HOLO_LIGHT);
+				alert.setTitle("알림");
+				alert.setMessage("삭제하시겠습니까?");
+				alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int whichButton) {
+						DEL_Group(del_position);
+					}
+				});
+				// Cancel 버튼 이벤트
+				alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog, int which) {
+						dialog.cancel();
+					}
+				});
+				alert.show();
 			}
 
 		}
@@ -790,7 +802,7 @@ public class LMSMyPhoneActivity extends Activity{
 				customDialog = new ProgressDialog( this );
 			}
 			customDialog.setCancelable(false);
-			customDialog.setMessage("전화번호 불러오는중");
+			customDialog.setMessage("전화번호 불러오는중…\n수량에따라 시간이 소요됨");
 			customDialog.show();
 		}catch(Exception ex){}
 	}

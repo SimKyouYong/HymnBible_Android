@@ -82,7 +82,7 @@ public class MainActivity extends Activity{
 	private String mCameraPhotoPath;
 	AccumThread mThread;
 
-    JIFace iface = new JIFace();
+	JIFace iface = new JIFace();
 	protected ProgressDialog customDialog = null;
 
 
@@ -122,10 +122,10 @@ public class MainActivity extends Activity{
 	private HashMap<String, String> group_kr;
 	private HashMap<String, String> group_title;
 	private HashMap<String, Integer> group_count;
-	
 
 
-	
+
+
 	@Override
 	public void onResume(){
 		super.onResume();
@@ -133,24 +133,7 @@ public class MainActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
-		/*
-		int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS);
 
-		if(permissionCheck== PackageManager.PERMISSION_DENIED){
-		    // 권한 없음
-			Log.e("SKY", "권한 없음");
-			ActivityCompat.requestPermissions(this,
-	                PERMISSIONS_STORAGE,
-	                1);
-		}else{
-		    // 권한 있음
-			Log.e("SKY", "권한 있음");
-			ActivityCompat.requestPermissions(this,
-	                PERMISSIONS_STORAGE,
-	                1);
-		}
-		*/
 		vc = new MySQLiteOpenHelper(this);
 		bottomview = (LinearLayout)findViewById(R.id.bottomview);
 		bottomview.setVisibility(View.GONE);
@@ -172,16 +155,16 @@ public class MainActivity extends Activity{
 		setting_button();
 		//myTTS = new TextToSpeech(this, this);
 		myTTS=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-	         @Override
-	         public void onInit(int status) {
-	            if(status != TextToSpeech.ERROR) {
-	            	myTTS.setLanguage(Locale.KOREA);
-	            }
-	         }
-	      });
+			@Override
+			public void onInit(int status) {
+				if(status != TextToSpeech.ERROR) {
+					myTTS.setLanguage(Locale.KOREA);
+				}
+			}
+		});
 		group_title=new HashMap<String, String>();
-    	group_count=new HashMap<String, Integer>();
-    	//getGroupContacts();
+		group_count=new HashMap<String, Integer>();
+		//getGroupContacts();
 
 
 		//push
@@ -208,82 +191,82 @@ public class MainActivity extends Activity{
 				mThread.start();		//스레드 시작!!
 			}
 		}
-//		//최초 설치시 추천인 입력
-//		if("".equals(Check_Preferences.getAppPreferences(MainActivity.this, "ch"))){
-//			InputAlert();
-//		}
-	    //getGroupall(and_where);
-	    getSampleContactList2(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + "= " + 4);
+		//		//최초 설치시 추천인 입력
+		//		if("".equals(Check_Preferences.getAppPreferences(MainActivity.this, "ch"))){
+		//			InputAlert();
+		//		}
+		//getGroupall(and_where);
+		getSampleContactList2(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + "= " + 4);
 	}
 	public void getSampleContactList2(String groupID) {
 		Log.e("SKY" , "--getSampleContactList2-- :: " + groupID);
-	    Uri groupURI = ContactsContract.Data.CONTENT_URI;
-	    String[] projection = new String[] {
-	            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-	            ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID };
+		Uri groupURI = ContactsContract.Data.CONTENT_URI;
+		String[] projection = new String[] {
+				ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+				ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID };
 
-	    Cursor c = getContentResolver().query(
-	            groupURI,
-	            projection,
-	            ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID
-                + "=" + 4, 
-	            null, 
-	            null);
+		Cursor c = getContentResolver().query(
+				groupURI,
+				projection,
+				ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID
+				+ "=" + 4, 
+				null, 
+				null);
 
-	    int count_all = 0;
-	    while (c.moveToNext()) {
-	        String id = c
-	                .getString(c
-	                        .getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
-	        Cursor pCur = getContentResolver().query(
-	                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-	                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-	                new String[] { id }, null);
+		int count_all = 0;
+		while (c.moveToNext()) {
+			String id = c
+					.getString(c
+							.getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
+			Cursor pCur = getContentResolver().query(
+					ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+					ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+							new String[] { id }, null);
 
-	        int i =0;
-	        while (pCur.moveToNext()) {
-	        	i++;
-	            String name = pCur
-	                    .getString(pCur
-	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+			int i =0;
+			while (pCur.moveToNext()) {
+				i++;
+				String name = pCur
+						.getString(pCur
+								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
 
-	            String phone = pCur
-	                    .getString(pCur
-	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+				String phone = pCur
+						.getString(pCur
+								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 				Log.e("SKY" , "aaa" + count_all + ".name:: " + name + " // phone :: " + phone);
 				//SAVE_DB_Phone(name, phone, ""+groupID);
 				count_all++;
-	        }
-	        pCur.close();
-	    }
-	    
+			}
+			pCur.close();
+		}
+
 	}
 	public void onRequestPermissionsResult(int requestCode,
-	        String permissions[], int[] grantResults) {
-	    switch (requestCode) {
-	        case 1: {
-	        	Log.e("SKY", "TEST");
-	            //권한 획득이 거부되면 결과 배열은 비어있게 됨
-	            if (grantResults.length > 0
-	                && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+			String permissions[], int[] grantResults) {
+		switch (requestCode) {
+		case 1: {
+			Log.e("SKY", "TEST");
+			//권한 획득이 거부되면 결과 배열은 비어있게 됨
+			if (grantResults.length > 0
+					&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-	                //권한 획득이 허용되면 수행해야 할 작업이 표시됨
-	                //일반적으로 작업을 처리할 메서드를 호출
+				//권한 획득이 허용되면 수행해야 할 작업이 표시됨
+				//일반적으로 작업을 처리할 메서드를 호출
 
-	            } else {
+			} else {
 
-	                //권한 획득이 거부되면 수행해야 할 적업이 표시됨
-	                //일반적으로 작업을 처리할 메서드를 호출
-	            }
-	            return;
-	        }
-	    }
+				//권한 획득이 거부되면 수행해야 할 적업이 표시됨
+				//일반적으로 작업을 처리할 메서드를 호출
+			}
+			return;
+		}
+		}
 	}
 
 
 	private void getGroupContacts()
 	{
-	    Log.e("SKY","--getGroupContacts--");
+		Log.e("SKY","--getGroupContacts--");
 		Uri uri_group = ContactsContract.Groups.CONTENT_SUMMARY_URI;
 		String[] group_projection = new String[]{
 				ContactsContract.Groups._ID,
@@ -291,51 +274,51 @@ public class MainActivity extends Activity{
 		};
 		String group_selection = ContactsContract.Groups.DELETED + " = 0 AND " + ContactsContract.Groups.GROUP_VISIBLE + " = 1";
 		String orderby = ContactsContract.Groups.TITLE+ " COLLATE LOCALIZED ASC";
-	    Cursor gc = managedQuery(uri_group, group_projection, group_selection, null,orderby);
-	    while(gc.moveToNext())
-	    {
-	    	String gtitle=gc.getString(1);
-	    	if(gtitle!=null && !gtitle.equals(""))
-	    	{
-	    		int _ID = gc.getInt(0);
-	    		int people_count=0;
-		    	String selection=ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + "="+gc.getString(0);
-//	    		String[] qry={ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID};
-//		    	Cursor people_rlt = managedQuery(ContactsContract.Data.CONTENT_URI,qry, selection, null,null);//		    	
-//		    	final int people_count = people_rlt.getCount();
-//		    	Log.i("getGroupContacts",gc.getString(0)+" "+gc.getString(1)+" ("+people_count+")");
-	    		Uri lookupUri = Uri.withAppendedPath(ContactsContract.Data.CONTENT_URI, "");
-			    Cursor is_c = getContentResolver().query(
-			    		lookupUri, 
-			    		new String[]{ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID},
-			    		selection,
-			    		null,
-			    		null);
-			    people_count=is_c.getCount();
-			    try {
-			    	people_count=is_c.getCount();
-			    } catch (Exception e) {}
-			    finally{is_c.close();}
-		    	if(group_title.get(gtitle)!=null)
-		    	{
-		    		int g_tcount = group_count.get(gtitle)+people_count;
-		    		group_count.put(gtitle,g_tcount);
-		    		Log.e("SKY" , "1_ID :: " + _ID);
-		    		Log.e("SKY" , "1gtitle :: " + gtitle);
-		    		Log.e("SKY" , "1g_tcount :: " + g_tcount);
-		    		getSampleContactList(_ID);
-		    	}else{
-		    		group_title.put(gtitle,gtitle);
-		    		group_count.put(gtitle,people_count);
-		    		Log.e("SKY" , "2_ID :: " + _ID);
-		    		Log.e("SKY" , "2gtitle :: " + gtitle);
-		    		Log.e("SKY" , "2people_count :: " + people_count);
-		    		getSampleContactList(_ID);
-		    	}
-	    	}
-	    }
-	    Log.e("SKY","DDDD :: " + group_count.toString());
-	    AlertDialog.Builder alert = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
+		Cursor gc = managedQuery(uri_group, group_projection, group_selection, null,orderby);
+		while(gc.moveToNext())
+		{
+			String gtitle=gc.getString(1);
+			if(gtitle!=null && !gtitle.equals(""))
+			{
+				int _ID = gc.getInt(0);
+				int people_count=0;
+				String selection=ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + "="+gc.getString(0);
+				//	    		String[] qry={ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID};
+				//		    	Cursor people_rlt = managedQuery(ContactsContract.Data.CONTENT_URI,qry, selection, null,null);//		    	
+				//		    	final int people_count = people_rlt.getCount();
+				//		    	Log.i("getGroupContacts",gc.getString(0)+" "+gc.getString(1)+" ("+people_count+")");
+				Uri lookupUri = Uri.withAppendedPath(ContactsContract.Data.CONTENT_URI, "");
+				Cursor is_c = getContentResolver().query(
+						lookupUri, 
+						new String[]{ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID},
+						selection,
+						null,
+						null);
+				people_count=is_c.getCount();
+				try {
+					people_count=is_c.getCount();
+				} catch (Exception e) {}
+				finally{is_c.close();}
+				if(group_title.get(gtitle)!=null)
+				{
+					int g_tcount = group_count.get(gtitle)+people_count;
+					group_count.put(gtitle,g_tcount);
+					Log.e("SKY" , "1_ID :: " + _ID);
+					Log.e("SKY" , "1gtitle :: " + gtitle);
+					Log.e("SKY" , "1g_tcount :: " + g_tcount);
+					getSampleContactList(_ID);
+				}else{
+					group_title.put(gtitle,gtitle);
+					group_count.put(gtitle,people_count);
+					Log.e("SKY" , "2_ID :: " + _ID);
+					Log.e("SKY" , "2gtitle :: " + gtitle);
+					Log.e("SKY" , "2people_count :: " + people_count);
+					getSampleContactList(_ID);
+				}
+			}
+		}
+		Log.e("SKY","DDDD :: " + group_count.toString());
+		AlertDialog.Builder alert = new AlertDialog.Builder(this, AlertDialog.THEME_HOLO_LIGHT);
 		alert.setTitle("개발 및 버전 정보");
 		alert.setMessage(group_count.toString());
 		alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
@@ -347,42 +330,42 @@ public class MainActivity extends Activity{
 	}
 	public void getSampleContactList(int groupID) {
 		Log.e("SKY" , "--getSampleContactList-- :: " + groupID);
-	    Uri groupURI = ContactsContract.Data.CONTENT_URI;
-	    String[] projection = new String[] {
-	            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-	            ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID };
+		Uri groupURI = ContactsContract.Data.CONTENT_URI;
+		String[] projection = new String[] {
+				ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+				ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID };
 
-	    Cursor c = getContentResolver().query(
-	            groupURI,
-	            projection,
-	            ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID
-	                    + "=" + groupID, null, null);
+		Cursor c = getContentResolver().query(
+				groupURI,
+				projection,
+				ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID
+				+ "=" + groupID, null, null);
 
-	    while (c.moveToNext()) {
-	        String id = c
-	                .getString(c
-	                        .getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
-	        Cursor pCur = getContentResolver().query(
-	                ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-	                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-	                new String[] { id }, null);
+		while (c.moveToNext()) {
+			String id = c
+					.getString(c
+							.getColumnIndex(ContactsContract.CommonDataKinds.GroupMembership.CONTACT_ID));
+			Cursor pCur = getContentResolver().query(
+					ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+					ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+							new String[] { id }, null);
 
-	        int i =0;
-	        while (pCur.moveToNext()) {
-	        	i++;
-	            String name = pCur
-	                    .getString(pCur
-	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+			int i =0;
+			while (pCur.moveToNext()) {
+				i++;
+				String name = pCur
+						.getString(pCur
+								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
 
-	            String phone = pCur
-	                    .getString(pCur
-	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+				String phone = pCur
+						.getString(pCur
+								.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 				Log.e("SKY" , "" + i + ".name:: " + name + " // phone :: " + phone);
 
-	        }
+			}
 
-	        pCur.close();
-	    }
+			pCur.close();
+		}
 	}
 	private int getGroupSummaryCount(String groupId) {
 		Uri uri = ContactsContract.Groups.CONTENT_SUMMARY_URI;
@@ -530,7 +513,7 @@ public class MainActivity extends Activity{
 			break;
 		case 999:
 			if (resultCode == RESULT_OK && null != data) {
-				
+
 				ArrayList<String> result = data
 						.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
 				Log.e("SKY" , "RESULT :: " + result.get(0).trim());
@@ -569,7 +552,7 @@ public class MainActivity extends Activity{
 				//            }
 			}
 			break;
-			
+
 		}
 
 		}
@@ -708,12 +691,12 @@ public class MainActivity extends Activity{
 
 	}
 	class JIFace {
-        public void print(String data) {
-            data =""+data+"";
-            System.out.println(data);
+		public void print(String data) {
+			data =""+data+"";
+			System.out.println(data);
 			Log.e("SKY", "data :: "+data);
-        }
-    }
+		}
+	}
 	/*****************
 	 * @Class WebViewClient
 	 *****************/
@@ -750,9 +733,9 @@ public class MainActivity extends Activity{
 		@Override 
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			Log.e("SKY", "shouldOverrideUrlLoading = = = = = = = "+url);
-		
+
 			//myTTS.stop();
-			
+
 			if (url.matches(".*http://shqrp5200.cafe24.com/index.do.*")) {
 				//메인 페이지이기에 종료하기 띄운다!.
 				Real_exit = true;
@@ -761,7 +744,7 @@ public class MainActivity extends Activity{
 				Real_exit = false;
 				Log.e("SKY", "set Real_exit = = = = = = = "+Real_exit);
 			}
-			
+
 			if( url.startsWith("http:") || url.startsWith("https:") ) {
 				return false;
 
@@ -816,7 +799,7 @@ public class MainActivity extends Activity{
 			super.onPageStarted(view, url, favicon);
 			Log.e("SKY", "onPageStarted = = = = = = = "+url);
 			fix_url = url;
-			
+
 			if (url.matches(".*sharp5200.*")) {
 				URL_NOW = url;
 			}
@@ -836,9 +819,9 @@ public class MainActivity extends Activity{
 				if (url_copy_progress.matches(".*http://shqrp5200.cafe24.com/index.do.*")) {
 					customProgressPop();
 				}
-				
+
 			}
-			
+
 
 		}
 		@Override
@@ -886,7 +869,7 @@ public class MainActivity extends Activity{
 					}
 				}, 1000);
 			}
-			
+
 		}
 	}
 	private void downgogo(String url){
@@ -1100,6 +1083,7 @@ public class MainActivity extends Activity{
 				return true;
 			}
 		}
+		/*
 		if (keyCode == KeyEvent.KEYCODE_BACK && Check_Preferences.getAppPreferences(MainActivity.this, "slide").equals("true")) {
 			//slide 메뉴를 닫는다.
 			Log.e("SKY", "CLOSE SLIDE MENU");
@@ -1107,13 +1091,10 @@ public class MainActivity extends Activity{
 			Check_Preferences.setAppPreferences(MainActivity.this, "slide", "false");
 			return true;
 		}
+		 */
 		if ((keyCode == KeyEvent.KEYCODE_BACK) && BibleWeb.canGoBack()) {
 			if (Real_exit) {
-				if (BibleWeb.canGoBack()) {
-					BibleWeb.goBack();
-				}else{
-					EXIT();
-				}
+				EXIT();
 				return true;
 			}
 			//myTTS.stop();
@@ -1130,7 +1111,7 @@ public class MainActivity extends Activity{
 			EXIT();
 			return true;
 		}
-		
+
 		return super.onKeyDown(keyCode, event);
 	}
 	private void SplitFun(String url){

@@ -305,6 +305,7 @@ public class LMSMainActivity extends Activity{
 				m_Adapter.notifyDataSetChanged();
 				t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
 				list_noti.setVisibility(View.GONE);
+				phone_number.setText("");
 				break;
 			case R.id.number_minus:	
 				
