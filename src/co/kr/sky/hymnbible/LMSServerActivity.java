@@ -319,6 +319,8 @@ public class LMSServerActivity extends Activity{
 				if (gg_name.length() ==0 ) {
 					Toast.makeText(getApplicationContext(), "그룹명을 입력해주세요.", 0).show();
 				}else{
+					imageChooser();
+					/*
 					Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
 					contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
 					contentSelectionIntent.setType("file/*");
@@ -332,6 +334,7 @@ public class LMSServerActivity extends Activity{
 					chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
 
 					startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
+					*/
 				}
 			}
 		});
@@ -344,6 +347,31 @@ public class LMSServerActivity extends Activity{
 
 
 		
+	}
+	private void imageChooser() {
+		Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+			File photoFile = null;
+
+		}
+
+		Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
+		contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
+		contentSelectionIntent.setType("file/*");
+
+		Intent[] intentArray;
+		if(takePictureIntent != null) {
+			intentArray = new Intent[]{takePictureIntent};
+		} else {
+			intentArray = new Intent[0];
+		}
+
+		Intent chooserIntent = new Intent(Intent.ACTION_CHOOSER);
+		chooserIntent.putExtra(Intent.EXTRA_INTENT, contentSelectionIntent);
+		chooserIntent.putExtra(Intent.EXTRA_TITLE, "파일을 선택해주세요.");
+		chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+
+		startActivityForResult(chooserIntent, INPUT_FILE_REQUEST_CODE);
 	}
 	private void btn_ok(){
 		arrData_detail.clear();

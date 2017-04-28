@@ -365,8 +365,9 @@ public class LMSMainActivity extends Activity{
 		            
 		            for (int i = 0; i < arr_txt.length; i++) {
 			            Log.e("SKY", "arr_txt size1 : " + arr_txt[i]);
-			            String txt[] = arr_txt[i].split(",");
-			            arrData.add(new LMSMainObj(txt[0], txt[1]));
+			            String txt[] = arr_txt[i].split("\t");
+			            arrData.add(new LMSMainObj(txt[0], txt[1].replace("\u0000", "").replace("\n", "").replace("\r", "").replace("-", "")));
+			            list_noti.setVisibility(View.GONE);
 					}
 					m_Adapter.notifyDataSetChanged();
 		        } catch (IOException e) {
