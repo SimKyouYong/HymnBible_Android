@@ -1,6 +1,5 @@
 package co.kr.sky.hymnbible;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -8,7 +7,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.json.JSONArray;
@@ -40,10 +38,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import co.kr.sky.AccumThread;
-import co.kr.sky.hymnbible.LMSMyPhoneActivity.AccumThread2;
 import co.kr.sky.hymnbible.adapter.LMSServerPhoneGroup_Adapter;
 import co.kr.sky.hymnbible.fun.CommonUtil;
-import co.kr.sky.hymnbible.obj.MyPhoneListObj;
 import co.kr.sky.hymnbible.obj.MyPhoneListObj2;
 import co.kr.sky.hymnbible.obj.MyServerGroupObj;
 import co.kr.sky.hymnbible.obj.MyServerListObj;

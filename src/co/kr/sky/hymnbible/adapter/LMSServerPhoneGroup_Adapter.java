@@ -17,6 +17,8 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
+import co.kr.sky.hymnbible.LMSMyPhoneActivity;
+import co.kr.sky.hymnbible.LMSServerActivity;
 import co.kr.sky.hymnbible.R;
 import co.kr.sky.hymnbible.fun.CommonUtil;
 import co.kr.sky.hymnbible.obj.MyServerGroupObj;
@@ -87,6 +89,8 @@ public class LMSServerPhoneGroup_Adapter extends BaseAdapter {
 						mAfterAccum.sendMessage(msg2);
 						*/
 						vh.t_name.setText(board.getName() + "(" + board.getCount() + " / " + board.getCount() + ")");
+						String str = LMSServerActivity.check_count.getText().toString().replace("명", "").replace(" ", "");
+						LMSServerActivity.check_count.setText(""+ (Integer.parseInt(str) + Integer.parseInt(board.getCount())) );
 					} else {
 						Log.e("SKY" , "not 클릭" );
 						board.setCheck(0);
@@ -98,6 +102,9 @@ public class LMSServerPhoneGroup_Adapter extends BaseAdapter {
 						mAfterAccum.sendMessage(msg2);
 						*/
 						vh.t_name.setText(board.getName() + "(" + "0" + " / " + board.getCount() + ")");
+						String str = LMSServerActivity.check_count.getText().toString().replace("명", "").replace(" ", "");
+						LMSServerActivity.check_count.setText(""+ (Integer.parseInt(str) - Integer.parseInt(board.getCount())) );
+
 
 					}
 					Allcheck();
