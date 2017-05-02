@@ -71,6 +71,46 @@ import co.kr.sky.hymnbible.fun.MySQLiteOpenHelper;
  * * 그룹 주소록 수정 기능(상세만 있음!,그룹 xxx)
  * * 그룹 엑셀추가 기능(txt 파일에 그룹,이름,전화번호 형식으로 변경)
  * */
+
+
+/*
+ * simgyuyongui-MacBook-Pro:desktop SKY$ keytool -list -v  -keystore HymnBible_key.keystore
+키 저장소 비밀번호 입력:  
+
+키 저장소 유형: JKS
+키 저장소 제공자: SUN
+
+키 저장소에 1개의 항목이 포함되어 있습니다.
+
+별칭 이름: snap40
+생성 날짜: 2017. 5. 2
+항목 유형: PrivateKeyEntry
+인증서 체인 길이: 1
+인증서[1]:
+소유자: CN=snap40
+발행자: CN=snap40
+일련 번호: 2d971725
+적합한 시작 날짜: Tue May 02 10:20:06 KST 2017, 종료 날짜: Wed Apr 20 10:20:06 KST 2067
+인증서 지문:
+	 MD5: 40:D3:E9:2D:61:7E:9B:5B:95:FD:E2:E7:33:C8:DA:5B
+	 SHA1: A7:4F:C6:B2:8E:4A:61:13:30:FC:26:21:90:6C:43:B0:11:39:94:4A
+	 SHA256: F9:3F:17:59:88:C8:95:B0:0D:74:27:B3:55:D4:E6:E8:DE:DE:BD:98:ED:C0:60:26:11:12:12:02:5A:96:98:14
+	 서명 알고리즘 이름: SHA256withRSA
+	 버전: 3
+
+확장: 
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: BD E1 D0 C9 81 29 FE 6C   25 D5 18 FF 33 8E 01 51  .....).l%...3..Q
+0010: 74 6D C3 64                                        tm.d
+
+--배포 맵키 : AIzaSyD98fokEtY9jjyObtwFetlcxhAzmcovMLc
+--배포키 비밀번호 : akdntm1 
+ * 
+ * 
+ * */
 public class MainActivity extends Activity{
 
 	//업로드

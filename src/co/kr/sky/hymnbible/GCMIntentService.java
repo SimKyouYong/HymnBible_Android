@@ -35,7 +35,7 @@ public class GCMIntentService extends GCMBaseIntentService {
 				.getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification notification = new Notification(icon, message, when);
 
-		String title = context.getString(R.string.app_name);
+		String title = "성경과찬송-뉴";
 
 		Intent notificationIntent = new Intent(context,MainActivity.class);
 		re_message= message	;
