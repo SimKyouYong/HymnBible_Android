@@ -86,6 +86,7 @@ public class LMSMyPhoneGroup_Adapter extends BaseAdapter {
 					} else {
 						Log.e("SKY" , "not 클릭" );
 						board.setSELECTED(0);
+						vh.t_name.setText(board.getTITLE() + "(" + "0" + " / " + board.getGROUP_COUNT() + ")");
 						String str = LMSMyPhoneActivity.check_count.getText().toString().replace("명", "").replace(" ", "");
 						LMSMyPhoneActivity.check_count.setText(""+ (Integer.parseInt(str) - Integer.parseInt(board.getGROUP_COUNT())) );
 

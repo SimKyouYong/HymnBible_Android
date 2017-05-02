@@ -742,10 +742,25 @@ public class MainActivity extends Activity{
 	 *****************/
 	class ITGOWebChromeClient extends WebViewClient {
 
-		@Override //SSL
-		public void onReceivedSslError (WebView view, SslErrorHandler handler, SslError error) {
-			Log.e("SKY", "error = = = = = = = "+error);
-			handler.proceed();
+		
+		@Override
+		public void onReceivedSslError(WebView view, final SslErrorHandler handler, SslError error) {
+		  final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+		  builder.setMessage("유효하지 않은 사이트 입니다.\n계속 진행하시겠습니까?");
+		  builder.setPositiveButton("continue", new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		      handler.proceed();
+		    }
+		  });
+		  builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		      handler.cancel();
+		    }
+		  });
+		  final AlertDialog dialog = builder.create();
+		  dialog.show();
 		}
 		@Override
 		public void onReceivedError(WebView view, int errorCode,String description, String failingUrl) {

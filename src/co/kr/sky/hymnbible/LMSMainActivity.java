@@ -359,23 +359,25 @@ public class LMSMainActivity extends Activity{
 		        try {
 		            File file = new File(getPath(uri));		//파일명
 		            FileInputStream fis = new FileInputStream(file);
-		            Reader in = new InputStreamReader(fis);
+		            Reader in = new InputStreamReader(fis,"euc-kr");
+
 		            int size = fis.available();
 		            char[] buffer = new char[size];
 		            in.read(buffer);
 		            in.close();
 		 
 		            text = new String(buffer);
-		            Log.e("SKY", "text : " + text);
 		            
 		            String arr_txt[] = text.split("\n");
 		            Log.e("SKY", "arr_txt size : " + arr_txt.length);
 		            
 		            for (int i = 0; i < arr_txt.length; i++) {
-			            Log.e("SKY", "arr_txt size1 : " + arr_txt[i]);
-			            String txt[] = arr_txt[i].split("\t");
-			            arrData.add(new LMSMainObj(txt[0], txt[1].replace("\u0000", "").replace("\n", "").replace("\r", "").replace("-", "")));
-			            list_noti.setVisibility(View.GONE);
+						if (arr_txt[i].replace("\u0000", "").replace("\n", "").replace("\r", "").replace("-", "").length() > 1) {
+							Log.e("SKY", "arr_txt size1 : " + arr_txt[i]);
+				            String txt[] = arr_txt[i].split("\t");
+				            arrData.add(new LMSMainObj(txt[0], txt[1].replace("\u0000", "").replace("\n", "").replace("\r", "").replace("-", "")));
+				            list_noti.setVisibility(View.GONE);
+						}
 					}
 					m_Adapter.notifyDataSetChanged();
 		        } catch (IOException e) {

@@ -221,7 +221,7 @@ public class LMSServerActivity extends Activity{
 				try {
 					File file = new File(getPath(uri));		//파일명
 					FileInputStream fis = new FileInputStream(file);
-					Reader in = new InputStreamReader(fis);
+		            Reader in = new InputStreamReader(fis,"euc-kr");
 					int size = fis.available();
 					char[] buffer = new char[size];
 					in.read(buffer);
