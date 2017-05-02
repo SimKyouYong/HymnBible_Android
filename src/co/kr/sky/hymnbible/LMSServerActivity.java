@@ -240,12 +240,12 @@ public class LMSServerActivity extends Activity{
 
 					int count_all = 0;
 					for (int i = 0; i < arr_txt.length; i++) {
-						Log.e("SKY", "arr_txt size1 : " + arr_txt[i]);
-						if (arr_txt[i].length() > 1) {
+						Log.e("SKY", "arr_txt size1 : " + arr_txt[i].replace("\u0000", "").replace("\n", "").replace("\r", "").replace("-", ""));
+						if (arr_txt[i].replace("\u0000", "").replace("\n", "").replace("\r", "").replace("-", "").length() > 1) {
 							String txt[] = arr_txt[i].split("\t");
 							JSONObject sObject = new JSONObject();//배열 내에 들어갈 json
 							sObject.put("NAME", txt[0]);
-							sObject.put("PHONE", txt[1].replace("\u0000", "").replace("\n", "").replace("\r", "").replace("-", ""));
+							sObject.put("PHONE", txt[1]);
 							jArray.put(sObject);
 							count_all++;
 						}

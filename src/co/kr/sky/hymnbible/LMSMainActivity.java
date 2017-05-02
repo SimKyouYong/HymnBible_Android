@@ -70,7 +70,7 @@ public class LMSMainActivity extends Activity{
 					for (int j = 0; j < arrData.size(); j++) {
 						Log.e("SKY", "arrData.get(j).getName() :: " + arrData.get(j).getName());
 						Log.e("SKY", "arrData.get(j).getNumber() :: " + arrData.get(j).getNumber());
-						if (arrData.get(j).getName().equals(dataSet.arrData_real.get(i).getNAME())  &&  arrData.get(j).getNumber().replace("-", "").equals(dataSet.arrData_real.get(i).getPHONE().replace("-", ""))) {
+						if (arrData.get(j).getNumber().replace("-", "").equals(dataSet.arrData_real.get(i).getPHONE().replace("-", ""))) {
 							flag = false;
 						}
 					}
@@ -175,7 +175,7 @@ public class LMSMainActivity extends Activity{
 			try
 			{
 				byte[] getbyte = after_text.getBytes("KSC5601");
-				if(getbyte.length > 80)
+				if(getbyte.length > 2000)
 				{
 					s.delete(s.length()-2, s.length()-1);
 				}
@@ -301,6 +301,14 @@ public class LMSMainActivity extends Activity{
 					Toast.makeText(getApplicationContext(), "이름 혹은 전화번호를 입력해주세요.", 0).show();
 					return;
 				}
+	            for (int i = 0; i < arrData.size(); i++) {
+					if(arrData.get(i).getNumber().equals(phone_number.getText().toString())){
+						Toast.makeText(getApplicationContext(), "동일한 번호가 존재합니다.", 0).show();
+						return;
+					}
+				}
+				
+				
 				arrData.add(new LMSMainObj(phone_number.getText().toString().replace("-", ""), phone_number.getText().toString().replace("-", "")));
 				m_Adapter.notifyDataSetChanged();
 				t_count.setText("보내는 사람 : " + arrData.size()+ " 명");

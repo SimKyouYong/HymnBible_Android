@@ -221,7 +221,7 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
 						RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
 				intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-				intent.putExtra(RecognizerIntent.EXTRA_PROMPT,MainActivity.TTS_str);
+				intent.putExtra(RecognizerIntent.EXTRA_PROMPT,"이름을 말해주세요");
 				try {
 					startActivityForResult(intent, 999);
 				} catch (ActivityNotFoundException a) {

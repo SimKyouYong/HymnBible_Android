@@ -100,7 +100,8 @@ public class LMSMyPhoneActivity extends Activity{
 		t_count.setTypeface(ttf);
 		t_name.setTypeface(ttf);
 		check_count.setTypeface(ttf);
-
+		check_count.setText("0");
+		
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_server).setOnClickListener(btnListener);
 		findViewById(R.id.btn_server1).setOnClickListener(btnListener);
@@ -277,8 +278,9 @@ public class LMSMyPhoneActivity extends Activity{
 	                    .getString(pCur
 	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 				Log.e("SKY" , "aaa" + count_all + ".name:: " + name + " // phone :: " + phone + "//contact :: " +c.getString(1));
-				Phone_ox(name.replace(" ", "") , phone.replace("-", ""));
-				
+				if (phone.matches("010.*") || phone.matches("011.*") || phone.matches("019.*")) {
+					Phone_ox(name.replace(" ", "") , phone.replace("-", ""));
+				}
 				//SAVE_DB_Phone(name, phone, ""+groupID);
 				count_all++;
 	        }
@@ -398,9 +400,11 @@ public class LMSMyPhoneActivity extends Activity{
 	            String phone = pCur
 	                    .getString(pCur
 	                            .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-				Log.e("SKY" , "" + i + ".name:: " + name + " // phone :: " + phone);
-				SAVE_DB_Phone(name.replace(" ", ""), phone.replace("-", ""), ""+groupID);
-				count_all++;
+				if (phone.matches("010.*") || phone.matches("011.*") || phone.matches("019.*")) {
+					Log.e("SKY" , "" + i + ".name:: " + name + " // phone :: " + phone);
+					SAVE_DB_Phone(name.replace(" ", ""), phone.replace("-", ""), ""+groupID);
+					count_all++;
+				}
 	        }
 	        pCur.close();
 	    }

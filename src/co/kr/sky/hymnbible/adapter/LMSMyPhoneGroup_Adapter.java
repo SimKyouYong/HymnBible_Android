@@ -82,12 +82,12 @@ public class LMSMyPhoneGroup_Adapter extends BaseAdapter {
 						board.setSELECTED(1);
 						vh.t_name.setText(board.getTITLE() + "(" + board.getGROUP_COUNT() + " / " + board.getGROUP_COUNT() + ")");
 						String str = LMSMyPhoneActivity.check_count.getText().toString().replace("명", "").replace(" ", "");
-						LMSMyPhoneActivity.check_count.setText(""+ (Integer.parseInt(str) + Integer.parseInt(board.getGROUP_COUNT())) + "명");
+						LMSMyPhoneActivity.check_count.setText(""+ (Integer.parseInt(str) + Integer.parseInt(board.getGROUP_COUNT())) );
 					} else {
 						Log.e("SKY" , "not 클릭" );
 						board.setSELECTED(0);
 						String str = LMSMyPhoneActivity.check_count.getText().toString().replace("명", "").replace(" ", "");
-						LMSMyPhoneActivity.check_count.setText(""+ (Integer.parseInt(str) - Integer.parseInt(board.getGROUP_COUNT())) + "명");
+						LMSMyPhoneActivity.check_count.setText(""+ (Integer.parseInt(str) - Integer.parseInt(board.getGROUP_COUNT())) );
 
 					}
 					Allcheck();
