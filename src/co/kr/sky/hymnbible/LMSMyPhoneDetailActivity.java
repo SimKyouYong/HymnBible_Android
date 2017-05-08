@@ -173,6 +173,18 @@ public class LMSMyPhoneDetailActivity extends Activity implements OnEditorAction
 			}
 			cur.close();
 			db.close();
+			if (search_flag) {
+				arrData_copy.clear();
+				for (int i = 0; i < arrData.size(); i++) {
+					if (arrData.get(i).getNAME().matches(".*" + e_lms.getText().toString() +".*") || arrData.get(i).getPHONE().matches(".*" + e_lms.getText().toString() +".*")) {
+						Log.e("SKY", "같은 값! :: " + i);
+						search_flag = true;
+						arrData_copy.add(new MyPhoneListObj(arrData.get(i).getKey(),arrData.get(i).getNAME(), arrData.get(i).getPHONE(), arrData.get(i).getCHECK() , i));
+					}
+				}
+				m_Adapter = new LMSMyPhoneList_Adapter( LMSMyPhoneDetailActivity.this , arrData_copy , mAfterAccum);
+				list_number.setAdapter(m_Adapter);
+			}
 			m_Adapter.notifyDataSetChanged();
 
 		}
