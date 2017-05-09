@@ -8,6 +8,8 @@ import java.io.Reader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -49,7 +51,8 @@ public class LMSMainActivity extends Activity{
 	private Typeface ttf;
 	private static final int INPUT_FILE_REQUEST_CODE = 1;
 	protected ProgressDialog customDialog = null;
-	
+	int count_all = 0;
+
 	private LinearLayout list_noti;
 	private TextView font_1  , font_2, font_3 ,title , t_count , txt_byte , txt_notice;
 	private Button tab1 , tab2 , send_lms;
@@ -89,13 +92,13 @@ public class LMSMainActivity extends Activity{
 	public void onResume(){
 		super.onResume();
 		if (onresume_0 ==1) {
-			customProgressPop();
+			customProgressPop("전화번호 불러오는중..");
 			onresume_0 = 0;
 			AccumThread av = new AccumThread();
 			av.start();
 		}
 	}
-	
+
 
 
 	protected void onCreate(Bundle savedInstanceState) {
@@ -117,8 +120,8 @@ public class LMSMainActivity extends Activity{
 		send_lms = (Button)findViewById(R.id.send_lms);
 		list_noti = (LinearLayout)findViewById(R.id.list_noti);
 		txt_notice = (TextView)findViewById(R.id.txt_notice);
-		
-		
+
+
 		lms_msg.setTypeface(ttf);
 		phone_number.setTypeface(ttf);
 		font_1.setTypeface(ttf);
@@ -131,7 +134,7 @@ public class LMSMainActivity extends Activity{
 		title.setTypeface(ttf);
 		t_count.setTypeface(ttf);
 		txt_notice.setTypeface(ttf);
-		
+
 		findViewById(R.id.bottomview_l).setOnClickListener(btnListener);
 		findViewById(R.id.bottomview_l_copy).setOnClickListener(btnListener);
 		findViewById(R.id.bottomview_c).setOnClickListener(btnListener);
@@ -199,6 +202,30 @@ public class LMSMainActivity extends Activity{
 				list_noti.setVisibility(View.GONE);
 				t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
 				customProgressClose();
+			} else if (msg.arg1  == 8000 ) {
+				count_all--;
+				Log.e("SKY" , "count_all :: " + count_all);
+				if (count_all == 0) {
+					//customProgressClose();
+					//디비 인설트 
+					SAVE_LMS_HISTORY(""+arrData.size() , lms_msg.getText().toString());
+					arrData.clear();
+					lms_msg.setText("");
+					phone_number.setText("");
+					m_Adapter.notifyDataSetChanged();
+					t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
+					AlertDialog.Builder alert = new AlertDialog.Builder(LMSMainActivity.this, AlertDialog.THEME_HOLO_LIGHT);
+					alert.setTitle("알림");
+					alert.setMessage("전송 완료 하였습니다.");
+					alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+						public void onClick(DialogInterface dialog, int whichButton) {
+
+						}
+					});
+					alert.show(); 
+				}else{
+					setcustomProgressPop("발송진행중. . .\n\n총 "+ (arrData.size()-count_all) + "/" + arrData.size() + " 발송");
+				}
 			}
 
 		}
@@ -274,26 +301,22 @@ public class LMSMainActivity extends Activity{
 				}else if((SELECT_Phone(sdf.format(d))+arrData.size()) > 499){
 					Toast.makeText(getApplicationContext(), "하루에 전송 최대치(500건)를 넘었습니다.", 0).show();
 				}else{
-					for (int i = 0; i < arrData.size(); i++) {
-						sendSMS(lms_msg.getText().toString(),arrData.get(i).getNumber());
-					}
-					//디비 인설트 
-					SAVE_LMS_HISTORY(""+arrData.size() , lms_msg.getText().toString());
-					arrData.clear();
-					lms_msg.setText("");
-					phone_number.setText("");
-					m_Adapter.notifyDataSetChanged();
-					t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
-					AlertDialog.Builder alert = new AlertDialog.Builder(LMSMainActivity.this, AlertDialog.THEME_HOLO_LIGHT);
-					alert.setTitle("알림");
-					alert.setMessage("전송 완료 하였습니다.");
-					alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog, int whichButton) {
+					//발송진행중. . .
+					//총 000/000 발송
+					customProgressPop("발송진행중. . .\n\n총 0/" + arrData.size() + " 발송");
 
+					Thread myThread = new Thread(new Runnable() {
+						public void run() {
+							for (int i = 0; i < arrData.size(); i++) {
+								try {
+									handler.sendMessage(handler.obtainMessage());
+									Thread.sleep(1000);
+								} catch (Throwable t) {
+								}
+							}
 						}
 					});
-					alert.show();
-
+					myThread.start();
 				}
 				break;
 			case R.id.number_plus:	
@@ -301,14 +324,12 @@ public class LMSMainActivity extends Activity{
 					Toast.makeText(getApplicationContext(), "이름 혹은 전화번호를 입력해주세요.", 0).show();
 					return;
 				}
-	            for (int i = 0; i < arrData.size(); i++) {
+				for (int i = 0; i < arrData.size(); i++) {
 					if(arrData.get(i).getNumber().equals(phone_number.getText().toString())){
 						Toast.makeText(getApplicationContext(), "동일한 번호가 존재합니다.", 0).show();
 						return;
 					}
 				}
-				
-				
 				arrData.add(new LMSMainObj(phone_number.getText().toString().replace("-", ""), phone_number.getText().toString().replace("-", "")));
 				m_Adapter.notifyDataSetChanged();
 				t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
@@ -316,7 +337,7 @@ public class LMSMainActivity extends Activity{
 				phone_number.setText("");
 				break;
 			case R.id.number_minus:	
-				
+
 				arrData.clear();
 				m_Adapter.notifyDataSetChanged();
 				t_count.setText("보내는 사람 : " + "0"+ " 명");
@@ -325,6 +346,42 @@ public class LMSMainActivity extends Activity{
 			}
 		}
 	};
+	Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			updateThread();
+		}
+	};
+	private void updateThread() {
+		Log.e("SKY" , "count_all :: " + count_all);
+		Log.e("SKY" , "arrData.size() :: " + arrData.size());
+		if (count_all == (arrData.size()-1)) {
+			//멈춤
+			customProgressClose();
+			SAVE_LMS_HISTORY(""+arrData.size() , lms_msg.getText().toString());
+			arrData.clear();
+			lms_msg.setText("");
+			phone_number.setText("");
+			m_Adapter.notifyDataSetChanged();
+			t_count.setText("보내는 사람 : " + arrData.size()+ " 명");
+			AlertDialog.Builder alert = new AlertDialog.Builder(LMSMainActivity.this, AlertDialog.THEME_HOLO_LIGHT);
+			alert.setTitle("알림");
+			alert.setMessage("전송 완료 하였습니다.");
+			alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+				public void onClick(DialogInterface dialog, int whichButton) {
+
+				}
+			});
+			alert.show(); 
+		}else{
+			final String number = arrData.get(count_all).getNumber();
+			sendSMS(lms_msg.getText().toString(),number);
+			count_all++;
+			setcustomProgressPop("발송진행중. . .\n\n총 "+ count_all + "/" + arrData.size() + " 발송");
+		}
+
+	}
+
 	private String getPath(Uri uri)
 	{
 		String[] projection = { MediaStore.Images.Media.DATA };
@@ -356,33 +413,33 @@ public class LMSMainActivity extends Activity{
 				}
 				//04-20 22:56:40.193: E/SKY(29127): PATH :: /storage/emulated/0/KakaoTalkDownload/전화번호불러오기샘플데이터.txt
 				String text = null;
-		        try {
-		            File file = new File(getPath(uri));		//파일명
-		            FileInputStream fis = new FileInputStream(file);
-		            Reader in = new InputStreamReader(fis,"euc-kr");
+				try {
+					File file = new File(getPath(uri));		//파일명
+					FileInputStream fis = new FileInputStream(file);
+					Reader in = new InputStreamReader(fis,"euc-kr");
 
-		            int size = fis.available();
-		            char[] buffer = new char[size];
-		            in.read(buffer);
-		            in.close();
-		 
-		            text = new String(buffer);
-		            
-		            String arr_txt[] = text.split("\n");
-		            Log.e("SKY", "arr_txt size : " + arr_txt.length);
-		            
-		            for (int i = 0; i < arr_txt.length; i++) {
+					int size = fis.available();
+					char[] buffer = new char[size];
+					in.read(buffer);
+					in.close();
+
+					text = new String(buffer);
+
+					String arr_txt[] = text.split("\n");
+					Log.e("SKY", "arr_txt size : " + arr_txt.length);
+
+					for (int i = 0; i < arr_txt.length; i++) {
 						if (arr_txt[i].replace("\u0000", "").replace("\n", "").replace("\r", "").replace("-", "").length() > 1) {
 							Log.e("SKY", "arr_txt size1 : " + arr_txt[i]);
-				            String txt[] = arr_txt[i].split("\t");
-				            arrData.add(new LMSMainObj(txt[0], txt[1].replace("\u0000", "").replace("\n", "").replace("\r", "").replace("-", "")));
-				            list_noti.setVisibility(View.GONE);
+							String txt[] = arr_txt[i].split("\t");
+							arrData.add(new LMSMainObj(txt[0], txt[1].replace("\u0000", "").replace("\n", "").replace("\r", "").replace("-", "")));
+							list_noti.setVisibility(View.GONE);
 						}
 					}
 					m_Adapter.notifyDataSetChanged();
-		        } catch (IOException e) {
-		            throw new RuntimeException(e);
-		        }
+				} catch (IOException e) {
+					throw new RuntimeException(e);
+				}
 			} 
 			break;
 		}
@@ -453,15 +510,18 @@ public class LMSMainActivity extends Activity{
 			Log.e("SKY","onPostExecute error : "+ e.toString());
 		}
 	}
-	public void customProgressPop(){
+	public void customProgressPop(String msg){
 		try{
 			if (customDialog==null){
 				customDialog = new ProgressDialog( this );
 			}
 			customDialog.setCancelable(false);
-			customDialog.setMessage("전화번호 불러오는중");
+			customDialog.setMessage(msg);
 			customDialog.show();
 		}catch(Exception ex){}
+	}
+	public void setcustomProgressPop(String msg){
+		customDialog.setMessage(msg);
 	}
 	public void customProgressClose(){
 		if (customDialog!=null && customDialog.isShowing()){

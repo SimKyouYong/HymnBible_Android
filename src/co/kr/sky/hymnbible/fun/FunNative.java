@@ -104,8 +104,8 @@ public class FunNative  {
 		Log.e("SKY" , "-AppShare-- :: ");
 		Intent msg = new Intent(Intent.ACTION_SEND);
 		msg.addCategory(Intent.CATEGORY_DEFAULT);
-		msg.putExtra(Intent.EXTRA_SUBJECT, "-성경 찬송-");
-		msg.putExtra(Intent.EXTRA_TEXT, "안녕하세요 성경 찬송 입니다.\n다운받을 주소는 http://market.android.com/details?id=co.kr.app.helloweurope 입니다. \n감사합니다.");
+		msg.putExtra(Intent.EXTRA_SUBJECT, "성경과찬송-뉴");
+		msg.putExtra(Intent.EXTRA_TEXT, "무료 “성경과찬송-뉴”\n본앱은 찬양 선교를 위해 중점을\n두고 만들어진 서비스입니다.\n찬송가 645전곡 반주제공, 무료문자\n성경과찬송-뉴, 교회찾기 기능등\n\n▶구글스토어 바로가기\nhttps://play.google.com/store/apps/details?id=co.kr.sky.hymnbible\n\n▶애플스토어 바로가기\nhttps://appsto.re/kr/ptiAjb.i\n\n※ 기능안내 ※\n▶찬송가 전곡 반주제공\n    전문 연주자가 직접 연주 녹음\n    예배의 품격을 높여줍니다.\n    4부(소.엘.테.베) 멜로디지원\n▶무료 문자발송(단.장문)\n   교회&단체,영업등 성도.고객관리로\n   한번에 500명까지 발송가능\n▶성경 : 관주 특화기능\n▶교회찾기 서비스\n▶경조사 금전관리\n\n아이폰.안드로이드 앱스토어에서\n'성경과찬송뉴'를 검색");
 		//		msg.putExtra(Intent.EXTRA_TITLE, "제목");
 		msg.setType("text/plain");    
 		ac.startActivity(Intent.createChooser(msg, "공유"));
@@ -172,7 +172,7 @@ public class FunNative  {
 		Log.e("SKY" , "-MarketLink-- :: ");
 
 		Intent marketLaunch = new Intent(Intent.ACTION_VIEW); 
-		marketLaunch.setData(Uri.parse("http://market.android.com/details?id=co.kr.app.helloweurope"));
+		marketLaunch.setData(Uri.parse("https://play.google.com/store/apps/details?id=co.kr.sky.hymnbible"));
 
 		ac.startActivity(marketLaunch);
 	}
@@ -481,7 +481,7 @@ public class FunNative  {
 
 		Intent msg = new Intent(Intent.ACTION_SEND);
 		msg.addCategory(Intent.CATEGORY_DEFAULT);
-		msg.putExtra(Intent.EXTRA_SUBJECT, "-성경 찬송-");
+		msg.putExtra(Intent.EXTRA_SUBJECT, "성경과찬송-뉴");
 		msg.putExtra(Intent.EXTRA_TEXT, val[1]);
 		//		msg.putExtra(Intent.EXTRA_TITLE, "제목");
 		msg.setType("text/plain");    
