@@ -789,7 +789,7 @@ public class MainActivity extends Activity{
 		public boolean shouldOverrideUrlLoading(WebView view, String url) {
 			Log.e("SKY", "shouldOverrideUrlLoading = = = = = = = "+url);
 
-			//myTTS.stop();
+			myTTS.stop();
 
 			if (url.matches(".*http://shqrp5200.cafe24.com/index.do.*")) {
 				//메인 페이지이기에 종료하기 띄운다!.
@@ -1132,6 +1132,7 @@ public class MainActivity extends Activity{
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		//홍진:openWindow로 추가 된 뷰가있으면 메인웹뷰에서 삭제해준다.
+		myTTS.stop();
 		if(keyCode == KeyEvent.KEYCODE_BACK){
 			if(BibleWeb_s!=null){
 				BibleWeb.removeView(BibleWeb_s);

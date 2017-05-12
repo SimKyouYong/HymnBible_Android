@@ -347,6 +347,7 @@ public class FunNative  {
 	 * window.location.href = "js2ios://LMSMainActivity?url=안씀&str=안씀&return=안씀";
 	 * */
 	public void LMSMainActivity(String url , Activity ac , WebView vc , String return_fun){
+		MainActivity.myTTS.stop();
 		Log.e("SKY" , "-LMSMainActivity-- :: ");
 		Intent intent = new Intent(ac , LMSMainActivity.class);
 		ac.startActivity(intent);
@@ -361,6 +362,7 @@ public class FunNative  {
 	 * window.location.href = "js2ios://ChurchSearch?url=안씀&str=안씀&return=안씀";
 	 * */
 	public void ChurchSearch(String url , Activity ac , WebView vc , String return_fun){
+		MainActivity.myTTS.stop();
 		Log.e("SKY" , "-ChurchSearch-- :: ");
 		Intent intent = new Intent(ac , ChurchSearch.class);
 		ac.startActivity(intent);
@@ -442,6 +444,7 @@ public class FunNative  {
 	 * */
 	public void SearchSst(String url , Activity ac , WebView vc , String return_fun){
 		Log.e("SKY" , "--SearchSst-- :: ");
+		MainActivity.myTTS.stop();
 		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
 		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
 				RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
@@ -474,6 +477,7 @@ public class FunNative  {
 	 * */
 	public void Share(String url , Activity ac , WebView vc , String return_fun){
 		Log.e("SKY" , "--공유하기-- :: ");
+		MainActivity.myTTS.stop();
 		String val[] = url.split(",");
 		for (int i = 0; i < val.length; i++) {
 			Log.e("SKY" , "VAL["+i + "]  :: " + i + " --> " + val[i]);
