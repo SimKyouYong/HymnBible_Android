@@ -310,7 +310,7 @@ public class LMSMainActivity extends Activity{
 							for (int i = 0; i < arrData.size(); i++) {
 								try {
 									handler.sendMessage(handler.obtainMessage());
-									Thread.sleep(1000);
+									Thread.sleep(1500);		//발송 지연 초.. 설정
 								} catch (Throwable t) {
 								}
 							}
