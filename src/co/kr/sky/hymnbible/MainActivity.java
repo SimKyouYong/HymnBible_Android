@@ -164,11 +164,78 @@ public class MainActivity extends Activity{
 	private HashMap<String, String> group_title;
 	private HashMap<String, Integer> group_count;
 
+	public static int start = 0;
 
 
 
 	@Override
 	public void onResume(){
+		if (start != 0) {
+			//버전 체크
+	        map.clear();
+	        map.put("url", dataSet.VERSION_CHECK);
+	        mThread = new AccumThread(this, mAfterAccum, map, 2, 1, null);
+	        mThread.start(); // 스레드 시작!!
+	        
+			vc = new MySQLiteOpenHelper(this);
+			bottomview = (LinearLayout)findViewById(R.id.bottomview);
+			bottomview.setVisibility(View.GONE);
+
+			TelephonyManager telManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);// 사용자 전화번호로 ID값 가져옴
+			try {
+				dataSet.PHONE = telManager.getLine1Number().toString().trim().replace("+82", "0").replace("82", "0"); //폰번호를 가져옴
+				//dataSet.PHONE = "01027065911";
+
+				Log.e("SKY" , "폰번호 :: " + dataSet.PHONE);
+				//dataSet.PHONE = telManager.getDeviceId();
+			} catch (Exception e) {
+				// TODO: handle exception
+				dataSet.PHONE = "";
+				//confirmDialog("휴대폰 번호가 없는 기기는 가입할수 없습니다.");
+				//return;
+			}
+			setting_web();
+			setting_button();
+			//myTTS = new TextToSpeech(this, this);
+			myTTS=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+				@Override
+				public void onInit(int status) {
+					if(status != TextToSpeech.ERROR) {
+						myTTS.setLanguage(Locale.KOREA);
+					}
+				}
+			});
+			group_title=new HashMap<String, String>();
+			group_count=new HashMap<String, Integer>();
+
+
+			//push
+			if(GCMIntentService.re_message!=null){
+				Log.e("CHECK" , "PUSH DATA!!!----> " +GCMIntentService.re_message );
+			}else{
+				Log.e("CHECK" , "dataSet.PROJECT_ID11122!----> " +dataSet.PROJECT_ID );
+				GCMRegistrar.checkDevice(this);
+				GCMRegistrar.checkManifest(this);
+
+				dataSet.REG_ID = GCMRegistrar.getRegistrationId(this);
+				Log.e("reg_id11", dataSet.REG_ID);
+
+				if (dataSet.REG_ID.equals("")) {
+					Log.e("SKY", "in");
+					GCMRegistrar.register(this, dataSet.PROJECT_ID);
+				} else {
+					Log.e("SKY", "푸시 등록 :: " + dataSet.REG_ID);
+					map.clear();
+					map.put("url", dataSet.SERVER+"json/updateRegid.do");
+					map.put("phone",dataSet.PHONE);
+					map.put("reg_id",dataSet.REG_ID);
+					map.put("type","android");
+					mThread = new AccumThread(MainActivity.this , mAfterAccum , map , 0 , 0 , null);
+					mThread.start();		//스레드 시작!!
+				}
+			}
+			getSampleContactList2(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + "= " + 4);
+		}
 		super.onResume();
 	}
 	protected void onCreate(Bundle savedInstanceState) {
@@ -180,70 +247,7 @@ public class MainActivity extends Activity{
             
 		
 		
-		//버전 체크
-        map.clear();
-        map.put("url", dataSet.VERSION_CHECK);
-        mThread = new AccumThread(this, mAfterAccum, map, 2, 1, null);
-        mThread.start(); // 스레드 시작!!
-        
-		vc = new MySQLiteOpenHelper(this);
-		bottomview = (LinearLayout)findViewById(R.id.bottomview);
-		bottomview.setVisibility(View.GONE);
-
-		TelephonyManager telManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);// 사용자 전화번호로 ID값 가져옴
-		try {
-			dataSet.PHONE = telManager.getLine1Number().toString().trim().replace("+82", "0").replace("82", "0"); //폰번호를 가져옴
-			//dataSet.PHONE = "01027065911";
-
-			Log.e("SKY" , "폰번호 :: " + dataSet.PHONE);
-			//dataSet.PHONE = telManager.getDeviceId();
-		} catch (Exception e) {
-			// TODO: handle exception
-			dataSet.PHONE = "";
-			//confirmDialog("휴대폰 번호가 없는 기기는 가입할수 없습니다.");
-			//return;
-		}
-		setting_web();
-		setting_button();
-		//myTTS = new TextToSpeech(this, this);
-		myTTS=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-			@Override
-			public void onInit(int status) {
-				if(status != TextToSpeech.ERROR) {
-					myTTS.setLanguage(Locale.KOREA);
-				}
-			}
-		});
-		group_title=new HashMap<String, String>();
-		group_count=new HashMap<String, Integer>();
-
-
-		//push
-		if(GCMIntentService.re_message!=null){
-			Log.e("CHECK" , "PUSH DATA!!!----> " +GCMIntentService.re_message );
-		}else{
-			Log.e("CHECK" , "dataSet.PROJECT_ID11122!----> " +dataSet.PROJECT_ID );
-			GCMRegistrar.checkDevice(this);
-			GCMRegistrar.checkManifest(this);
-
-			dataSet.REG_ID = GCMRegistrar.getRegistrationId(this);
-			Log.e("reg_id11", dataSet.REG_ID);
-
-			if (dataSet.REG_ID.equals("")) {
-				Log.e("SKY", "in");
-				GCMRegistrar.register(this, dataSet.PROJECT_ID);
-			} else {
-				Log.e("SKY", "푸시 등록 :: " + dataSet.REG_ID);
-				map.clear();
-				map.put("url", dataSet.SERVER+"json/updateRegid.do");
-				map.put("phone",dataSet.PHONE);
-				map.put("reg_id",dataSet.REG_ID);
-				map.put("type","android");
-				mThread = new AccumThread(MainActivity.this , mAfterAccum , map , 0 , 0 , null);
-				mThread.start();		//스레드 시작!!
-			}
-		}
-		getSampleContactList2(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + "= " + 4);
+		
 	}
 	public void getSampleContactList2(String groupID) {
 		Log.e("SKY" , "--getSampleContactList2-- :: " + groupID);

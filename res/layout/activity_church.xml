@@ -1,4 +1,3 @@
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/vi"
@@ -53,11 +52,11 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:hint="교회명목사명주소 전화입력"
             android:layout_marginLeft="20dp"
             android:layout_toLeftOf="@+id/sspp"
             android:layout_toRightOf="@+id/btn_back"
             android:background="@drawable/search"
+            android:hint="교회명목사명주소 전화입력"
             android:imeOptions="actionSearch"
             android:inputType="text"
             android:paddingLeft="25dp"
@@ -67,53 +66,67 @@
             android:typeface="sans" />
     </RelativeLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@+id/view1"
-        android:orientation="vertical" >
-
-        <fragment
-            android:id="@+id/mapview"
-            android:name="com.google.android.gms.maps.SupportMapFragment"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1" />
+        android:layout_height="fill_parent" >
 
         <LinearLayout
-            android:id="@+id/list_view_11"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginBottom="5dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:visibility="gone" >
+            android:layout_below="@+id/view1"
+            android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/list_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:textColor="#000000"
-                android:textSize="14dp" />
-
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="1dp"
-                android:background="#DCDCDC" />
-
-            <ListView
-                android:id="@+id/list_cummun"
+            <fragment
+                android:id="@+id/mapview"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:divider="#dfdede"
-                android:dividerHeight="1dp" >
-            </ListView>
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:id="@+id/list_view_11"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:visibility="gone" >
+
+                <TextView
+                    android:id="@+id/list_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="#000000"
+                    android:textSize="14dp" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="#DCDCDC" />
+
+                <ListView
+                    android:id="@+id/list_cummun"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:divider="#dfdede"
+                    android:dividerHeight="1dp" >
+                </ListView>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+        
+        <Button 
+            android:id="@+id/url_send"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:background="@drawable/sms_button_2"/>
+        
+    </FrameLayout>
 
 </RelativeLayout>

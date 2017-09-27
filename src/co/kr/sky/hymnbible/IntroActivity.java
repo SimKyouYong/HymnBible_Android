@@ -30,6 +30,7 @@ public class IntroActivity extends Activity {
 	Runnable r= new Runnable() {
 		@Override
 		public void run() {
+			MainActivity.start = 1;
 			finish();
 
 

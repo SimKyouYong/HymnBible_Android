@@ -146,6 +146,7 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 		findViewById(R.id.btn_back).setOnClickListener(btnListener);
 		findViewById(R.id.btn_sp2).setOnClickListener(btnListener);
 		findViewById(R.id.btn_sp3).setOnClickListener(btnListener);
+		findViewById(R.id.url_send).setOnClickListener(btnListener);
 		e_search1.setText("");
 //		SendHttp();
 		
@@ -171,6 +172,10 @@ public class ChurchSearch extends FragmentActivity implements LocationListener,O
 		public void onClick(View v) {
 			switch (v.getId()) {
 			
+			
+			case R.id.url_send:	
+				//지훈이 url 나오면 SubWEBVIEW 에 넘기기..
+				break;
 			case R.id.btn_sp2:	
 				SendHttp();
 				break;
