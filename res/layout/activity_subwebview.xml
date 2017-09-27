@@ -1,0 +1,108 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/vi"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:id="@+id/bottomview"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentBottom="true"
+        android:background="#ffffffff"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="gone" >
+
+        <Button
+            android:id="@+id/b_bible1"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#00A9A9A9"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="성경"
+            android:textColor="#D3D3D3"
+            android:textStyle="bold"
+            android:typeface="normal" />
+
+        <Button
+            android:id="@+id/b_bible2"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#00A9A9A9"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="STUDY"
+            android:textColor="#D3D3D3"
+            android:textSize="12dp"
+            android:textStyle="bold"
+            android:typeface="normal" />
+
+        <Button
+            android:id="@+id/b_bible3"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#00A9A9A9"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="핵심"
+            android:textColor="#D3D3D3"
+            android:textStyle="bold"
+            android:typeface="normal" />
+
+        <Button
+            android:id="@+id/b_bible4"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#00A9A9A9"
+            android:gravity="center"
+            android:text="묵상"
+            android:textColor="#D3D3D3"
+            android:textStyle="bold"
+            android:typeface="normal" />
+
+        <Button
+            android:id="@+id/b_bible5"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#00A9A9A9"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="QA"
+            android:textColor="#D3D3D3"
+            android:textStyle="bold"
+            android:typeface="normal" />
+
+        <Button
+            android:id="@+id/b_bible6"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:background="#00A9A9A9"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="읽기표"
+            android:textColor="#D3D3D3"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <WebView
+        android:id="@+id/web"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomview" />
+
+    <Button
+        android:id="@+id/btnsample"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="공유하기"
+        android:visibility="gone" />
+
+</RelativeLayout>

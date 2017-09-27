@@ -62,6 +62,46 @@ public class FunNative  {
 
 	private WebView Webview_copy;
 
+	
+	/*
+     * 버전 가져오기 
+     * window.location.href = "js2ios://Advertising?url=광고 url&str=안씀&return=리턴함수";
+     * */
+    public void Advertising(String url , final Activity ac , WebView vc , String return_fun){
+		Log.e("SKY" , "-Advertising-- :: ");
+		String val[] = url.split(",");
+		for (int i = 0; i < val.length; i++) {
+			Log.e("SKY" , "VAL["+i + "]  :: " + i + " --> " + val[i]);
+		}
+		Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(val[0]));
+		ac.startActivity(intent);
+		Log.e("SKY", "javascript:"+return_fun + "('" +"true" + "')");
+		vc.loadUrl("javascript:"+return_fun + "('" +"true" + "')");
+	}
+    
+    /*
+     * 버전 가져오기 
+     * window.location.href = "js2ios://GetVersion?url=안씀&str=안씀&return=리턴함수";
+     * */
+    public void GetVersion(String url , final Activity ac , WebView vc , String return_fun){
+		Log.e("SKY" , "-GetVersion-- :: ");
+		String val[] = url.split(",");
+		for (int i = 0; i < val.length; i++) {
+			Log.e("SKY" , "VAL["+i + "]  :: " + i + " --> " + val[i]);
+		}
+		PackageInfo pi = null;
+		try {
+			pi = ac.getPackageManager().getPackageInfo(ac.getPackageName(), 0);
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		String verSion = pi.versionName;
+		Log.e("SKY", "javascript:"+return_fun + "('" +verSion + "')");
+		vc.loadUrl("javascript:"+return_fun + "('" +verSion + "')");
+	}
+    
+    
 	/*
 	 * url : true : 열릴때 값 넘겨줌 , false : 닫힐때 값 넘겨
 	 * window.location.href = "js2ios://SlideMenu?url=truehtml데이&str=안씀&return=안씀";

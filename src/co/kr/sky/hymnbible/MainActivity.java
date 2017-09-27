@@ -22,6 +22,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -174,6 +175,17 @@ public class MainActivity extends Activity{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		startActivity(new Intent(this, IntroActivity.class));
+
+            
+		
+		
+		//버전 체크
+        map.clear();
+        map.put("url", dataSet.VERSION_CHECK);
+        mThread = new AccumThread(this, mAfterAccum, map, 2, 1, null);
+        mThread.start(); // 스레드 시작!!
+        
 		vc = new MySQLiteOpenHelper(this);
 		bottomview = (LinearLayout)findViewById(R.id.bottomview);
 		bottomview.setVisibility(View.GONE);
@@ -187,8 +199,8 @@ public class MainActivity extends Activity{
 			//dataSet.PHONE = telManager.getDeviceId();
 		} catch (Exception e) {
 			// TODO: handle exception
-			//dataSet.PHONE = "01027065915";
-			confirmDialog("휴대폰 번호가 없는 기기는 가입할수 없습니다.");
+			dataSet.PHONE = "";
+			//confirmDialog("휴대폰 번호가 없는 기기는 가입할수 없습니다.");
 			//return;
 		}
 		setting_web();
@@ -204,7 +216,6 @@ public class MainActivity extends Activity{
 		});
 		group_title=new HashMap<String, String>();
 		group_count=new HashMap<String, Integer>();
-		//getGroupContacts();
 
 
 		//push
@@ -223,6 +234,7 @@ public class MainActivity extends Activity{
 				GCMRegistrar.register(this, dataSet.PROJECT_ID);
 			} else {
 				Log.e("SKY", "푸시 등록 :: " + dataSet.REG_ID);
+				map.clear();
 				map.put("url", dataSet.SERVER+"json/updateRegid.do");
 				map.put("phone",dataSet.PHONE);
 				map.put("reg_id",dataSet.REG_ID);
@@ -231,11 +243,6 @@ public class MainActivity extends Activity{
 				mThread.start();		//스레드 시작!!
 			}
 		}
-		//		//최초 설치시 추천인 입력
-		//		if("".equals(Check_Preferences.getAppPreferences(MainActivity.this, "ch"))){
-		//			InputAlert();
-		//		}
-		//getGroupall(and_where);
 		getSampleContactList2(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + "= " + 4);
 	}
 	public void getSampleContactList2(String groupID) {
@@ -443,6 +450,33 @@ public class MainActivity extends Activity{
 			if (msg.arg1  == 0 ) {
 				String res = (String)msg.obj;
 				Log.e("CHECK" , "RESULT  -> " + res);
+			}else if(msg.arg1  == 1 ){
+				String res = (String) msg.obj;
+
+                String version;
+                try {
+                    PackageInfo i = MainActivity.this.getPackageManager().getPackageInfo(MainActivity.this.getPackageName(), 0);
+                    version = i.versionName.trim();
+
+                    float i_version = Float.parseFloat(version);
+                    float i_result = Float.parseFloat(res);
+                    Log.e("CHECK", "version  -> " + i_version);
+                    Log.e("CHECK", "RESULT  -> " + i_result);
+                    if (i_result != i_version){
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this , AlertDialog.THEME_DEVICE_DEFAULT_LIGHT);
+                        builder.setMessage("업데이트 되었습니다. 구글플레이어 스토어로 이동합니다");
+                        builder.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                //어플 다운로드 페이지 이동(구글 스토어 이동
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
+                            }
+                        });
+                        final AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }
+
+                } catch(PackageManager.NameNotFoundException e) { }
 			}
 		}
 	};
