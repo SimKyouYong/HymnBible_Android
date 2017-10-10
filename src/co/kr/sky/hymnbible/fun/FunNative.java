@@ -64,7 +64,7 @@ public class FunNative  {
 
 	
 	/*
-     * 버전 가져오기 
+     * 메인 광고 클릭 
      * window.location.href = "js2ios://Advertising?url=광고 url&str=안씀&return=리턴함수";
      * */
     public void Advertising(String url , final Activity ac , WebView vc , String return_fun){
