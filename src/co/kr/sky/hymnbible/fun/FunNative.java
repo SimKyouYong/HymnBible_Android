@@ -549,6 +549,34 @@ public class FunNative  {
 		vc.loadUrl("javascript:"+return_fun + "('false')");
 
 	}
+	
+	
+	/* TTS 속도 조절
+	 * param 
+	 * url :: value 
+	 * str :: 안씀
+	 * return :: 재생후 리턴 함수에 true 반환 
+	 * window.location.href = "js2ios://setSpeechRate?url=0.8&str=&return=리턴함수(true)";
+	 * */
+	@SuppressWarnings("deprecation")
+	public void setSpeechRate(String url , Activity ac , WebView vc , String return_fun){
+		Log.e("SKY" , "--setSpeechRate-- :: ");
+		String val[] = url.split(",");
+		for (int i = 0; i < val.length; i++) {
+			Log.e("SKY" , "VAL["+i + "]  :: " + i + " --> " + val[i]);
+		}
+		try {
+			MainActivity.myTTS.setSpeechRate(Float.parseFloat(val[0]));
+			Log.e("SKY" , "TTS 성공");
+			vc.loadUrl("javascript:"+return_fun + "('true')");
+		} catch (Exception e) {
+			// TODO: handle exception
+			Log.e("SKY" , "TTS 실패");
+			vc.loadUrl("javascript:"+return_fun + "('false')");
+
+			e.printStackTrace();
+		}
+	}
 	/*
 	 * param 
 	 * url :: 안씀 
